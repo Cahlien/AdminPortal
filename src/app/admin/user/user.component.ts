@@ -20,9 +20,6 @@ export class UserComponent implements OnInit {
 
   users: User[] = new Array();
   userForm!: FormGroup;
-
-
-
   modalRef!: NgbModalRef;
   errorMessage: any;
   closeResult: any;
@@ -36,7 +33,7 @@ export class UserComponent implements OnInit {
 
   loadUsers(): any{
     this.httpService
-    .getAll('http://localhost:8080/admin/users')
+    .getAll('http://localhost:9001/admin/users')
     .subscribe((response) => {
       let arr: any;
       arr = response;
@@ -65,7 +62,7 @@ export class UserComponent implements OnInit {
   }
 
   deleteUser(id: String){
-    this.httpService.deleteById('http://localhost:8080/admin/users/id/' + id).subscribe((result)=>{
+    this.httpService.deleteById('http://localhost:9001/admin/users/' + id).subscribe((result)=>{
       console.log(result);
       this.users.length = 0;
       this.loadUsers();
@@ -87,13 +84,13 @@ export class UserComponent implements OnInit {
     const body = JSON.stringify(u);
 
     if (!this.userForm.controls['userId'].value){
-      this.httpService.create('http://localhost:8080/admin/users', body).subscribe((result)=>{
+      this.httpService.create('http://localhost:9001/users', body).subscribe((result)=>{
         this.users.length = 0;
         this.loadUsers();
       })
     }
     else{
-      this.httpService.update('http://localhost:8080/admin/users/id/' + this.userForm.controls['userId'].value, body).subscribe((result)=>{
+      this.httpService.update('http://localhost:9001/admin/users/' + this.userForm.controls['userId'].value, body).subscribe((result)=>{
         this.users.length = 0;
         this.loadUsers();
       })
