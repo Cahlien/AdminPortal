@@ -6,7 +6,7 @@ import { throwError, Subject } from 'rxjs';
 @Injectable({providedIn: 'root'})
 export class AuthService {
   url: string = 'http://localhost:9001/users/login';
-  headers: HttpHeaders = new HttpHeaders({ 'Content-Type': 'application/json', 'Accept': 'application/json'});
+  headers: HttpHeaders = new HttpHeaders({ 'Content-Type': 'application/json', 'Accept': 'application/json', 'LR-Type': 'admin'});
 
   constructor(private http: HttpClient) {
   }
