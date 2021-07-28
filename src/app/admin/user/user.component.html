@@ -1,6 +1,6 @@
 <div class='container-fluid'>
     <h1 class="text-center mb-2">View All Users</h1>
-    <h3><td><button type="button" class="btn btn-primary btn-lg" style="background-color:green" (click)="open(updateUserModal, null)">Create</button></td></h3>
+    <h3><td><button type="button" class="btn btn-primary btn-lg" style="background-color:green" (click)="open(userModal, null)">Create</button></td></h3>
     <table class='table table-striped table-hover table-active border border-secondary shadow-lg'>
         <thead>
             <tr>
@@ -16,15 +16,15 @@
                 <td>{{ i+1 }}</td>
                 <td>{{ u.$firstName }}</td>
                 <td>{{ u.$lastName }}</td>
-                <td><button type="button" class="btn btn-secondary" (click)="open(updateUserModal, u)">Edit</button></td>
+                <td><button type="button" class="btn btn-secondary" (click)="open(userModal, u)">Edit</button></td>
                 <td><button type="button" class="btn btn-danger" (click)="deleteUser(u.$userId)">Delete</button></td>
             </tr>
         </tbody>
     </table>
 </div>
 
-<ng-template #updateUserModal let-c="close" let-d="dismiss">
-    <form [formGroup]="updateUserForm" (ngSubmit)="saveUser()">
+<ng-template #userModal let-c="close" let-d="dismiss">
+    <form [formGroup]="userForm" (ngSubmit)="saveUser(); closeModal()">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -33,58 +33,107 @@
                 <div class="modal-body">
                     <p>User Details</p>
                     <div class="form-group">
-                        User ID: <input
-                        type="text"
-                        id="userId"
-                        formControlName="userId"
-                        class="mb-2 disabled"/>
-                        <br>
-                        Username: <input
-                        type="text"
-                        id="username"
-                        formControlName="username"
-                        class="mb-2"/>
-                        <br>
-                        Password: <input
-                        type="text"
-                        id="password"
-                        formControlName="password"
-                        class="mb-2"/>
-                        <br>
-                        Email: <input
-                        type="text"
-                        id="email"
-                        formControlName="email"
-                        class="mb-2"/>
-                        <br>
-                        Phone: <input
-                        type="text"
-                        id="phone"
-                        formControlName="phone"
-                        class="mb-2"/>
-                        <br>
-                        Date of Birth: <input
-                        type="text"
-                        id="dateOfBirth"
-                        formControlName="dateOfBirth"
-                        class="mb-2"/>
-                        <br>
-                        First Name: <input
-                        type="text"
-                        id="firstName"
-                        formControlName="firstName"
-                        class="mb-2"/>
-                        <br>
-                        Last Name: <input
-                        type="text"
-                        id="lastName"
-                        formControlName="lastName"
-                        class="mb-2"/>
-                        <br>
-                        Role: <input
-                        type="text"
-                        id="role"
-                        formControlName="role"/>
+                        <div class="mb-2" *ngIf="this.userForm.controls['userId']">
+                            <label for="userId" class="form-label">User ID: </label>
+                            <input type="text" id="userId" formControlName="userId" class="form-control" readonly/>
+                        </div>
+                        <div class="mb-2">
+                            <label for="username" class="form-label">Username: </label>
+                            <input type="text" id="username" formControlName="username" class="form-control" required/>
+                            <div *ngIf="username?.invalid && (username?.dirty || username?.touched)">
+                                <div *ngIf="username?.errors?.required">
+                                    <small class="text-danger">username is required</small>
+                                </div>
+                                <div *ngIf="username?.errors?.maxlength">
+                                    <small class="text-danger">username cannot be longer than 20 characters</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="password" class="form-label">Password: </label>
+                            <input type="text" id="password" formControlName="password" class="form-control sr-only"/>
+                            <div *ngIf="password?.invalid && (password?.dirty || password?.touched)">
+                                <div *ngIf="password?.errors?.required">
+                                    <small class="text-danger">password is required</small>
+                                </div>
+                                <div *ngIf="password?.errors?.maxlength">
+                                    <small class="text-danger">password cannot be longer than 20 characters</small>
+                                </div>
+                                <div *ngIf="password && password?.errors?.minlength">
+                                    <small class="text-danger">password must contain at least 8 characters</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="email" class="form-label">Email: </label>
+                            <input type="text" id="email" formControlName="email" class="form-control"/>
+                            <div *ngIf="email?.invalid && (email?.dirty || email?.touched)">
+                                <div *ngIf="email?.errors?.required">
+                                    <small class="text-danger">email is required</small>
+                                </div>
+                                <div *ngIf="email?.errors?.maxlength">
+                                    <small class="text-danger">email cannot be longer than 30 characters</small>
+                                </div>
+                                <div *ngIf="email?.errors?.pattern">
+                                    <small class="text-danger">email must be in correct format</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="phone" class="form-label">Phone: </label>
+                            <input type="text" id="phone" formControlName="phone" class="form-control"/>
+                            <div *ngIf="phone?.invalid && (phone?.dirty || phone?.touched)">
+                                <div *ngIf="phone?.errors?.required">
+                                    <small class="text-danger">phone number is required</small>
+                                </div>
+                                <div *ngIf="phone?.errors?.maxlength || phone?.errors?.minlength">
+                                    <small class="text-danger">phone number must be 10 characters</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="dateOfBirth" class="form-label">Date of Birth: </label>
+                            <input type="date" id="dateOfBirth" formControlName="dateOfBirth" class="form-control"/>
+                            <div *ngIf="dateOfBirth?.invalid && (dateOfBirth?.dirty || dateOfBirth?.touched)">
+                                <div *ngIf="dateOfBirth?.errors?.required">
+                                    <small class="text-danger">date of birth is required</small>
+                                </div>
+                                <div *ngIf="username?.errors?.maxlength">
+                                    <small class="text-danger">date of birth must be in correct format</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="firstName" class="form-label">First Name: </label>
+                            <input type="text" id="firstName" formControlName="firstName" class="form-control"/>
+                            <div *ngIf="firstName?.invalid && (firstName?.dirty || firstName?.touched)">
+                                <div *ngIf="firstName?.errors?.required">
+                                    <small class="text-danger">first name is required</small>
+                                </div>
+                                <div *ngIf="firstName?.errors?.maxlength">
+                                    <small class="text-danger">first name cannot be longer than 20 characters</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="lastName" class="form-label">Last Name: </label>
+                            <input type="text" id="lastName" formControlName="lastName" class="form-control"/>
+                            <div *ngIf="lastName?.invalid && (lastName?.dirty || lastName?.touched)">
+                                <div *ngIf="lastName?.errors?.required">
+                                    <small class="text-danger">last name is required</small>
+                                </div>
+                                <div *ngIf="lastName?.errors?.maxlength">
+                                    <small class="text-danger">last name cannot be longer than 20 characters</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group mb-2">
+                            <label class="input-group-text" for="role">Role</label>
+                            <select class="form-select" id="role" formControlName="role">
+                              <option value="user">User</option>
+                              <option value="admin">Admin</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -92,11 +141,11 @@
                     type="button"
                     class="btn btn-secondary"
                     data-bs-dismiss="modal"
-                    (click)="closeModal()"
+                    (click)="closeModal(); initializeForms()"
                     >
                     Close
                     </button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="!userForm.valid">Save changes</button>
                 </div>
             </div>
         </div>

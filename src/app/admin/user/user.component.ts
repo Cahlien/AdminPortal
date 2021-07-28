@@ -19,7 +19,7 @@ export class UserComponent implements OnInit {
   //constructor(private http: HttpClient, private fb: FormBuilder, private modalService: NgbModal) { }
 
   users: User[] = new Array();
-  updateUserForm!: FormGroup;
+  userForm!: FormGroup;
 
 
 
@@ -30,6 +30,7 @@ export class UserComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
+    this.initializeForms();
     //sthis.initializeForms();
   }
 
@@ -43,28 +44,27 @@ export class UserComponent implements OnInit {
         console.log(obj.dateOfBirth);
         let u = new User(obj.username, obj.password, obj.email, obj.phone, 
           obj.firstName, obj.lastName, obj.dateOfBirth, obj.role, obj.userId);
-        console.log(u);
+        console.log(u); 
         this.users.push(u);
       }
     })
   }
 
   initializeForms(){
-    this.updateUserForm = new FormGroup({
-      userId: new FormControl('',[Validators.required, Validators.maxLength(20)]),
+    this.userForm = this.fb.group({
+      userId: new FormControl(''),
       username: new FormControl('',[Validators.required, Validators.maxLength(20)]),
-      password: new FormControl('',[Validators.required, Validators.maxLength(20)]),
-      email: new FormControl('',[Validators.required, Validators.maxLength(30)]),
-      phone: new FormControl('',[Validators.required, Validators.maxLength(10)]),
+      password: new FormControl('',[Validators.required, Validators.minLength(8), Validators.maxLength(20)]),
+      email: new FormControl('',[Validators.required, Validators.maxLength(30), Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
+      phone: new FormControl('',[Validators.required, Validators.minLength(10), Validators.maxLength(10)]),
       firstName: new FormControl('',[Validators.required, Validators.maxLength(20)]),
       lastName: new FormControl('',[Validators.required, Validators.maxLength(20)]),
       dateOfBirth: new FormControl('',[Validators.required, Validators.maxLength(10)]),
-      role: new FormControl('',[Validators.required, Validators.maxLength(20)])
+      role: new FormControl('',[Validators.required])
     })
   }
 
   deleteUser(id: String){
-    alert("delete user " + id);
     this.httpService.deleteById('http://localhost:8080/admin/users/id/' + id).subscribe((result)=>{
       console.log(result);
       this.users.length = 0;
@@ -73,38 +73,32 @@ export class UserComponent implements OnInit {
   }
 
   saveUser(){
-    console.log("save");
-    alert("save user " + this.updateUserForm.controls['dateOfBirth'].value);
     let u = new User(
-      this.updateUserForm.controls['username'].value,
-      this.updateUserForm.controls['password'].value,
-      this.updateUserForm.controls['email'].value,
-      this.updateUserForm.controls['phone'].value,
-      this.updateUserForm.controls['firstName'].value, 
-      this.updateUserForm.controls['lastName'].value,
-      this.updateUserForm.controls['dateOfBirth'].value,
-      this.updateUserForm.controls['role'].value,
-      this.updateUserForm.controls['userId'].value);
+      this.userForm.controls['username'].value,
+      this.userForm.controls['password'].value,
+      this.userForm.controls['email'].value,
+      this.userForm.controls['phone'].value,
+      this.userForm.controls['firstName'].value, 
+      this.userForm.controls['lastName'].value,
+      this.userForm.controls['dateOfBirth'].value,
+      this.userForm.controls['role'].value,
+      this.userForm.controls['userId'].value);
     
     const body = JSON.stringify(u);
-    console.log(body);
 
-    if (!this.updateUserForm.controls['userId'].value){
-      console.log("saving...");
+    if (!this.userForm.controls['userId'].value){
       this.httpService.create('http://localhost:8080/admin/users', body).subscribe((result)=>{
-        console.log("save" + result);
         this.users.length = 0;
         this.loadUsers();
       })
     }
     else{
-      console.log("editing...");
-      this.httpService.update('http://localhost:8080/admin/users/id/' + this.updateUserForm.controls['userId'].value, body).subscribe((result)=>{
-        console.log("updating" + result);
+      this.httpService.update('http://localhost:8080/admin/users/id/' + this.userForm.controls['userId'].value, body).subscribe((result)=>{
         this.users.length = 0;
         this.loadUsers();
       })
     }
+    this.initializeForms();
     //this.loadUsers();
   }
 
@@ -113,8 +107,7 @@ export class UserComponent implements OnInit {
   open(content: any, u: User | null){
     if (u!== null){
       this.modalHeader = 'Edit User';
-      console.log("createModal False");
-      this.updateUserForm = this.fb.group({
+      this.userForm = this.fb.group({
         userId: u.$userId,
         username: u.$username,
         password: u.$password,
@@ -125,25 +118,9 @@ export class UserComponent implements OnInit {
         dateOfBirth: u.$dateOfBirth,
         role: u.$role
       });
-    } else{
+    } 
+    else{
       this.modalHeader = 'Add New User';
-      console.log("createModal True");
-      if(this.updateUserForm){
-        console.log("updateuserform");
-        this.updateUserForm.reset();
-        this.updateUserForm = this.fb.group({
-          userId: '',
-          username: '',
-          password: '',
-          email: '',
-          phone: '',
-          firstName: '',
-          lastName: '',
-          dateOfBirth: '',
-          role: ''
-        })
-      }
-      
     }
     this.modalRef = this.modalService.open(content);
     this.modalRef.result.then(
@@ -173,4 +150,13 @@ export class UserComponent implements OnInit {
       return of(result as T);
     };
   }
+
+  get username() { return this.userForm.get('username'); }
+  get password() { return this.userForm.get('password'); }
+  get email() { return this.userForm.get('email'); }
+  get phone() { return this.userForm.get('phone'); }
+  get firstName() { return this.userForm.get('firstName'); }
+  get lastName() { return this.userForm.get('lastName'); }
+  get dateOfBirth() { return this.userForm.get('dateOfBirth'); }
+  get role() { return this.userForm.get('role'); }
 }
