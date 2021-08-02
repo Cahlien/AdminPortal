@@ -23,4 +23,10 @@ export class AuthService {
         headers: this.headers
       });
   }
+
+  logout(){
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    console.log("test");
+  }
 }
