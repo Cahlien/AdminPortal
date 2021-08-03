@@ -1,18 +1,24 @@
-import { Injectable } from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
-import { catchError, tap } from 'rxjs/operators';
-import { throwError, Subject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Router} from "@angular/router";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  url: string = 'http://localhost:9001/users/login';
-  headers: HttpHeaders = new HttpHeaders({ 'Content-Type': 'application/json', 'Accept': 'application/json', 'LR-Type': 'admin'});
+  isLoggedIn: boolean;
 
-  constructor(private http: HttpClient) {
+  url: string = 'http://localhost:9001/users/login';
+  headers: HttpHeaders = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'LR-Type': 'admin'
+  });
+
+  constructor(private http: HttpClient, private router: Router) {
+    this.isLoggedIn = false;
   }
 
   login(email: string, password: string) {
-    return this.http.post(
+    let result = this.http.post(
       this.url,
       {
         email,
@@ -22,11 +28,23 @@ export class AuthService {
         observe: "response",
         headers: this.headers
       });
+    this.setLoginStatus(true);
+    console.log("Logged In: " + this.isLoggedIn)
+
+    return result;
   }
 
-  logout(){
+  logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
-    console.log("test");
+    this.setLoginStatus(false);
+  }
+
+  public getLoginStatus() {
+    return this.isLoggedIn;
+  }
+
+  public setLoginStatus(status: boolean) {
+    this.isLoggedIn = status;
   }
 }
