@@ -18,6 +18,7 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
+    console.log(this.url);
     let result = this.http.post(
       this.url,
       {
@@ -30,7 +31,7 @@ export class AuthService {
       });
     this.setLoginStatus(true);
     console.log("Logged In: " + this.isLoggedIn)
-
+    console.log(this.headers.get('Authorization'));
     return result;
   }
 
