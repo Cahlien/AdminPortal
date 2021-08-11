@@ -14,7 +14,11 @@ export class AuthService {
   });
 
   constructor(private http: HttpClient, private router: Router) {
-    this.isLoggedIn = false;
+    if(localStorage.getItem('token')){
+      this.isLoggedIn = true;
+    } else {
+      this.isLoggedIn = false;
+    }
   }
 
   login(email: string, password: string) {
