@@ -3,9 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { HttpService } from 'src/app/shared/services/http.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/shared/models/user.model';
-import { catchError, map, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-user',
@@ -35,7 +33,7 @@ export class UserComponent implements OnInit {
 
   loadUsers(): any{
     this.httpService
-    .getAll('http://localhost:8080/admin/users')
+    .getAll('http://localhost:9001/admin/users')
     .subscribe((response) => {
       let arr: any;
       arr = response;

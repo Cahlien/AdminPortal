@@ -14,6 +14,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthComponent } from './auth/auth.component';
+import { AccountComponent } from './admin/accounts/accounts.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { AuthComponent } from './auth/auth.component';
     FooterComponent,
     AdminComponent,
     UserComponent,
-    AuthComponent
+    AuthComponent, 
+    AccountComponent
   ],
   imports: [
     BrowserModule,
