@@ -31,9 +31,8 @@
                     <h5 class="modal-title">{{ modalHeader }}</h5>
                 </div>
                 <div class="modal-body">
-                    <p>User Details</p>
                     <div class="form-group">
-                        <div class="mb-2" *ngIf="this.userForm.controls['userId']">
+                        <div class="mb-2" *ngIf="this.modalHeader === 'Edit User';">
                             <label for="userId" class="form-label">User ID: </label>
                             <input type="text" id="userId" formControlName="userId" class="form-control" readonly/>
                         </div>

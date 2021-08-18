@@ -1,6 +1,6 @@
 <section id="login" class="col-12 h-75 w-100">
   <div class="container vertical-center offset-4 col-4">
-    <form #authForm="ngForm" (ngSubmit)="onSubmit(authForm)" class="w-100">
+    <form id="authForm" #authForm="ngForm" (ngSubmit)="onSubmit(authForm)" class="w-100">
       <div class="form-group">
         <label for="email">Email</label>
         <input type="email" class="form-control" id="email" aria-describedby="emailHelp" ngModel name="email" required email>

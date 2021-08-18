@@ -33,7 +33,7 @@ export class UserComponent implements OnInit {
 
   loadUsers(): any{
     this.httpService
-    .getAll('http://localhost:9001/admin/users')
+    .getAll('http://localhost:9001/admin/users', true)
     .subscribe((response) => {
       let arr: any;
       arr = response;
@@ -62,7 +62,7 @@ export class UserComponent implements OnInit {
   }
 
   deleteUser(id: String){
-    this.httpService.deleteById('http://localhost:9001/admin/users/' + id).subscribe((result)=>{
+    this.httpService.deleteById('http://localhost:9001/admin/users/' + id, true).subscribe((result)=>{
       console.log(result);
       this.users.length = 0;
       this.loadUsers();
@@ -84,13 +84,13 @@ export class UserComponent implements OnInit {
     const body = JSON.stringify(u);
 
     if (!this.userForm.controls['userId'].value){
-      this.httpService.create('http://localhost:9001/users', body).subscribe((result)=>{
+      this.httpService.create('http://localhost:9001/users', body, true).subscribe((result)=>{
         this.users.length = 0;
         this.loadUsers();
       })
     }
     else{
-      this.httpService.update('http://localhost:9001/admin/users/' + this.userForm.controls['userId'].value, body).subscribe((result)=>{
+      this.httpService.update('http://localhost:9001/admin/users/' + this.userForm.controls['userId'].value, body, true).subscribe((result)=>{
         this.users.length = 0;
         this.loadUsers();
       })
@@ -132,20 +132,6 @@ export class UserComponent implements OnInit {
 
   closeModal(){
     this.modalRef.close();
-  }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-  
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-  
-      // TODO: better job of transforming error for user consumption
-      //this.log(`${operation} failed: ${error.message}`);
-  
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
   }
 
   get username() { return this.userForm.get('username'); }

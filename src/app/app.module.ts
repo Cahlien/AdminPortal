@@ -13,6 +13,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthComponent } from './auth/auth.component';
+import { CardComponent } from './admin/card/card.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { AuthComponent } from './auth/auth.component';
     FooterComponent,
     AdminComponent,
     UserComponent,
-    AuthComponent
+    AuthComponent,
+    CardComponent
   ],
   imports: [
     BrowserModule,
