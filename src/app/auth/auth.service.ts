@@ -52,8 +52,5 @@ export class AuthService {
   public setLoginStatus(status: boolean) {
     this.isLoggedIn = status;
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> Feature-BeardtrustLLC-132/133/135
+

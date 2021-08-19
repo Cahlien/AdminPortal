@@ -41,10 +41,5 @@ export class AuthComponent implements OnInit {
     } catch(e) {
       console.log(e);
     }
-
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> Feature-BeardtrustLLC-132/133/135

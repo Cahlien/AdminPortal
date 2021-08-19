@@ -38,14 +38,14 @@ export class CardComponent implements OnInit {
 
   loadCards(): any{
     this.httpService
-    .getAll('http://localhost:9001/cards/', false)
+    .getAll('http://localhost:9001/cards/')
     .subscribe((response) => {
       let arr: any;
       arr = response;
       for(let obj of arr){
-        let c = new Card(obj.cardId, obj.userId, obj.cardType, obj.balance, obj.cardNumber, obj.interestRate, 
+        let c = new Card(obj.cardId, obj.userId, obj.cardType, obj.balance, obj.cardNumber, obj.interestRate,
           obj.createDate, obj.nickname, obj.billCycleLength, obj.expireDate);
-        console.log(c); 
+        console.log(c);
         this.cards.push(c);
       }
     })
@@ -53,7 +53,7 @@ export class CardComponent implements OnInit {
 
   loadCardTypes(): any{
     this.httpService
-    .getAll('http://localhost:9001/cardtypes/', false)
+    .getAll('http://localhost:9001/cardtypes/')
     .subscribe((response) => {
       let arr: any;
       arr = response;
@@ -79,7 +79,7 @@ export class CardComponent implements OnInit {
   }
 
   deleteCard(id: String){
-    this.httpService.deleteById('http://localhost:9001/cards/' + id, false).subscribe((result)=>{
+    this.httpService.deleteById('http://localhost:9001/cards/' + id).subscribe((result)=>{
       this.cards.length = 0;
       this.loadCards();
     })
@@ -96,8 +96,8 @@ export class CardComponent implements OnInit {
       )
 
       const body = JSON.stringify(c);
-      
-      this.httpService.create('http://localhost:9001/cards/register/' + this.cardForm.controls['userId'].value, body, false).subscribe((result)=>{
+
+      this.httpService.create('http://localhost:9001/cards/register/' + this.cardForm.controls['userId'].value, body).subscribe((result)=>{
         this.cards.length = 0;
         this.loadCards();
         this.initializeForms();
@@ -109,16 +109,16 @@ export class CardComponent implements OnInit {
         this.cardForm.controls['userId'].value,
         this.cardForm.controls['cardType'].value,
         this.cardForm.controls['balance'].value,
-        this.cardForm.controls['cardNumber'].value, 
+        this.cardForm.controls['cardNumber'].value,
         this.cardForm.controls['interestRate'].value,
         this.cardForm.controls['createDate'].value,
         this.cardForm.controls['nickname'].value,
         this.cardForm.controls['billCycleLength'].value,
         this.cardForm.controls['expireDate'].value);
-      
+
       const body = JSON.stringify(c);
 
-      this.httpService.update('http://localhost:9001/cards/', body, false).subscribe((result)=>{
+      this.httpService.update('http://localhost:9001/cards/', body).subscribe((result)=>{
         this.cards.length = 0;
         this.loadCards();
         this.initializeForms();
@@ -142,7 +142,7 @@ export class CardComponent implements OnInit {
         billCycleLength: c.$billCycleLength,
         expireDate: c.$expireDate
       });
-    } 
+    }
     else{
       this.modalHeader = 'Add New Card';
     }

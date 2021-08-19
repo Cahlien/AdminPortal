@@ -31,19 +31,15 @@ export class UserComponent implements OnInit {
 
   loadUsers(): any{
     this.httpService
-<<<<<<< HEAD
     .getAll('http://localhost:9001/admin/users')
-=======
-    .getAll('http://localhost:9001/admin/users', true)
->>>>>>> Feature-BeardtrustLLC-132/133/135
     .subscribe((response) => {
       let arr: any;
       arr = response;
       for(let obj of arr){
         console.log(obj.dateOfBirth);
-        let u = new User(obj.username, obj.password, obj.email, obj.phone, 
+        let u = new User(obj.username, obj.password, obj.email, obj.phone,
           obj.firstName, obj.lastName, obj.dateOfBirth, obj.role, obj.userId);
-        console.log(u); 
+        console.log(u);
         this.users.push(u);
       }
     })
@@ -64,7 +60,7 @@ export class UserComponent implements OnInit {
   }
 
   deleteUser(id: String){
-    this.httpService.deleteById('http://localhost:9001/admin/users/' + id, true).subscribe((result)=>{
+    this.httpService.deleteById('http://localhost:9001/admin/users/' + id).subscribe((result)=>{
       console.log(result);
       this.users.length = 0;
       this.loadUsers();
@@ -77,22 +73,22 @@ export class UserComponent implements OnInit {
       this.userForm.controls['password'].value,
       this.userForm.controls['email'].value,
       this.userForm.controls['phone'].value,
-      this.userForm.controls['firstName'].value, 
+      this.userForm.controls['firstName'].value,
       this.userForm.controls['lastName'].value,
       this.userForm.controls['dateOfBirth'].value,
       this.userForm.controls['role'].value,
       this.userForm.controls['userId'].value);
-    
+
     const body = JSON.stringify(u);
 
     if (!this.userForm.controls['userId'].value){
-      this.httpService.create('http://localhost:9001/users', body, true).subscribe((result)=>{
+      this.httpService.create('http://localhost:9001/users', body).subscribe((result)=>{
         this.users.length = 0;
         this.loadUsers();
       })
     }
     else{
-      this.httpService.update('http://localhost:9001/admin/users/' + this.userForm.controls['userId'].value, body, true).subscribe((result)=>{
+      this.httpService.update('http://localhost:9001/admin/users/' + this.userForm.controls['userId'].value, body).subscribe((result)=>{
         this.users.length = 0;
         this.loadUsers();
       })
@@ -101,7 +97,7 @@ export class UserComponent implements OnInit {
     //this.loadUsers();
   }
 
-  //{ username: String; password: String; email: String; phone: String; 
+  //{ username: String; password: String; email: String; phone: String;
   //firstName: String; lastName: String; dateOfBirth: String; role: String, userId: String}
   open(content: any, u: User | null){
     if (u!== null){
@@ -117,7 +113,7 @@ export class UserComponent implements OnInit {
         dateOfBirth: u.$dateOfBirth,
         role: u.$role
       });
-    } 
+    }
     else{
       this.modalHeader = 'Add New User';
     }
