@@ -51,21 +51,14 @@ export class HttpService {
     return this.accountId;
   }
 
-  getAccounts(page: number, size: number, sort?: string, asc?: boolean, dsc?: boolean, search?: string) {
+  getAccounts(page: number, size: number, sort?: string, dir?: string, search?: string) {
     let query = `http://localhost:9001/accounts/all?page=${encodeURIComponent(page)}&size=${encodeURIComponent(size)}`;
-    if (sort !== undefined) {
-      query += `&sort=${encodeURIComponent(sort)}&asc=${encodeURIComponent(!!asc)}`;
+    if (sort !== undefined && dir !== undefined) {
+      query += `&sortName=${encodeURIComponent(sort)}&sortDir=${encodeURIComponent(dir)}`;
     }
-    // if (asc) {
-    //   query += `&asc=${encodeURIComponent(!!asc)}`;
-    // }
-    // if (dsc) {
-    //   query += `&dsc=${encodeURIComponent(!!dsc)}`;
-    // }
     if (search !== undefined) {
       query += `&search=${encodeURIComponent(search)}`;
     }
-    console.log('Outbound Query: ', query)
     return this.http.get(query, this.getHeaders() );
   }
 

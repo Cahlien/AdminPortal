@@ -38,8 +38,8 @@ export class AccountComponent implements OnInit {
   @Input() asc!: boolean;
   @Output() ascChange = new EventEmitter<number>();
 
-  @Input() dsc!: boolean;
-  @Output() dscChange = new EventEmitter<number>();
+  @Input() dir!: string;
+  @Output() dirChange = new EventEmitter<number>();
 
   data: {
     status: "notYetPending" | "pending" | "success" | "error",
@@ -84,14 +84,14 @@ export class AccountComponent implements OnInit {
   setSort(property: string) {
     if (this.asc && this.sort === property) {
       this.asc = false;
-      this.dsc = true;
+      this.dir = "desc";
       this.update();
     } else {
       console.log('asc true')
       if (property !== 'firstName' && property !== 'lastName') {
         this.sort = property;
         this.asc = true;
-        this.dsc = false;
+        this.dir = "asc";
         this.update();
       }
       else {
@@ -109,7 +109,7 @@ export class AccountComponent implements OnInit {
     this.accounts = [];
     this.loadUsers();
     this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
-    this.httpService.getAccounts(this.pageNumber, this.resultsPerPage, this.sort, this.asc, this.dsc, this.search).toPromise().then((res) => {
+    this.httpService.getAccounts(this.pageNumber, this.resultsPerPage, this.sort, this.dir, this.search).toPromise().then((res) => {
       let arr: any;
       arr = res;
       for (let obj of arr.content) {
