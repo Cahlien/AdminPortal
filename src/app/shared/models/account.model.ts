@@ -3,21 +3,21 @@ import { ThisReceiver } from "@angular/compiler";
 export class Account {
     private userId: String;
     private accountId: String;
-    private active_status: boolean;
+    private activeStatus: boolean;
     private balance: number;
-    private create_date: Date;
+    private createDate: Date;
     private interest: number;
     private nickname: String;
     private type: String;
     private firstName: any;
     private lastName: any;
 
-    constructor(userId: String, accountId: String, active_status: boolean, balance: number, create_date: Date, interest: number, nickname: String, type: String) {
+    constructor(userId: String, accountId: String, activeStatus: boolean, balance: number, createDate: Date, interest: number, nickname: String, type: String) {
         this.userId = userId;
         this.accountId = accountId;
-        this.active_status = active_status;
+        this.activeStatus = activeStatus;
         this.balance = balance;
-        this.create_date = create_date;
+        this.createDate = createDate;
         this.interest = interest
         this.nickname = nickname;
         this.type = type;
@@ -39,12 +39,12 @@ export class Account {
         this.accountId = val
     }
 
-    get $active_status() {
-        return this.active_status
+    get $activeStatus() {
+        return this.activeStatus
     }
 
-    set $active_status(val: boolean) {
-        this.active_status = val
+    set $activeStatus(val: boolean) {
+        this.activeStatus = val
     }
 
     get $balance() {
@@ -60,12 +60,12 @@ export class Account {
         return this.balance
     }
 
-    get $create_date() {
-        return this.create_date
+    get $createDate() {
+        return this.createDate
     }
 
-    set $create_date(val: Date) {
-        this.create_date = val
+    set $createDate(val: Date) {
+        this.createDate = val
     }
 
     get $interest() {

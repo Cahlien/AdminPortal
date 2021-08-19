@@ -1,10 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators, } from "@angular/forms";
 import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { HttpService } from "src/app/shared/services/http.service";
 import { Account } from "src/app/shared/models/account.model";
 import { User } from "src/app/shared/models/user.model";
-import { Observable, of } from "rxjs";
 
 @Component({
   selector: 'app-accounts',
@@ -12,10 +11,9 @@ import { Observable, of } from "rxjs";
   styleUrls: ['./accounts.component.css'],
 })
 export class AccountComponent implements OnInit {
-
   accounts: Account[] = new Array();
   users: User[] = new Array();
-  sortedAccounts: Account[] = new Array();
+  namedAccounts: Account[] = new Array();
   updateAccountForm!: FormGroup;
 
   modalRef!: NgbModalRef;
@@ -23,59 +21,146 @@ export class AccountComponent implements OnInit {
   closeResult: any;
   modalHeader!: String;
 
+  //Pagination items:
+
+  @Input() search!: string;
+  @Output() searchChange = new EventEmitter<string>();
+
+  @Input() pageNumber: number = 0;
+  @Output() pageNumberChange = new EventEmitter<number>();
+
+  @Input() resultsPerPage: number = 10;
+  @Output() resultsPerPageChange = new EventEmitter<number>();
+
+  @Input() sort!: string;
+  @Output() sortChange = new EventEmitter<number>();
+
+  @Input() asc!: boolean;
+  @Output() ascChange = new EventEmitter<number>();
+
+  @Input() dsc!: boolean;
+  @Output() dscChange = new EventEmitter<number>();
+
+  data: {
+    status: "notYetPending" | "pending" | "success" | "error",
+    content: any[],
+    totalElements: number,
+    totalPages: number
+  } = { status: "notYetPending", content: [], totalElements: 0, totalPages: 0 };
+
+  account = [
+    { name: "firstName", displayName: "First Name", class: "col-2" },
+    { name: "lastName", displayName: "Last Name", class: "col-2" },
+    { name: "userId", displayName: "User ID", class: "col-2" },
+    { name: "accountId", displayName: "Account ID", class: "col-3" },
+    { name: "activeStatus", displayName: "Is Active", class: "col-3" },
+    { name: "balance", displayName: "Balance", class: "col-2" },
+    { name: "createDate", displayName: "Date Created", class: "col-2" },
+    { name: "interest", displayName: "Interest Rate", class: "col-2" },
+    { name: "nickname", displayName: "Nickname", class: "col-3" },
+    { name: "type", displayName: "Account Type", class: "col-3" }
+  ];
+
+
   constructor(private httpService: HttpService, private fb: FormBuilder, private modalService: NgbModal) { }
   ngOnInit(): void {
-    this.loadAccounts();
-    this.loadUsers();
-    this.sortAccounts();
-    //this.initializeForms();
+    //this.loadAccounts();
+    this.update();
   }
 
-  loadAccounts(): any {
-    this.httpService
-      .getAll("http://localhost:9001/accounts/all")
-      .subscribe((response) => {
-        let arr: any;
-        arr = response;
-        for (let obj of arr) {
-          console.log(obj.nickname);
-          let u = new Account(obj.userId, obj.accountId, obj.active_status, obj.balance,
-            obj.create_date, obj.interest, obj.nickname, obj.type);
-          u.fixBalance(); //<--VERY IMPORTANT!!!
-          this.accounts.push(u);
-        }
-      })
+  //All Pagination methods:
+
+  setPage(pageNumber: number) {
+    this.pageNumber = pageNumber;
+    this.update();
+  }
+
+  setResultsPerPage(resultsPerPage: number) {
+    this.pageNumber = 0;
+    this.resultsPerPage = resultsPerPage;
+    this.update();
+  }
+
+  setSort(property: string) {
+    if (this.asc && this.sort === property) {
+      this.asc = false;
+      this.dsc = true;
+      this.update();
+    } else {
+      console.log('asc true')
+      if (property !== 'firstName' && property !== 'lastName') {
+        this.sort = property;
+        this.asc = true;
+        this.dsc = false;
+        this.update();
+      }
+      else {
+        alert('Cannot sort by name.')
+      }
+    }
+  }
+
+  setSearch(search: string) {
+    this.search = search;
+  }
+
+  update() {
+    this.accounts = [];
+    this.accounts = [];
+    this.loadUsers();
+    this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
+    this.httpService.getAccounts(this.pageNumber, this.resultsPerPage, this.sort, this.asc, this.dsc, this.search).toPromise().then((res) => {
+      let arr: any;
+      arr = res;
+      for (let obj of arr.content) {
+        let u = new Account(obj.userId, obj.accountId, obj.activeStatus, obj.balance,
+          obj.createDate, obj.interest, obj.nickname, obj.type);
+        u.fixBalance(); //<--VERY IMPORTANT!!!
+        this.accounts.push(u);
+        this.nameAccounts();
+      }
+      this.data = {
+        status: "success",
+        content: this.accounts,
+        totalElements: arr.numberOfElements,
+        totalPages: arr.totalPages
+      };
+      this.loadUsers();
+    }, (err) => {
+      console.error("Failed to retrieve accounts", err);
+      this.data = { status: "error", content: [], totalElements: 0, totalPages: 0 };
+    })
   }
 
   loadUsers(): any {
+    this.users = [];
     this.httpService
       .getAll('http://localhost:9001/users')
       .subscribe((response) => {
         let arr: any;
         arr = response;
         for (let obj of arr) {
-          console.log(obj.firstName);
           let u = new User(obj.username, obj.password, obj.email, obj.phone,
             obj.firstName, obj.lastName, obj.dateOfBirth, obj.role, obj.userId);
           this.users.push(u);
         }
-        this.sortAccounts();
+        this.nameAccounts();
       })
   }
 
-  sortAccounts(): any {
+  nameAccounts(): any {
+    this.namedAccounts = [];
     for (var i = 0; i < this.users.length; i++) {
       for (var j = 0; j < this.accounts.length; j++) {
-        if (this.accounts[j].$userId == this.users[i].$userId) {
+        if (this.accounts[j].$userId === this.users[i].$userId) {
           this.accounts[j].$firstName = this.users[i].$firstName;
           this.accounts[j].$lastName = this.users[i].$lastName;
-          this.sortedAccounts.push(this.accounts[j]);
-          console.log('accounts length: ' + this.sortedAccounts.length)
+          this.namedAccounts.push(this.accounts[j]);
         }
         else {
           this.accounts[j].$firstName = 'Unrecognized user ID'
           this.accounts[j].$lastName = 'Please Fix'
-          this.sortedAccounts.push(this.accounts[j])
+          this.namedAccounts.push(this.accounts[j])
         }
       }
     }
@@ -85,9 +170,9 @@ export class AccountComponent implements OnInit {
     this.updateAccountForm = new FormGroup({
       userId: new FormControl('', [Validators.required, Validators.maxLength(20)]),
       accountId: new FormControl('', [Validators.required, Validators.maxLength(20)]),
-      active_status: new FormControl('', [Validators.required]),
+      activeStatus: new FormControl('', [Validators.required]),
       balance: new FormControl('', [Validators.required, Validators.maxLength(30)]),
-      create_date: new FormControl('', [Validators.required, Validators.maxLength(10)]),
+      createDate: new FormControl('', [Validators.required, Validators.maxLength(10)]),
       interest: new FormControl('', [Validators.required, Validators.maxLength(20)]),
       nickname: new FormControl('', [Validators.maxLength(50)]),
       type: new FormControl('', [Validators.required, Validators.maxLength(10)])
@@ -110,7 +195,7 @@ export class AccountComponent implements OnInit {
       this.updateAccountForm.controls['accountId'].value &&
       this.updateAccountForm.controls['balance'].value &&
       this.updateAccountForm.controls['interest'].value &&
-      this.updateAccountForm.controls['create_date'].value &&
+      this.updateAccountForm.controls['createDate'].value &&
       this.updateAccountForm.controls['type'].value) {
       console.log('form is filled');
       return true;
@@ -125,9 +210,9 @@ export class AccountComponent implements OnInit {
       let u = new Account(
         this.updateAccountForm.controls['userId'].value,
         this.updateAccountForm.controls['accountId'].value,
-        this.updateAccountForm.controls['active_status'].value,
+        this.updateAccountForm.controls['activeStatus'].value,
         this.updateAccountForm.controls['balance'].value * 100,//<-- VERY IMPORTANT!!!
-        this.updateAccountForm.controls['create_date'].value,
+        this.updateAccountForm.controls['createDate'].value,
         this.updateAccountForm.controls['interest'].value,
         this.updateAccountForm.controls['nickname'].value,
         this.updateAccountForm.controls['type'].value);
@@ -143,7 +228,7 @@ export class AccountComponent implements OnInit {
       this.httpService.update('http://localhost:9001/accounts', body).subscribe((result) => {
         console.log("updating" + result);
         this.accounts.length = 0;
-        this.loadAccounts();
+        this.update()
         window.location.reload();
       });
     } else {
@@ -157,9 +242,9 @@ export class AccountComponent implements OnInit {
       this.updateAccountForm = this.fb.group({
         userId: u.$userId,
         accountId: u.$accountId,
-        active_status: u.$active_status,
+        activeStatus: u.$activeStatus,
         balance: u.$balance,
-        create_date: u.$create_date,
+        createDate: u.$createDate,
         interest: u.$interest,
         nickname: u.$nickname,
         type: u.$type,
@@ -171,9 +256,9 @@ export class AccountComponent implements OnInit {
       this.updateAccountForm = this.fb.group({
         userId: '',
         accountId: uuid,
-        active_status: '',
+        activeStatus: '',
         balance: '',
-        create_date: '',
+        createDate: '',
         interest: '',
         nickname: '',
         type: ''
@@ -191,19 +276,5 @@ export class AccountComponent implements OnInit {
   }
   closeModal() {
     this.modalRef.close();
-  }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      //this.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
   }
 }

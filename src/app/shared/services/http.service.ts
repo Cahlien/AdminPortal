@@ -1,6 +1,5 @@
-import { getNumberOfCurrencyDigits } from '@angular/common';
+
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { analyzeAndValidateNgModules } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { Account } from '../models/account.model';
 
@@ -52,10 +51,33 @@ export class HttpService {
     return this.accountId;
   }
 
-  //Send the url, type and name of the param. eg. typename = 'userId' type = the actual Id
-  getParams(url: string, type: string, typeName: string) {
-    let myparams = new HttpParams().set(typeName, type);
-    return this.http.get(url, this.getHeaders());
+  getAccounts(page: number, size: number, sort?: string, asc?: boolean, dsc?: boolean, search?: string) {
+    let query = `http://localhost:9001/accounts/all?page=${encodeURIComponent(page)}&size=${encodeURIComponent(size)}`;
+    if (sort !== undefined) {
+      query += `&sort=${encodeURIComponent(sort)}&asc=${encodeURIComponent(!!asc)}`;
+    }
+    // if (asc) {
+    //   query += `&asc=${encodeURIComponent(!!asc)}`;
+    // }
+    // if (dsc) {
+    //   query += `&dsc=${encodeURIComponent(!!dsc)}`;
+    // }
+    if (search !== undefined) {
+      query += `&search=${encodeURIComponent(search)}`;
+    }
+    console.log('Outbound Query: ', query)
+    return this.http.get(query, this.getHeaders() );
+  }
+
+  getUsers(page: number, size: number, sort?: string, asc?: boolean, search?: string) {
+    let query = `http://localhost:9001/accounts/all?page=${encodeURIComponent(page)}&size=${encodeURIComponent(size)}`;
+    if (sort !== undefined) {
+      query += `&sort=${encodeURIComponent(sort)}&asc=${encodeURIComponent(!!asc)}`;
+    }
+    if (search !== undefined) {
+      query += `&search=${encodeURIComponent(search)}`;
+    }
+    return this.http.get(query, this.getHeaders() );
   }
 
   deleteById(url: string) {
