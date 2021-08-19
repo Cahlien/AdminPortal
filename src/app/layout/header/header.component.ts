@@ -22,4 +22,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> Feature-BeardtrustLLC-132/133/135

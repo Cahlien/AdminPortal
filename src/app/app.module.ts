@@ -12,8 +12,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthComponent } from './auth/auth.component';
+<<<<<<< HEAD
 import { AccountComponent } from './admin/accounts/accounts.component';
 import { NgxPaginationModule } from 'ngx-pagination';
+=======
+import { CardComponent } from './admin/card/card.component';
+>>>>>>> Feature-BeardtrustLLC-132/133/135
 
 @NgModule({
   declarations: [
@@ -23,8 +27,13 @@ import { NgxPaginationModule } from 'ngx-pagination';
     FooterComponent,
     AdminComponent,
     UserComponent,
+<<<<<<< HEAD
     AuthComponent, 
     AccountComponent,
+=======
+    AuthComponent,
+    CardComponent
+>>>>>>> Feature-BeardtrustLLC-132/133/135
   ],
   imports: [
     BrowserModule,

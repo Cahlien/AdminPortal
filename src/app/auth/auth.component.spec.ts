@@ -90,4 +90,8 @@ describe('AuthComponent', () => {
     expect(localStorage.getItem('userId')).not.toEqual('abc-123-xyz-789');
     expect(authService.isLoggedIn).toEqual(false);
   });
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> Feature-BeardtrustLLC-132/133/135

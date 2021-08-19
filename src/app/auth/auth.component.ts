@@ -43,4 +43,8 @@ export class AuthComponent implements OnInit {
     }
 
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> Feature-BeardtrustLLC-132/133/135

@@ -13,14 +13,22 @@
     "downlevelIteration": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
+    "paths": {
+      "@services/*": ["src/app/shared/services/*"]
+    },
     "importHelpers": true,
     "target": "es2017",
+    "types": [
+      "jest"
+    ],
     "module": "es2020",
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "esModuleInterop": true,
   },
+  "include": ["src/**/*"],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
