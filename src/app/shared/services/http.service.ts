@@ -52,13 +52,20 @@ export class HttpService {
   }
 
   getAccounts(page: number, size: number, sort?: string, dir?: string, search?: string) {
-    let query = `http://localhost:9001/accounts/all?page=${encodeURIComponent(page)}&size=${encodeURIComponent(size)}`;
+    let query = `http://localhost:9001/accounts/all?pageNum=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(size)}`;
+    if (sort === undefined && dir === undefined) {
+      sort = "accountId"; dir = "asc";
+    }
+    if (search === undefined) {
+      search = "";
+    }
     if (sort !== undefined && dir !== undefined) {
       query += `&sortName=${encodeURIComponent(sort)}&sortDir=${encodeURIComponent(dir)}`;
     }
     if (search !== undefined) {
       query += `&search=${encodeURIComponent(search)}`;
     }
+    console.log('Outbound Query: ', query);
     return this.http.get(query, this.getHeaders() );
   }
 
