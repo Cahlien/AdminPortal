@@ -42,7 +42,7 @@ export class CardComponent implements OnInit {
     .subscribe((response) => {
       let arr: any;
       arr = response;
-      for(let obj of arr){
+      for(let obj of arr.content){
         let c = new Card(obj.cardId, obj.userId, obj.cardType, obj.balance, obj.cardNumber, obj.interestRate,
           obj.createDate, obj.nickname, obj.billCycleLength, obj.expireDate);
         console.log(c);
