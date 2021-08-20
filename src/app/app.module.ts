@@ -15,6 +15,8 @@ import { AuthComponent } from './auth/auth.component';
 import { AccountComponent } from './admin/accounts/accounts.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { CardComponent } from './admin/card/card.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -35,7 +37,9 @@ import { CardComponent } from './admin/card/card.component';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    MatPaginatorModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
