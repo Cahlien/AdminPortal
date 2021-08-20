@@ -189,6 +189,8 @@ export class CardComponent implements OnInit {
 
     this.cards = new Array();
 
+    this.assemblePredicate();
+
     this.loadCards();
     this.loadCardTypes();
     this.initializeForms();
@@ -218,7 +220,6 @@ export class CardComponent implements OnInit {
       this.createDateOrder = this.createDateOrder === 'desc' ? 'asc' : 'desc';
     }
 
-    this.assembleQueryParams()
     this.assemblePredicate();
     this.cards = new Array();
     this.loadCards();
@@ -239,6 +240,8 @@ export class CardComponent implements OnInit {
   }
 
   private assemblePredicate(){
+    this.assembleQueryParams()
+
     this.predicate = "?page=" + this.pageIndex + "&&size=" + this.pageSize;
     this.predicate += this.sortBy.length > 0 ? '&&sortBy=' + this.sortBy : '';
     this.predicate += this.searchCriteria.length > 0 ? "&&search=" + this.searchCriteria : '';
