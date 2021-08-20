@@ -5,9 +5,18 @@
         <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">Card Id</th>
-                <th scope="col">Balance</th>
-                <th scope="col">Create Date</th>
+                <th scope="col" (click)="addToSortBy('cardId')">
+                  Card Id
+                  {{this.sortByCardId === true ? this.cardIdOrder === 'asc' ? ' ↑' : ' ↓' : ''}}
+                </th>
+                <th scope="col" (click)="addToSortBy('balance')">
+                  Balance
+                  {{this.sortByBalance === true ? this.balanceOrder === 'asc' ? ' ↑' : ' ↓' : ''}}
+                </th>
+                <th scope="col" (click)="addToSortBy('createDate')">
+                  Create Date
+                  {{this.sortByCreateDate === true ? this.createDateOrder === 'asc' ? ' ↑' : ' ↓' : ''}}
+                </th>
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
@@ -23,6 +32,10 @@
             </tr>
         </tbody>
     </table>
+</div>
+<div class="mb-5">
+  <mat-paginator class="my-5" [length]="this.totalItems" [pageIndex]="this.pageIndex" [pageSizeOptions]="[5, 10, 15, 20, 25, 50]"
+                 [pageSize]="this.pageSize" [showFirstLastButtons]="true" (page)="onChangePage($event)"></mat-paginator>
 </div>
 
 <ng-template #cardModal let-c="close" let-d="dismiss">

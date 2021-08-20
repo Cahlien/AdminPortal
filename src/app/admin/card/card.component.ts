@@ -1,4 +1,4 @@
-import { Component, OnInit, SystemJsNgModuleLoader } from '@angular/core';
+import {Component, OnInit, SystemJsNgModuleLoader, ViewChild} from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -9,6 +9,7 @@ import { Observable, of } from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
 import { CardRegistration } from '../../shared/models/cardregistration.model';
 import { HttpService } from '../../shared/services/http.service';
+import {PageEvent} from "@angular/material/paginator";
 
 
 @Component({
@@ -17,8 +18,8 @@ import { HttpService } from '../../shared/services/http.service';
   styleUrls: ['./card.component.css']
 })
 export class CardComponent implements OnInit {
-
-  constructor(private httpService: HttpService, private fb: FormBuilder, private modalService: NgbModal) { }
+  constructor(private httpService: HttpService, private fb: FormBuilder, private modalService: NgbModal) {
+  }
 
   //constructor(private http: HttpClient, private fb: FormBuilder, private modalService: NgbModal) { }
 
@@ -29,8 +30,23 @@ export class CardComponent implements OnInit {
   errorMessage: any;
   closeResult: any;
   modalHeader!: String;
+  pageIndex: any;
+  totalItems: any;
+  pageSize: any;
+  cardIdOrder: string = 'desc';
+  sortByCardId: boolean = false;
+  balanceOrder: string = 'desc';
+  sortByBalance: boolean = false;
+  createDateOrder: string = 'desc';
+  sortByCreateDate: boolean = false;
+  sortBy: string[] = new Array();
+  predicate: string = '?page=0&&size=5';
+  searchCriteria: string = '';
 
   ngOnInit(): void {
+    this.pageSize=5;
+    this.pageIndex=0;
+    this.totalItems=0;
     this.loadCards();
     this.loadCardTypes();
     this.initializeForms();
@@ -38,10 +54,11 @@ export class CardComponent implements OnInit {
 
   loadCards(): any{
     this.httpService
-    .getAll('http://localhost:9001/cards/')
+    .getAll('http://localhost:9001/cards' + this.predicate)
     .subscribe((response) => {
       let arr: any;
       arr = response;
+      this.totalItems = arr.totalElements;
       for(let obj of arr.content){
         let c = new Card(obj.cardId, obj.userId, obj.cardType, obj.balance, obj.cardNumber, obj.interestRate,
           obj.createDate, obj.nickname, obj.billCycleLength, obj.expireDate);
@@ -161,6 +178,22 @@ export class CardComponent implements OnInit {
     this.modalRef.close();
   }
 
+  onChangePage(pe:PageEvent) {
+    console.log("Current pageIndex: " + pe.pageIndex);
+    console.log("Current pageSize: " + pe.pageSize);
+    this.pageIndex = pe.pageIndex;
+    if(pe.pageSize !== this.pageSize){
+      this.pageIndex = 0;
+      this.pageSize = pe.pageSize;
+    }
+
+    this.cards = new Array();
+
+    this.loadCards();
+    this.loadCardTypes();
+    this.initializeForms();
+  }
+
   get cardId() { return this.cardForm.get('cardId'); }
   get userId() { return this.cardForm.get('userId'); }
   get cardType() { return this.cardForm.get('cardType'); }
@@ -171,4 +204,43 @@ export class CardComponent implements OnInit {
   get nickname() { return this.cardForm.get('nickname'); }
   get billCycleLength() { return this.cardForm.get('billCycleLength'); }
   get expireDate() { return this.cardForm.get('expireDate'); }
+
+  addToSortBy(field: string) {
+    console.log("added " + field + " to sortby");
+    if(field === 'cardId'){
+      this.sortByCardId = true;
+      this.cardIdOrder = this.cardIdOrder === 'desc' ? 'asc' : 'desc';
+    } else if(field === 'balance') {
+      this.sortByBalance = true;
+      this.balanceOrder = this.balanceOrder === 'desc' ? 'asc' : 'desc';
+    } else if(field === 'createDate'){
+      this.sortByCreateDate = true;
+      this.createDateOrder = this.createDateOrder === 'desc' ? 'asc' : 'desc';
+    }
+
+    this.assembleQueryParams()
+    this.assemblePredicate();
+    this.cards = new Array();
+    this.loadCards();
+  }
+
+  private assembleQueryParams() {
+    this.sortBy = [];
+
+    if(this.sortByCardId){
+      this.sortBy.push('cardId,' + this.cardIdOrder);
+    }
+    if(this.sortByBalance){
+      this.sortBy.push('balance,' + this.balanceOrder);
+    }
+    if(this.sortByCreateDate){
+      this.sortBy.push('createDate,' + this.createDateOrder);
+    }
+  }
+
+  private assemblePredicate(){
+    this.predicate = "?page=" + this.pageIndex + "&&size=" + this.pageSize;
+    this.predicate += this.sortBy.length > 0 ? '&&sortBy=' + this.sortBy : '';
+    this.predicate += this.searchCriteria.length > 0 ? "&&search=" + this.searchCriteria : '';
+  }
 }
