@@ -1,4 +1,4 @@
-import { Component, OnInit, SystemJsNgModuleLoader } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpService } from 'src/app/shared/services/http.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -12,42 +12,109 @@ import { Observable, of } from 'rxjs';
 })
 export class UserComponent implements OnInit {
 
-  constructor(private httpService: HttpService, private fb: FormBuilder, private modalService: NgbModal) { }
-
-  //constructor(private http: HttpClient, private fb: FormBuilder, private modalService: NgbModal) { }
-
   users: User[] = new Array();
   updateUserForm!: FormGroup;
-
-
-
   modalRef!: NgbModalRef;
   errorMessage: any;
   closeResult: any;
   modalHeader!: String;
+  createNew!: boolean;
+
+  constructor(private httpService: HttpService, private fb: FormBuilder, private modalService: NgbModal) { }
+
+  @Input() search!: string;
+  @Output() searchChange = new EventEmitter<string>();
+
+  @Input() pageNumber: number = 0;
+  @Output() pageNumberChange = new EventEmitter<number>();
+
+  @Input() resultsPerPage: number = 10;
+  @Output() resultsPerPageChange = new EventEmitter<number>();
+
+  @Input() sort!: string;
+  @Output() sortChange = new EventEmitter<number>();
+
+  @Input() asc!: boolean;
+  @Output() ascChange = new EventEmitter<number>();
+
+  data: {
+    status: string,
+    content: any[],
+    totalElements: number,
+    totalPages: number
+  } = { status: "notYetPending", content: [], totalElements: 0, totalPages: 0 };
+
+  userField = [
+    {name: "firstName", displayName: "First Name", class: "col-2"},
+    {name: "lastName", displayName: "Last Name", class: "col-2"},
+    {name: "userId", displayName: "User ID", class: "col-2"},
+    {name: "email", displayName: "Email", class: "col-2"},
+    {name: "phone", displayName: "Phone Number", class: "col-2"},
+    {name: "dateOfBirth", displayName: "Date of Birth", class: "col-2"},
+    {name: "role", displayName: "Role", class: "col-2"}
+  ];
 
   ngOnInit(): void {
     this.loadUsers();
-    //sthis.initializeForms();
+    this.initializeForms();
+  }
+
+  setPage(pageNumber: number) {
+    this.pageNumber = pageNumber;
+    this.loadUsers();
+  }
+
+  setResultsPerPage(resultsPerPage: number) {
+    this.pageNumber = 0;
+    this.resultsPerPage = resultsPerPage;
+    this.loadUsers();
+  }
+
+  setSort(property: string) {
+    if (this.asc && this.sort === property) {
+      this.asc = false;
+      this.loadUsers();
+    } else {
+        this.sort = property;
+        this.asc = true;
+        this.loadUsers();
+    }
+  }
+
+  setSearch(search: string) {
+    this.search = search;
   }
 
   loadUsers(): any{
+    this.users = [];
+    this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
     this.httpService
-    .getAll('http://localhost:9001/admin/users')
+    .getUsers(this.pageNumber, this.resultsPerPage, this.sort, this.asc, this.search)
     .subscribe((response) => {
       let arr: any;
       arr = response;
-      for(let obj of arr){
-        console.log(obj.dateOfBirth);
+      for(let obj of arr.content){
         let u = new User(obj.username, obj.password, obj.email, obj.phone, 
           obj.firstName, obj.lastName, obj.dateOfBirth, obj.role, obj.userId);
         console.log(u);
         this.users.push(u);
       }
+      this.data = {
+        status: "success",
+        content: arr.content,
+        totalElements: arr.totalElements,
+        totalPages: arr.totalPages
+      };
+      console.log('data: ', this.data)
+      console.log('data: ', this.data)
+      console.log('totalelems: ', arr.totalElements)
+    }, (err) => {
+      console.error("Failed to retrieve accounts", err);
+      this.data = { status: "error", content: [], totalElements: 0, totalPages: 0 };
     })
   }
 
-  initializeForms(){
+  initializeForms() {
     this.updateUserForm = new FormGroup({
       userId: new FormControl('',[Validators.required, Validators.maxLength(20)]),
       username: new FormControl('',[Validators.required, Validators.maxLength(20)]),
@@ -72,7 +139,7 @@ export class UserComponent implements OnInit {
 
   saveUser(){
     console.log("save");
-    alert("save user " + this.updateUserForm.controls['dateOfBirth'].value);
+    alert("save user " + this.updateUserForm.controls['firstName'].value);
     let u = new User(
       this.updateUserForm.controls['username'].value,
       this.updateUserForm.controls['password'].value,
@@ -87,17 +154,18 @@ export class UserComponent implements OnInit {
     const body = JSON.stringify(u);
     console.log(body);
 
-    if (!this.updateUserForm.controls['userId'].value){
+    if (this.createNew){
       console.log("saving...");
-      this.httpService.create('http://localhost:8080/admin/users', body).subscribe((result)=>{
+      this.httpService.create('http://localhost:9001/admin/users', body).subscribe((result)=>{
         console.log("save" + result);
         this.users.length = 0;
+        this.createNew = false;
         this.loadUsers();
       })
     }
     else{
       console.log("editing...");
-      this.httpService.update('http://localhost:8080/admin/users/id/' + this.updateUserForm.controls['userId'].value, body).subscribe((result)=>{
+      this.httpService.update('http://localhost:9001/admin/users/' + this.updateUserForm.controls['userId'].value, body).subscribe((result)=>{
         console.log("updating" + result);
         this.users.length = 0;
         this.loadUsers();
@@ -108,7 +176,7 @@ export class UserComponent implements OnInit {
 
   //{ username: String; password: String; email: String; phone: String; 
   //firstName: String; lastName: String; dateOfBirth: String; role: String, userId: String}
-  open(content: any, u: User | null){
+  async open(content: any, u: User | null){
     if (u!== null){
       this.modalHeader = 'Edit User';
       console.log("createModal False");
@@ -125,12 +193,14 @@ export class UserComponent implements OnInit {
       });
     } else{
       this.modalHeader = 'Add New User';
+      const uuid = await this.httpService.getNewUUID('http://localhost:9001/accounts/new');
+      this.createNew = true;
       console.log("createModal True");
       if(this.updateUserForm){
         console.log("updateuserform");
         this.updateUserForm.reset();
         this.updateUserForm = this.fb.group({
-          userId: '',
+          userId: uuid,
           username: '',
           password: '',
           email: '',

@@ -37,7 +37,7 @@ export class HttpService {
     return this.http.get(url, this.getHeaders());
   }
 
-  async getNewAccount(url: string): Promise<String> {
+  async getNewUUID(url: string): Promise<String> {
     console.log('inbound url: ', url)
     await this.http.get(url, this.getHeaders()).toPromise().then(
       (res) => {
@@ -70,7 +70,7 @@ export class HttpService {
   }
 
   getUsers(page: number, size: number, sort?: string, asc?: boolean, search?: string) {
-    let query = `http://localhost:9001/accounts/all?page=${encodeURIComponent(page)}&size=${encodeURIComponent(size)}`;
+    let query = `http://localhost:9001/admin/users?page=${encodeURIComponent(page)}&size=${encodeURIComponent(size)}`;
     if (sort !== undefined) {
       query += `&sort=${encodeURIComponent(sort)}&asc=${encodeURIComponent(!!asc)}`;
     }

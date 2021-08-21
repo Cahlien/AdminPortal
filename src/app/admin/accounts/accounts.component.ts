@@ -42,8 +42,8 @@ export class AccountComponent implements OnInit {
   @Output() dirChange = new EventEmitter<number>();
 
   data: {
-    status: "notYetPending" | "pending" | "success" | "error",
-    content: any[],
+    status: string,
+    content: Account[],
     totalElements: number,
     totalPages: number
   } = { status: "notYetPending", content: [], totalElements: 0, totalPages: 0 };
@@ -64,11 +64,8 @@ export class AccountComponent implements OnInit {
 
   constructor(private httpService: HttpService, private fb: FormBuilder, private modalService: NgbModal) { }
   ngOnInit(): void {
-    //this.loadAccounts();
     this.update();
   }
-
-  //All Pagination methods:
 
   setPage(pageNumber: number) {
     this.pageNumber = pageNumber;
@@ -106,10 +103,11 @@ export class AccountComponent implements OnInit {
 
   update() {
     this.accounts = [];
-    this.accounts = [];
     this.loadUsers();
     this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
-    this.httpService.getAccounts(this.pageNumber, this.resultsPerPage, this.sort, this.dir, this.search).toPromise().then((res) => {
+    this.httpService.getAccounts(this.pageNumber, this.resultsPerPage, this.sort, this.dir, this.search)
+    .subscribe((res) => {
+      console.log(res);
       let arr: any;
       arr = res;
       for (let obj of arr.content) {
@@ -117,11 +115,12 @@ export class AccountComponent implements OnInit {
           obj.createDate, obj.interest, obj.nickname, obj.type);
         u.fixBalance(); //<--VERY IMPORTANT!!!
         this.accounts.push(u);
-        this.nameAccounts();
+        console.log('accounts: ', this.accounts)
+        // this.nameAccounts();
       }
       this.data = {
         status: "success",
-        content: this.accounts,
+        content: arr.content,
         totalElements: arr.numberOfElements,
         totalPages: arr.totalPages
       };
@@ -251,7 +250,7 @@ export class AccountComponent implements OnInit {
       });
     } else {
       this.modalHeader = 'Add New Account';
-      const uuid = await this.httpService.getNewAccount('http://localhost:9001/accounts/new');
+      const uuid = await this.httpService.getNewUUID('http://localhost:9001/accounts/new');
       console.log('rcv\'d: ', uuid);
       this.updateAccountForm = this.fb.group({
         userId: '',
