@@ -4,6 +4,7 @@ import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { HttpService } from "src/app/shared/services/http.service";
 import { Account } from "src/app/shared/models/account.model";
 import { User } from "src/app/shared/models/user.model";
+import {Balance} from "../../shared/models/balance.model";
 
 @Component({
   selector: 'app-accounts',
@@ -113,7 +114,7 @@ export class AccountComponent implements OnInit {
       let arr: any;
       arr = res;
       for (let obj of arr.content) {
-        let u = new Account(obj.userId, obj.accountId, obj.activeStatus, obj.balance,
+        let u = new Account(obj.userId, obj.accountId, obj.activeStatus, new Balance(obj.balance.dollars, obj.balance.cents),
           obj.createDate, obj.interest, obj.nickname, obj.type);
         u.fixBalance(); //<--VERY IMPORTANT!!!
         this.accounts.push(u);
@@ -211,7 +212,7 @@ export class AccountComponent implements OnInit {
         this.updateAccountForm.controls['userId'].value,
         this.updateAccountForm.controls['accountId'].value,
         this.updateAccountForm.controls['activeStatus'].value,
-        this.updateAccountForm.controls['balance'].value * 100,//<-- VERY IMPORTANT!!!
+        new Balance(0,this.updateAccountForm.controls['balance'].value * 100),//<-- VERY IMPORTANT!!!
         this.updateAccountForm.controls['createDate'].value,
         this.updateAccountForm.controls['interest'].value,
         this.updateAccountForm.controls['nickname'].value,

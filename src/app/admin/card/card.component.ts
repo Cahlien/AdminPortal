@@ -10,6 +10,8 @@ import { HttpHeaders } from '@angular/common/http';
 import { CardRegistration } from '../../shared/models/cardregistration.model';
 import { HttpService } from '../../shared/services/http.service';
 import {PageEvent} from "@angular/material/paginator";
+import {Balance} from "../../shared/models/balance.model";
+import {B} from "@angular/cdk/keycodes";
 
 
 @Component({
@@ -39,7 +41,7 @@ export class CardComponent implements OnInit {
   sortByBalance: boolean = false;
   createDateOrder: string = 'desc';
   sortByCreateDate: boolean = false;
-  sortBy: string[] = new Array();
+  sortBy: string[] = [];
   predicate: string = '?page=0&&size=5';
   searchCriteria: string = '';
 
@@ -47,8 +49,8 @@ export class CardComponent implements OnInit {
     this.pageSize=5;
     this.pageIndex=0;
     this.totalItems=0;
-    this.loadCards();
     this.loadCardTypes();
+    this.loadCards();
     this.initializeForms();
   }
 
@@ -57,11 +59,11 @@ export class CardComponent implements OnInit {
     .getAll('http://localhost:9001/cards' + this.predicate)
     .subscribe((response) => {
       let arr: any;
-      arr = response;
+      arr = response as Card;
       this.totalItems = arr.totalElements;
       for(let obj of arr.content){
-        let c = new Card(obj.cardId, obj.userId, obj.cardType, obj.balance, obj.cardNumber, obj.interestRate,
-          obj.createDate, obj.nickname, obj.billCycleLength, obj.expireDate);
+        let c = new Card(obj.cardId, obj.userId, obj.cardType, new Balance(obj.balance.dollars, obj.balance.cents),
+          obj.cardNumber, obj.interestRate, obj.createDate, obj.nickname, obj.billCycleLength, obj.expireDate);
         console.log(c);
         this.cards.push(c);
       }
@@ -246,8 +248,8 @@ export class CardComponent implements OnInit {
 
     this.assemblePredicate();
 
-    this.loadCards();
     this.loadCardTypes();
+    this.loadCards();
     this.initializeForms();
   }
 }
