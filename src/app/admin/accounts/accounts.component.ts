@@ -49,8 +49,6 @@ export class AccountComponent implements OnInit {
   } = { status: "notYetPending", content: [], totalElements: 0, totalPages: 0 };
 
   account = [
-    { name: "firstName", displayName: "First Name", class: "col-2" },
-    { name: "lastName", displayName: "Last Name", class: "col-2" },
     { name: "userId", displayName: "User ID", class: "col-2" },
     { name: "accountId", displayName: "Account ID", class: "col-3" },
     { name: "activeStatus", displayName: "Is Active", class: "col-3" },
@@ -103,7 +101,6 @@ export class AccountComponent implements OnInit {
 
   update() {
     this.accounts = [];
-    this.loadUsers();
     this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
     this.httpService.getAccounts(this.pageNumber, this.resultsPerPage, this.sort, this.dir, this.search)
     .subscribe((res) => {
@@ -124,46 +121,47 @@ export class AccountComponent implements OnInit {
         totalElements: arr.numberOfElements,
         totalPages: arr.totalPages
       };
-      this.loadUsers();
+      // this.loadUsers();
     }, (err) => {
       console.error("Failed to retrieve accounts", err);
       this.data = { status: "error", content: [], totalElements: 0, totalPages: 0 };
     })
   }
 
-  loadUsers(): any {
-    this.users = [];
-    this.httpService
-      .getAll('http://localhost:9001/users')
-      .subscribe((response) => {
-        let arr: any;
-        arr = response;
-        for (let obj of arr) {
-          let u = new User(obj.username, obj.password, obj.email, obj.phone,
-            obj.firstName, obj.lastName, obj.dateOfBirth, obj.role, obj.userId);
-          this.users.push(u);
-        }
-        this.nameAccounts();
-      })
-  }
+  // loadUsers(): any {
+  //   this.users = [];
+  //   this.httpService
+  //     .getAll('http://localhost:9001/users')
+  //     .subscribe((response) => {
+  //       let arr: any;
+  //       arr = response;
+  //       console.log('response: ', arr.content);
+  //       for (let obj of arr.content) {
+  //         let u = new User(obj.username, obj.password, obj.email, obj.phone,
+  //           obj.firstName, obj.lastName, obj.dateOfBirth, obj.role, obj.userId);
+  //         this.users.push(u);
+  //       }
+  //       this.nameAccounts();
+  //     })
+  // }
 
-  nameAccounts(): any {
-    this.namedAccounts = [];
-    for (var i = 0; i < this.users.length; i++) {
-      for (var j = 0; j < this.accounts.length; j++) {
-        if (this.accounts[j].$userId === this.users[i].$userId) {
-          this.accounts[j].$firstName = this.users[i].$firstName;
-          this.accounts[j].$lastName = this.users[i].$lastName;
-          this.namedAccounts.push(this.accounts[j]);
-        }
-        else {
-          this.accounts[j].$firstName = 'Unrecognized user ID'
-          this.accounts[j].$lastName = 'Please Fix'
-          this.namedAccounts.push(this.accounts[j])
-        }
-      }
-    }
-  }
+  // nameAccounts(): any {
+  //   this.namedAccounts = [];
+  //   for (var i = 0; i < this.users.length; i++) {
+  //     for (var j = 0; j < this.accounts.length; j++) {
+  //       if (this.accounts[j].$userId === this.users[i].$userId) {
+  //         this.accounts[j].$firstName = this.users[i].$firstName;
+  //         this.accounts[j].$lastName = this.users[i].$lastName;
+  //         this.namedAccounts.push(this.accounts[j]);
+  //       }
+  //       else {
+  //         this.accounts[j].$firstName = 'Unrecognized user ID'
+  //         this.accounts[j].$lastName = 'Please Fix'
+  //         this.namedAccounts.push(this.accounts[j])
+  //       }
+  //     }
+  //   }
+  // }
 
   initializeForms() {
     this.updateAccountForm = new FormGroup({
@@ -183,7 +181,7 @@ export class AccountComponent implements OnInit {
       this.httpService.deleteById("http://localhost:9001/accounts/" + id).subscribe((result) => {
         console.log(result);
         this.users.length = 0;
-        this.loadUsers();
+        // this.loadUsers();
       });
       window.location.reload();
     }
@@ -219,10 +217,10 @@ export class AccountComponent implements OnInit {
       const body = JSON.stringify(u);
 
       if (!this.updateAccountForm.controls['nickname'].value) {
-        alert('Save Acount ' + this.updateAccountForm.controls['accountId'].value + '?');
+        window.confirm('Save Acount ' + this.updateAccountForm.controls['accountId'].value + '?');
       }
       else {
-        alert('Save Acount ' + this.updateAccountForm.controls['nickname'].value + '?');
+        window.confirm('Save Acount ' + this.updateAccountForm.controls['nickname'].value + '?');
       }
       this.httpService.update('http://localhost:9001/accounts', body).subscribe((result) => {
         console.log("updating" + result);

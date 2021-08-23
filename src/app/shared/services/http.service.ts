@@ -1,7 +1,6 @@
 
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Account } from '../models/account.model';
 
 @Injectable({
   providedIn: 'root'
@@ -85,10 +84,12 @@ export class HttpService {
   }
 
   create(url: string, obj: any) {
+    console.log('create called')
     return this.http.post(url, obj, this.getHeaders());
   }
 
   update(url: string, obj: any) {
+    console.log('update called')
     return this.http.put(url, obj, this.getHeaders());
   }
 

@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { HttpService } from 'src/app/shared/services/http.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/shared/models/user.model';
-import { Observable, of } from 'rxjs';
+import { never, Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-user',
@@ -48,6 +48,7 @@ export class UserComponent implements OnInit {
     {name: "firstName", displayName: "First Name", class: "col-2"},
     {name: "lastName", displayName: "Last Name", class: "col-2"},
     {name: "userId", displayName: "User ID", class: "col-2"},
+    {name: "username", displayName: "Username", class: "col-2"},
     {name: "email", displayName: "Email", class: "col-2"},
     {name: "phone", displayName: "Phone Number", class: "col-2"},
     {name: "dateOfBirth", displayName: "Date of Birth", class: "col-2"},
@@ -88,7 +89,6 @@ export class UserComponent implements OnInit {
   loadUsers() {
     this.users = [];
     this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
-    console.log('attempting to make http call')
     this.httpService
     .getUsers(this.pageNumber, this.resultsPerPage, this.sort, this.asc, this.search)
     .subscribe((response) => {
@@ -131,8 +131,8 @@ export class UserComponent implements OnInit {
   }
 
   deleteUser(id: String){
-    alert("delete user " + id);
-    this.httpService.deleteById('http://localhost:8080/admin/users/id/' + id).subscribe((result)=>{
+    window.confirm("delete user " + id + "?");
+    this.httpService.deleteById('http://localhost:9001/admin/users/' + id).subscribe((result)=>{
       console.log(result);
       this.users.length = 0;
       this.loadUsers();
@@ -140,8 +140,7 @@ export class UserComponent implements OnInit {
   }
 
   saveUser(){
-    console.log("save");
-    alert("save user " + this.updateUserForm.controls['firstName'].value);
+    window.confirm("save user " + this.updateUserForm.controls['firstName'].value + "?");
     let u = new User(
       this.updateUserForm.controls['username'].value,
       this.updateUserForm.controls['password'].value,
@@ -153,13 +152,12 @@ export class UserComponent implements OnInit {
       this.updateUserForm.controls['role'].value,
       this.updateUserForm.controls['userId'].value);
     
-    const body = JSON.stringify(u);
-    console.log(body);
+    let body = u;
 
     if (this.createNew){
       console.log("saving...");
-      this.httpService.create('http://localhost:9001/admin/users', body).subscribe((result)=>{
-        console.log("save" + result);
+      this.httpService.create('http://localhost:9001/users', body).subscribe((result)=>{
+        console.log("save " + result);
         this.users.length = 0;
         this.createNew = false;
         this.loadUsers();
@@ -168,7 +166,7 @@ export class UserComponent implements OnInit {
     else{
       console.log("editing...");
       this.httpService.update('http://localhost:9001/admin/users/' + this.updateUserForm.controls['userId'].value, body).subscribe((result)=>{
-        console.log("updating" + result);
+        console.log("updating: " + result);
         this.users.length = 0;
         this.loadUsers();
       })
@@ -180,6 +178,8 @@ export class UserComponent implements OnInit {
   //firstName: String; lastName: String; dateOfBirth: String; role: String, userId: String}
   async open(content: any, u: User | null){
     if (u!== null){
+      console.log('user pass: ', u.$password);
+      this.createNew = false;
       this.modalHeader = 'Edit User';
       console.log("createModal False");
       this.updateUserForm = this.fb.group({
