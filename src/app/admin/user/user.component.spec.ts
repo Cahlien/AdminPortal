@@ -37,7 +37,6 @@ fdescribe('UserComponent', () => {
         '1111111111', 'abcd', 'abcd', 
         '2000-01-01', 'abcd', 
         'd44c62cd-c1e5-4273-82ec-2b1fa9654b0a')]
-        httpServiceSpy.getUsers.and.returnValue(of(users));
         const page = {
             status: 'success',
             content: users,
@@ -50,10 +49,11 @@ fdescribe('UserComponent', () => {
             totalElements: 1,
             totalPages: 1
         }
+        httpServiceSpy.getUsers.and.returnValue(of(users));
         fixture.detectChanges();
-        // expect(component.users).toEqual(users);
+        expect(component.users).toEqual(users);
         expect(component.data).toEqual(data);
-        // expect(component.users.length).toBe(1);
+        expect(component.users.length).toBe(1);
     })
 
 });

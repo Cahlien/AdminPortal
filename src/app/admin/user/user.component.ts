@@ -85,15 +85,17 @@ export class UserComponent implements OnInit {
     this.search = search;
   }
 
-  loadUsers(): any{
+  loadUsers() {
     this.users = [];
     this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
+    console.log('attempting to make http call')
     this.httpService
     .getUsers(this.pageNumber, this.resultsPerPage, this.sort, this.asc, this.search)
     .subscribe((response) => {
       let arr: any;
       arr = response;
       for(let obj of arr.content){
+        console.log('in for loop, arr = ', arr)
         let u = new User(obj.username, obj.password, obj.email, obj.phone, 
           obj.firstName, obj.lastName, obj.dateOfBirth, obj.role, obj.userId);
         console.log(u);
