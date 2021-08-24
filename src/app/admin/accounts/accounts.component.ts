@@ -21,6 +21,8 @@ export class AccountComponent implements OnInit {
   closeResult: any;
   modalHeader!: String;
 
+
+
   @Input() search!: string;
   @Output() searchChange = new EventEmitter<string>();
 

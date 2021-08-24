@@ -20,16 +20,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'beardtrust-front'`, () => {
+  it(`should have as title 'beardtrust'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('beardtrust-front');
+    expect(app.title).toEqual('beardtrust');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('beardtrust-front app is running!');
+    expect(compiled.querySelector('.content span').textContent).toContain('beardtrust app is running!');
   });
 });
