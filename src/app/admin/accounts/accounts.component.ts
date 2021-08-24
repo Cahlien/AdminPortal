@@ -21,8 +21,6 @@ export class AccountComponent implements OnInit {
   closeResult: any;
   modalHeader!: String;
 
-  //Pagination items:
-
   @Input() search!: string;
   @Output() searchChange = new EventEmitter<string>();
 
@@ -113,7 +111,6 @@ export class AccountComponent implements OnInit {
         u.fixBalance(); //<--VERY IMPORTANT!!!
         this.accounts.push(u);
         console.log('accounts: ', this.accounts)
-        // this.nameAccounts();
       }
       this.data = {
         status: "success",
@@ -121,47 +118,11 @@ export class AccountComponent implements OnInit {
         totalElements: arr.numberOfElements,
         totalPages: arr.totalPages
       };
-      // this.loadUsers();
     }, (err) => {
       console.error("Failed to retrieve accounts", err);
       this.data = { status: "error", content: [], totalElements: 0, totalPages: 0 };
     })
   }
-
-  // loadUsers(): any {
-  //   this.users = [];
-  //   this.httpService
-  //     .getAll('http://localhost:9001/users')
-  //     .subscribe((response) => {
-  //       let arr: any;
-  //       arr = response;
-  //       console.log('response: ', arr.content);
-  //       for (let obj of arr.content) {
-  //         let u = new User(obj.username, obj.password, obj.email, obj.phone,
-  //           obj.firstName, obj.lastName, obj.dateOfBirth, obj.role, obj.userId);
-  //         this.users.push(u);
-  //       }
-  //       this.nameAccounts();
-  //     })
-  // }
-
-  // nameAccounts(): any {
-  //   this.namedAccounts = [];
-  //   for (var i = 0; i < this.users.length; i++) {
-  //     for (var j = 0; j < this.accounts.length; j++) {
-  //       if (this.accounts[j].$userId === this.users[i].$userId) {
-  //         this.accounts[j].$firstName = this.users[i].$firstName;
-  //         this.accounts[j].$lastName = this.users[i].$lastName;
-  //         this.namedAccounts.push(this.accounts[j]);
-  //       }
-  //       else {
-  //         this.accounts[j].$firstName = 'Unrecognized user ID'
-  //         this.accounts[j].$lastName = 'Please Fix'
-  //         this.namedAccounts.push(this.accounts[j])
-  //       }
-  //     }
-  //   }
-  // }
 
   initializeForms() {
     this.updateAccountForm = new FormGroup({
@@ -180,7 +141,6 @@ export class AccountComponent implements OnInit {
       this.httpService.deleteById("http://localhost:9001/accounts/" + id).subscribe((result) => {
         console.log(result);
         this.users.length = 0;
-        // this.loadUsers();
       });
       window.location.reload();
     }
