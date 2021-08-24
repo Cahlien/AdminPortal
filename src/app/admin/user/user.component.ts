@@ -179,7 +179,7 @@ export class UserComponent implements OnInit {
       console.log('user pass: ', u.$password);
       this.createNew = false;
       this.modalHeader = 'Edit User';
-      this.userForm = this.fb.group({
+      this.updateUserForm = this.fb.group({
         userId: u.$userId,
         username: u.$username,
         password: u.$password,
