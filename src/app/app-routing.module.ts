@@ -5,6 +5,7 @@ import { UserComponent } from './admin/user/user.component';
 import { LayoutComponent } from './layout/layout.component';
 import { AuthComponent } from "./auth/auth.component";
 import { AccountComponent } from "./admin/accounts/accounts.component"
+import { CardComponent } from './admin/card/card.component';
 
 const routes: Routes = [
   {
@@ -27,8 +28,11 @@ const routes: Routes = [
       {
         path: 'accounts',
         component: AccountComponent
+      },
+      {
+        path: 'cards',
+        component: CardComponent
       }
-
     ]
   }
 
