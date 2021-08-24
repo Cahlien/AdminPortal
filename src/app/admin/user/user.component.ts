@@ -118,15 +118,14 @@ export class UserComponent implements OnInit {
 
   initializeForms() {
     this.updateUserForm = new FormGroup({
-      userId: new FormControl('',[Validators.required, Validators.maxLength(20)]),
       username: new FormControl('',[Validators.required, Validators.maxLength(20)]),
-      password: new FormControl('',[Validators.required, Validators.maxLength(20)]),
-      email: new FormControl('',[Validators.required, Validators.maxLength(30)]),
-      phone: new FormControl('',[Validators.required, Validators.maxLength(10)]),
+      password: new FormControl('',[Validators.required, Validators.minLength(8), Validators.maxLength(20)]),
+      email: new FormControl('',[Validators.required, Validators.maxLength(30), Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
+      phone: new FormControl('',[Validators.required, Validators.minLength(10), Validators.maxLength(10)]),
       firstName: new FormControl('',[Validators.required, Validators.maxLength(20)]),
       lastName: new FormControl('',[Validators.required, Validators.maxLength(20)]),
       dateOfBirth: new FormControl('',[Validators.required, Validators.maxLength(10)]),
-      role: new FormControl('',[Validators.required, Validators.maxLength(20)])
+      role: new FormControl('',[Validators.required])
     })
   }
 
@@ -230,17 +229,12 @@ export class UserComponent implements OnInit {
     this.modalRef.close();
   }
 
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-  
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-  
-      // TODO: better job of transforming error for user consumption
-      //this.log(`${operation} failed: ${error.message}`);
-  
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
+  get username() { return this.updateUserForm.get('username'); }
+  get password() { return this.updateUserForm.get('password'); }
+  get email() { return this.updateUserForm.get('email'); }
+  get phone() { return this.updateUserForm.get('phone'); }
+  get firstName() { return this.updateUserForm.get('firstName'); }
+  get lastName() { return this.updateUserForm.get('lastName'); }
+  get dateOfBirth() { return this.updateUserForm.get('dateOfBirth'); }
+  get role() { return this.updateUserForm.get('role'); }
 }

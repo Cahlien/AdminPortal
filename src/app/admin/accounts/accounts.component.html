@@ -5,7 +5,7 @@
                 (click)="open(updateAccountModal, null)">Create new Account</button>
         </td>
     </h3>
-    
+
     <div *ngIf="data.status === 'success'">
         <div class="row mb-3">
             <div class="col-md-7">
@@ -31,7 +31,7 @@
         </div>
         <p class="text-muted">Showing {{data.content.length}} of {{data.totalElements}} {{(data.totalElements == 1) ?
             "result" : "results"}}</p>
-            
+
         <nav aria-label="Page navigation">
             <ul class="pagination">
                 <li class="page-item" [ngClass]="{'disabled': pageNumber === 0}"><a class="page-link" href="#"
@@ -79,7 +79,8 @@
                     <button type="button" class="btn btn-secondary" (click)="open(updateAccountModal, a)">Edit</button>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-danger" (click)="deactivateAccount(a.$accountId)">Delete</button>
+                    <button type="button" class="btn btn-danger"
+                        (click)="deactivateAccount(a.$accountId)">Delete</button>
                 </td>
             </tr>
         </tbody>
@@ -97,35 +98,69 @@
                     <h5 class="modal-title">{{ modalHeader }}</h5>
                 </div>
                 <div class="modal-body">
-                    <p>Account Details</p>
                     <div class="form-group">
-                        User ID: <input type="text" id="userId" formControlName="userId" class="mb-2 disabled"
-                            required />
-                        <br>
-                        Account ID: <input type="text" id="accountId" formControlName="accountId" class="mb-2"
-                            required />
-                        <br>
-                        Active Status: <input type="checkbox" id="activeStatus" formControlName="activeStatus"
-                            class="mb-2" />
-                        <br>
-                        Balance: <input type="number" id="balance" formControlName="balance" class="mb-2" required />
-                        <br>
-                        Creation Date: <input type="date" id="createDate" formControlName="createDate" class="mb-2"
-                            required />
-                        <br>
-                        Interest Rate: <input type="number" id="interest" formControlName="interest" class="mb-2"
-                            required />
-                        <br>
-                        Nickname: <input type="text" id="nickname" formControlName="nickname" class="mb-2" />
-                        <br>
-                        Account Type: <input type="text" id="type" formControlName="type" class="mb-2" required />
+                        <div class="mb-2">
+                            <label for="userId" class="form-label">UserId: </label>
+                            <input type="text" id="username" formControlName="userId" class="form-control" required />
+                            <div *ngIf="userId?.invalid && (userId?.dirty || userId?.touched)">
+                                <div *ngIf="userId?.errors?.required">
+                                    <small class="text-danger">userId is required</small>
+                                </div>
+                                <div *ngIf="userId?.errors?.maxlength">
+                                    <small class="text-danger">userId should be a standard UUID string</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="balance" class="form-label">Balance: </label>
+                            <input type="text" id="balance" formControlName="balance" class="form-control sr-only" />
+                            <div *ngIf="balance?.invalid && (balance?.dirty || balance?.touched)">
+                                <div *ngIf="balance?.errors?.required">
+                                    <small class="text-danger">Balance is required. It can be 0</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2" >
+                            <label for="activeStatus">Active Status:</label>
+                            <input type="checkbox" id="activeStatus" formControlName="activeStatus"/>
+                        </div>
+                        <div class="mb-2">
+                            <label for="createDate" class="form-label">Creation Date: </label>
+                            <input type="date" id="createDate" formControlName="createDate" class="form-control" />
+                            <div *ngIf="createDate?.invalid && (createDate?.dirty || createDate?.touched)">
+                                <div *ngIf="createDate?.errors?.required">
+                                    <small class="text-danger">creation date is required</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="interest" class="form-label">Interest Rate: </label>
+                            <input type="text" id="interest" formControlName="interest" class="form-control" />
+                            <div *ngIf="interest?.invalid && (interest?.dirty || interest?.touched)">
+                                <div *ngIf="interest?.errors?.required">
+                                    <small class="text-danger">Interest is required</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="nickname" class="form-label">Nickname: </label>
+                            <input type="text" id="nickname" formControlName="nickname" class="form-control" />
+                        </div>
+                        <div class="input-group mb-2">
+                            <label class="input-group-text" for="type">Account Type</label>
+                            <select class="form-select" id="type" formControlName="type">
+                                <option value="user">Savings</option>
+                                <option value="admin">Checking</option>
+                                <option value="admin">Recovery</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">
-                        Close
-                    </button>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">
+                            Close
+                        </button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
                 </div>
             </div>
         </div>

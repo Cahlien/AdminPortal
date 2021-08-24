@@ -165,14 +165,13 @@ export class AccountComponent implements OnInit {
 
   initializeForms() {
     this.updateAccountForm = new FormGroup({
-      userId: new FormControl('', [Validators.required, Validators.maxLength(20)]),
-      accountId: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+      userId: new FormControl('', [Validators.required, Validators.minLength(32), Validators.maxLength(32), Validators.pattern("/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/")]),
       activeStatus: new FormControl('', [Validators.required]),
-      balance: new FormControl('', [Validators.required, Validators.maxLength(30)]),
-      createDate: new FormControl('', [Validators.required, Validators.maxLength(10)]),
-      interest: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+      balance: new FormControl('', [Validators.required]),
+      createDate: new FormControl('', [Validators.required]),
+      interest: new FormControl('', [Validators.required, Validators.maxLength(3)]),
       nickname: new FormControl('', [Validators.maxLength(50)]),
-      type: new FormControl('', [Validators.required, Validators.maxLength(10)])
+      type: new FormControl('', [Validators.required])
     })
   }
 
@@ -274,4 +273,12 @@ export class AccountComponent implements OnInit {
   closeModal() {
     this.modalRef.close();
   }
+
+  get userId() { return this.updateAccountForm.get('userId'); }
+  get activeStatus() { return this.updateAccountForm.get('activeStatus'); }
+  get balance() { return this.updateAccountForm.get('balance'); }
+  get createDate() { return this.updateAccountForm.get('createDate'); }
+  get interest() { return this.updateAccountForm.get('interest'); }
+  get nickname() { return this.updateAccountForm.get('nickname'); }
+  get type() { return this.updateAccountForm.get('type'); }
 }
