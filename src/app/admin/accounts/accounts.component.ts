@@ -22,15 +22,11 @@ export class AccountComponent implements OnInit {
   closeResult: any;
   modalHeader!: String;
   totalItems: any;
+  pageIndex: any;
+  pageSize: any;
 
   @Input() search!: string;
   @Output() searchChange = new EventEmitter<string>();
-
-  @Input() pageNumber: number = 0;
-  @Output() pageNumberChange = new EventEmitter<number>();
-
-  @Input() resultsPerPage: number = 10;
-  @Output() resultsPerPageChange = new EventEmitter<number>();
 
   @Input() sort!: string;
   @Output() sortChange = new EventEmitter<number>();
@@ -62,27 +58,20 @@ export class AccountComponent implements OnInit {
 
   constructor(private httpService: HttpService, private fb: FormBuilder, private modalService: NgbModal) { }
   ngOnInit(): void {
-    this.update();
     this.totalItems = 0;
-  }
-
-  setPage(pageNumber: number) {
-    this.pageNumber = pageNumber;
-    this.update();
-  }
-
-  setResultsPerPage(resultsPerPage: number) {
-    this.pageNumber = 0;
-    this.resultsPerPage = resultsPerPage;
+    this.pageIndex = 0;
+    this.pageSize = 5;
     this.update();
   }
 
   onChangePage(pe:PageEvent) {
-    this.pageNumber = pe.pageIndex;
-    if(pe.pageSize !== this.resultsPerPage){
-      this.pageNumber = 0;
-      this.resultsPerPage = pe.pageSize;
+    this.pageIndex = pe.pageIndex;
+    if(pe.pageSize !== this.pageSize){
+      this.pageIndex = 0;
+      this.pageSize = pe.pageSize;
     }
+    this.accounts = new Array();
+    this.update();
   }
 
   setSort(property: string) {
@@ -111,18 +100,17 @@ export class AccountComponent implements OnInit {
   update() {
     this.accounts = [];
     this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
-    this.httpService.getAccounts(this.pageNumber, this.resultsPerPage, this.sort, this.dir, this.search)
+    this.httpService.getAccounts(this.pageIndex, this.pageSize, this.sort, this.dir, this.search)
     .subscribe((res) => {
       console.log(res);
       let arr: any;
-      this.totalItems = arr.totalElements;
       arr = res;
+      this.totalItems = arr.totalElements;
       for (let obj of arr.content) {
         let u = new Account(obj.userId, obj.accountId, obj.activeStatus, obj.balance,
           obj.createDate, obj.interest, obj.nickname, obj.type);
         u.fixBalance(); //<--VERY IMPORTANT!!!
         this.accounts.push(u);
-        console.log('accounts: ', this.accounts)
       }
       this.data = {
         status: "success",

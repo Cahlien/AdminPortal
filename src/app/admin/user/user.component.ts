@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { HttpService } from 'src/app/shared/services/http.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/shared/models/user.model';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-user',
@@ -18,6 +19,7 @@ export class UserComponent implements OnInit {
   closeResult: any;
   modalHeader!: String;
   createNew!: boolean;
+  totalItems: any;
 
   constructor(private httpService: HttpService, private fb: FormBuilder, private modalService: NgbModal) { }
 
@@ -68,6 +70,14 @@ export class UserComponent implements OnInit {
     this.pageNumber = 0;
     this.resultsPerPage = resultsPerPage;
     this.loadUsers();
+  }
+
+  onChangePage(pe:PageEvent) {
+    this.pageNumber = pe.pageIndex;
+    if(pe.pageSize !== this.resultsPerPage){
+      this.pageNumber = 0;
+      this.resultsPerPage = pe.pageSize;
+    }
   }
 
   setSort(property: string) {

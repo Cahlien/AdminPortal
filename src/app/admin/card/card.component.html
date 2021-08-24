@@ -1,6 +1,6 @@
 <div class='container'>
     <h1 class="text-center mb-2">View All Cards</h1>
-    <h3><td><button type="button" class="btn btn-primary btn-lg" style="background-color:green" (click)="open(cardModal, null)">Create</button></td></h3>
+    <h3><td><button type="button" class="btn btn-primary btn-lg me-5" style="background-color:green" (click)="open(cardModal, null)">Create new Card</button></td></h3>
     <table class='table table-striped table-hover table-active border border-secondary shadow-lg'>
         <thead>
             <tr>
@@ -59,10 +59,10 @@
                             <label class="input-group-text" for="cardType">Card Type: </label>
                             <select class="form-select" id="cardType" formControlName="cardType">
                                 <option *ngFor="let c of cardtypes;" value="{{ c.$id }}">{{ c.$typeName }}: {{ c.$baseInterestRate }}</option>
-                                <!--
+                                
                                 <option value="debit">Debit</option>
                                 <option value="credit">Credit</option>
-                                -->
+                               
                             </select>
                         </div>
                         <div class="mb-2" *ngIf="this.modalHeader === 'Edit Card';">
