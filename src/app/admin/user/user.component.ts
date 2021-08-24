@@ -171,9 +171,7 @@ export class UserComponent implements OnInit {
     this.initializeForms();
     //this.loadUsers();
   }
-
-  //{ username: String; password: String; email: String; phone: String;
-  //firstName: String; lastName: String; dateOfBirth: String; role: String, userId: String}
+  
   async open(content: any, u: User | null){
     if (u!== null){
       console.log('user pass: ', u.$password);
