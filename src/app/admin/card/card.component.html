@@ -1,4 +1,4 @@
-<div class='container-fluid'>
+<div class='container'>
     <h1 class="text-center mb-2">View All Cards</h1>
     <h3><td><button type="button" class="btn btn-primary btn-lg" style="background-color:green" (click)="open(cardModal, null)">Create</button></td></h3>
     <table class='table table-striped table-hover table-active border border-secondary shadow-lg'>
@@ -32,10 +32,10 @@
             </tr>
         </tbody>
     </table>
-</div>
-<div class="mb-5">
-  <mat-paginator class="my-5" [length]="this.totalItems" [pageIndex]="this.pageIndex" [pageSizeOptions]="[5, 10, 15, 20, 25, 50]"
-                 [pageSize]="this.pageSize" [showFirstLastButtons]="true" (page)="onChangePage($event)"></mat-paginator>
+    <div class="mb-5">
+        <mat-paginator class="my-5" [length]="this.totalItems" [pageIndex]="this.pageIndex" [pageSizeOptions]="[5, 10, 15, 20, 25, 50]"
+                       [pageSize]="this.pageSize" [showFirstLastButtons]="true" (page)="onChangePage($event)"></mat-paginator>
+      </div>
 </div>
 
 <ng-template #cardModal let-c="close" let-d="dismiss">

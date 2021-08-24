@@ -4,6 +4,7 @@ import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { HttpService } from "src/app/shared/services/http.service";
 import { Account } from "src/app/shared/models/account.model";
 import { User } from "src/app/shared/models/user.model";
+import { PageEvent } from "@angular/material/paginator";
 
 @Component({
   selector: 'app-accounts',
@@ -20,6 +21,7 @@ export class AccountComponent implements OnInit {
   errorMessage: any;
   closeResult: any;
   modalHeader!: String;
+  totalItems: any;
 
   @Input() search!: string;
   @Output() searchChange = new EventEmitter<string>();
@@ -61,6 +63,7 @@ export class AccountComponent implements OnInit {
   constructor(private httpService: HttpService, private fb: FormBuilder, private modalService: NgbModal) { }
   ngOnInit(): void {
     this.update();
+    this.totalItems = 0;
   }
 
   setPage(pageNumber: number) {
@@ -72,6 +75,14 @@ export class AccountComponent implements OnInit {
     this.pageNumber = 0;
     this.resultsPerPage = resultsPerPage;
     this.update();
+  }
+
+  onChangePage(pe:PageEvent) {
+    this.pageNumber = pe.pageIndex;
+    if(pe.pageSize !== this.resultsPerPage){
+      this.pageNumber = 0;
+      this.resultsPerPage = pe.pageSize;
+    }
   }
 
   setSort(property: string) {
@@ -104,6 +115,7 @@ export class AccountComponent implements OnInit {
     .subscribe((res) => {
       console.log(res);
       let arr: any;
+      this.totalItems = arr.totalElements;
       arr = res;
       for (let obj of arr.content) {
         let u = new Account(obj.userId, obj.accountId, obj.activeStatus, obj.balance,

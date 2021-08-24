@@ -1,5 +1,5 @@
 <div class="container">
-    <h1>View Accounts</h1>
+    <h1 class="text-center mb-2">View All Accounts</h1>
     <h3>
         <td><button type="button" class="btn btn-primary btn-md" style="background-color:green"
                 (click)="open(updateAccountModal, null)">Create new Account</button>
@@ -13,20 +13,9 @@
             <div class="col-md-3 mt-auto">
                 <div class="form-group">
                     <label for="search">Search</label>
-                    <input type="text" class="form-control" [ngModel]="search" (ngModelChange)="setSearch($event)">
-                    <button type="input" class="btn btn-primary" (click)="update()">Search</button>
+                    <input type="text" class="form-control col-sm-2 col-lg-3" [ngModel]="search" (ngModelChange)="setSearch($event)">
+                    <button type="input" class="btn btn-outline-secondary btn-small" (click)="update()">Search</button>
                 </div>
-            </div>
-            <div class="col-md-2 mt-auto">
-                <div class="form-group">
-                    <label for="resultsPerPage">Results Per Page</label>
-                    <select class="form-control" [ngModel]="resultsPerPage" (ngModelChange)="setResultsPerPage($event)">
-                        <option>10</option>
-                        <option>20</option>
-                        <option>30</option>
-                    </select>
-                </div>
-                <br>
             </div>
         </div>
         <p class="text-muted">Showing {{data.content.length}} of {{data.totalElements}} {{(data.totalElements == 1) ?
@@ -85,6 +74,10 @@
             </tr>
         </tbody>
     </table>
+    <div class="mb-5">
+        <mat-paginator class="my-5" [length]="this.totalItems" [pageIndex]="this.pageNumber" [pageSizeOptions]="[5, 10, 15, 20, 25, 50]"
+                       [pageSize]="this.resultsPerPage" [showFirstLastButtons]="true" (page)="onChangePage($event)"></mat-paginator>
+      </div>
     <br>
     <br>
 </div>
