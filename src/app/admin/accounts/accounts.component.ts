@@ -49,8 +49,6 @@ export class AccountComponent implements OnInit {
   } = { status: "notYetPending", content: [], totalElements: 0, totalPages: 0 };
 
   account = [
-    { name: "firstName", displayName: "First Name", class: "col-2" },
-    { name: "lastName", displayName: "Last Name", class: "col-2" },
     { name: "userId", displayName: "User ID", class: "col-2" },
     { name: "accountId", displayName: "Account ID", class: "col-3" },
     { name: "activeStatus", displayName: "Is Active", class: "col-3" },
@@ -103,7 +101,6 @@ export class AccountComponent implements OnInit {
 
   update() {
     this.accounts = [];
-    this.loadUsers();
     this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
     this.httpService.getAccounts(this.pageNumber, this.resultsPerPage, this.sort, this.dir, this.search)
     .subscribe((res) => {
@@ -124,57 +121,57 @@ export class AccountComponent implements OnInit {
         totalElements: arr.numberOfElements,
         totalPages: arr.totalPages
       };
-      this.loadUsers();
+      // this.loadUsers();
     }, (err) => {
       console.error("Failed to retrieve accounts", err);
       this.data = { status: "error", content: [], totalElements: 0, totalPages: 0 };
     })
   }
 
-  loadUsers(): any {
-    this.users = [];
-    this.httpService
-      .getAll('http://localhost:9001/users')
-      .subscribe((response) => {
-        let arr: any;
-        arr = response;
-        for (let obj of arr) {
-          let u = new User(obj.username, obj.password, obj.email, obj.phone,
-            obj.firstName, obj.lastName, obj.dateOfBirth, obj.role, obj.userId);
-          this.users.push(u);
-        }
-        this.nameAccounts();
-      })
-  }
+  // loadUsers(): any {
+  //   this.users = [];
+  //   this.httpService
+  //     .getAll('http://localhost:9001/users')
+  //     .subscribe((response) => {
+  //       let arr: any;
+  //       arr = response;
+  //       console.log('response: ', arr.content);
+  //       for (let obj of arr.content) {
+  //         let u = new User(obj.username, obj.password, obj.email, obj.phone,
+  //           obj.firstName, obj.lastName, obj.dateOfBirth, obj.role, obj.userId);
+  //         this.users.push(u);
+  //       }
+  //       this.nameAccounts();
+  //     })
+  // }
 
-  nameAccounts(): any {
-    this.namedAccounts = [];
-    for (var i = 0; i < this.users.length; i++) {
-      for (var j = 0; j < this.accounts.length; j++) {
-        if (this.accounts[j].$userId === this.users[i].$userId) {
-          this.accounts[j].$firstName = this.users[i].$firstName;
-          this.accounts[j].$lastName = this.users[i].$lastName;
-          this.namedAccounts.push(this.accounts[j]);
-        }
-        else {
-          this.accounts[j].$firstName = 'Unrecognized user ID'
-          this.accounts[j].$lastName = 'Please Fix'
-          this.namedAccounts.push(this.accounts[j])
-        }
-      }
-    }
-  }
+  // nameAccounts(): any {
+  //   this.namedAccounts = [];
+  //   for (var i = 0; i < this.users.length; i++) {
+  //     for (var j = 0; j < this.accounts.length; j++) {
+  //       if (this.accounts[j].$userId === this.users[i].$userId) {
+  //         this.accounts[j].$firstName = this.users[i].$firstName;
+  //         this.accounts[j].$lastName = this.users[i].$lastName;
+  //         this.namedAccounts.push(this.accounts[j]);
+  //       }
+  //       else {
+  //         this.accounts[j].$firstName = 'Unrecognized user ID'
+  //         this.accounts[j].$lastName = 'Please Fix'
+  //         this.namedAccounts.push(this.accounts[j])
+  //       }
+  //     }
+  //   }
+  // }
 
-  initializeForms() {
+  iinitializeForms() {
     this.updateAccountForm = new FormGroup({
-      userId: new FormControl('', [Validators.required, Validators.maxLength(20)]),
-      accountId: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+      userId: new FormControl('', [Validators.required, Validators.minLength(32), Validators.maxLength(32), Validators.pattern("/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/")]),
       activeStatus: new FormControl('', [Validators.required]),
-      balance: new FormControl('', [Validators.required, Validators.maxLength(30)]),
-      createDate: new FormControl('', [Validators.required, Validators.maxLength(10)]),
-      interest: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+      balance: new FormControl('', [Validators.required]),
+      createDate: new FormControl('', [Validators.required]),
+      interest: new FormControl('', [Validators.required, Validators.maxLength(3)]),
       nickname: new FormControl('', [Validators.maxLength(50)]),
-      type: new FormControl('', [Validators.required, Validators.maxLength(10)])
+      type: new FormControl('', [Validators.required])
     })
   }
 
@@ -183,7 +180,7 @@ export class AccountComponent implements OnInit {
       this.httpService.deleteById("http://localhost:9001/accounts/" + id).subscribe((result) => {
         console.log(result);
         this.users.length = 0;
-        this.loadUsers();
+        // this.loadUsers();
       });
       window.location.reload();
     }
@@ -219,10 +216,10 @@ export class AccountComponent implements OnInit {
       const body = JSON.stringify(u);
 
       if (!this.updateAccountForm.controls['nickname'].value) {
-        alert('Save Acount ' + this.updateAccountForm.controls['accountId'].value + '?');
+        window.confirm('Save Acount ' + this.updateAccountForm.controls['accountId'].value + '?');
       }
       else {
-        alert('Save Acount ' + this.updateAccountForm.controls['nickname'].value + '?');
+        window.confirm('Save Acount ' + this.updateAccountForm.controls['nickname'].value + '?');
       }
       this.httpService.update('http://localhost:9001/accounts', body).subscribe((result) => {
         console.log("updating" + result);
@@ -276,4 +273,12 @@ export class AccountComponent implements OnInit {
   closeModal() {
     this.modalRef.close();
   }
+
+  get userId() { return this.updateAccountForm.get('userId'); }
+  get activeStatus() { return this.updateAccountForm.get('activeStatus'); }
+  get balance() { return this.updateAccountForm.get('balance'); }
+  get createDate() { return this.updateAccountForm.get('createDate'); }
+  get interest() { return this.updateAccountForm.get('interest'); }
+  get nickname() { return this.updateAccountForm.get('nickname'); }
+  get type() { return this.updateAccountForm.get('type'); }
 }

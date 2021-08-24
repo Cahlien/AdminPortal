@@ -3,7 +3,6 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { HttpService } from 'src/app/shared/services/http.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/shared/models/user.model';
-import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-user',
@@ -48,6 +47,7 @@ export class UserComponent implements OnInit {
     {name: "firstName", displayName: "First Name", class: "col-2"},
     {name: "lastName", displayName: "Last Name", class: "col-2"},
     {name: "userId", displayName: "User ID", class: "col-2"},
+    {name: "username", displayName: "Username", class: "col-2"},
     {name: "email", displayName: "Email", class: "col-2"},
     {name: "phone", displayName: "Phone Number", class: "col-2"},
     {name: "dateOfBirth", displayName: "Date of Birth", class: "col-2"},
@@ -88,7 +88,6 @@ export class UserComponent implements OnInit {
   loadUsers() {
     this.users = [];
     this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
-    console.log('attempting to make http call')
     this.httpService
     .getUsers(this.pageNumber, this.resultsPerPage, this.sort, this.asc, this.search)
     .subscribe((response) => {
@@ -115,24 +114,22 @@ export class UserComponent implements OnInit {
       this.data = { status: "error", content: [], totalElements: 0, totalPages: 0 };
     })
   }
-
   initializeForms() {
     this.updateUserForm = new FormGroup({
-      userId: new FormControl('',[Validators.required, Validators.maxLength(20)]),
       username: new FormControl('',[Validators.required, Validators.maxLength(20)]),
-      password: new FormControl('',[Validators.required, Validators.maxLength(20)]),
-      email: new FormControl('',[Validators.required, Validators.maxLength(30)]),
-      phone: new FormControl('',[Validators.required, Validators.maxLength(10)]),
+      password: new FormControl('',[Validators.required, Validators.minLength(8), Validators.maxLength(20)]),
+      email: new FormControl('',[Validators.required, Validators.maxLength(30), Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]),
+      phone: new FormControl('',[Validators.required, Validators.minLength(10), Validators.maxLength(10)]),
       firstName: new FormControl('',[Validators.required, Validators.maxLength(20)]),
       lastName: new FormControl('',[Validators.required, Validators.maxLength(20)]),
       dateOfBirth: new FormControl('',[Validators.required, Validators.maxLength(10)]),
-      role: new FormControl('',[Validators.required, Validators.maxLength(20)])
+      role: new FormControl('',[Validators.required])
     })
   }
 
   deleteUser(id: String){
-    alert("delete user " + id);
-    this.httpService.deleteById('http://localhost:8080/admin/users/id/' + id).subscribe((result)=>{
+    window.confirm("delete user " + id + "?");
+    this.httpService.deleteById('http://localhost:9001/admin/users/' + id).subscribe((result)=>{
       console.log(result);
       this.users.length = 0;
       this.loadUsers();
@@ -140,8 +137,7 @@ export class UserComponent implements OnInit {
   }
 
   saveUser(){
-    console.log("save");
-    alert("save user " + this.updateUserForm.controls['firstName'].value);
+    window.confirm("save user " + this.updateUserForm.controls['firstName'].value + "?");
     let u = new User(
       this.updateUserForm.controls['username'].value,
       this.updateUserForm.controls['password'].value,
@@ -153,13 +149,12 @@ export class UserComponent implements OnInit {
       this.updateUserForm.controls['role'].value,
       this.updateUserForm.controls['userId'].value);
     
-    const body = JSON.stringify(u);
-    console.log(body);
+    let body = u;
 
     if (this.createNew){
       console.log("saving...");
-      this.httpService.create('http://localhost:9001/admin/users', body).subscribe((result)=>{
-        console.log("save" + result);
+      this.httpService.create('http://localhost:9001/users', body).subscribe((result)=>{
+        console.log("save " + result);
         this.users.length = 0;
         this.createNew = false;
         this.loadUsers();
@@ -168,20 +163,22 @@ export class UserComponent implements OnInit {
     else{
       console.log("editing...");
       this.httpService.update('http://localhost:9001/admin/users/' + this.updateUserForm.controls['userId'].value, body).subscribe((result)=>{
-        console.log("updating" + result);
+        console.log("updating: " + result);
         this.users.length = 0;
         this.loadUsers();
       })
     }
+    this.initializeForms();
     //this.loadUsers();
   }
 
-  //{ username: String; password: String; email: String; phone: String; 
+  //{ username: String; password: String; email: String; phone: String;
   //firstName: String; lastName: String; dateOfBirth: String; role: String, userId: String}
   async open(content: any, u: User | null){
     if (u!== null){
+      console.log('user pass: ', u.$password);
+      this.createNew = false;
       this.modalHeader = 'Edit User';
-      console.log("createModal False");
       this.updateUserForm = this.fb.group({
         userId: u.$userId,
         username: u.$username,
@@ -193,7 +190,8 @@ export class UserComponent implements OnInit {
         dateOfBirth: u.$dateOfBirth,
         role: u.$role
       });
-    } else{
+    }
+    else{
       this.modalHeader = 'Add New User';
       const uuid = await this.httpService.getNewUUID('http://localhost:9001/accounts/new');
       this.createNew = true;
@@ -213,7 +211,6 @@ export class UserComponent implements OnInit {
           role: ''
         })
       }
-      
     }
     this.modalRef = this.modalService.open(content);
     this.modalRef.result.then(
@@ -229,18 +226,12 @@ export class UserComponent implements OnInit {
   closeModal(){
     this.modalRef.close();
   }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-  
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-  
-      // TODO: better job of transforming error for user consumption
-      //this.log(`${operation} failed: ${error.message}`);
-  
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
+  get username() { return this.updateUserForm.get('username'); }
+  get password() { return this.updateUserForm.get('password'); }
+  get email() { return this.updateUserForm.get('email'); }
+  get phone() { return this.updateUserForm.get('phone'); }
+  get firstName() { return this.updateUserForm.get('firstName'); }
+  get lastName() { return this.updateUserForm.get('lastName'); }
+  get dateOfBirth() { return this.updateUserForm.get('dateOfBirth'); }
+  get role() { return this.updateUserForm.get('role'); }
 }
