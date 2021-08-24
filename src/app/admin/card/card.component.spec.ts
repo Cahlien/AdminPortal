@@ -146,7 +146,4 @@ describe('CardComponent', () => {
     call.flush(response);
 
   });
-
-  
-
 });

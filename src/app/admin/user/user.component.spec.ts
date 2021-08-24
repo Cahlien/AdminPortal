@@ -12,6 +12,8 @@ import {PageEvent} from "@angular/material/paginator";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { UserComponent } from './user.component';
+import { of } from 'rxjs';
+import { User } from 'src/app/shared/models/user.model';
 
 describe('UserComponent', () => {
   let component: UserComponent;
@@ -137,10 +139,5 @@ describe('UserComponent', () => {
     call.flush(response);
 
   });
-
-
-
-  
-
 });
 
