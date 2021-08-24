@@ -20,18 +20,14 @@ export class UserComponent implements OnInit {
   modalHeader!: String;
   createNew!: boolean;
   totalItems: any;
+  pageIndex: any;
+  pageSize: any;
+
 
   constructor(private httpService: HttpService, private fb: FormBuilder, private modalService: NgbModal) { }
 
   @Input() search!: string;
   @Output() searchChange = new EventEmitter<string>();
-
-  @Input() pageNumber: number = 0;
-  @Output() pageNumberChange = new EventEmitter<number>();
-
-  @Input() resultsPerPage: number = 10;
-  @Output() resultsPerPageChange = new EventEmitter<number>();
-
   @Input() sort!: string;
   @Output() sortChange = new EventEmitter<number>();
 
@@ -57,27 +53,21 @@ export class UserComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.totalItems = 0;
+    this.pageIndex = 0;
+    this.pageSize = 5;
     this.loadUsers();
     this.initializeForms();
   }
 
-  setPage(pageNumber: number) {
-    this.pageNumber = pageNumber;
-    this.loadUsers();
-  }
-
-  setResultsPerPage(resultsPerPage: number) {
-    this.pageNumber = 0;
-    this.resultsPerPage = resultsPerPage;
-    this.loadUsers();
-  }
-
   onChangePage(pe:PageEvent) {
-    this.pageNumber = pe.pageIndex;
-    if(pe.pageSize !== this.resultsPerPage){
-      this.pageNumber = 0;
-      this.resultsPerPage = pe.pageSize;
+    this.pageIndex = pe.pageIndex;
+    if(pe.pageSize !== this.pageSize){
+      this.pageIndex = 0;
+      this.pageSize = pe.pageSize;
     }
+
+    this.loadUsers();
   }
 
   setSort(property: string) {
@@ -99,10 +89,11 @@ export class UserComponent implements OnInit {
     this.users = [];
     this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
     this.httpService
-    .getUsers(this.pageNumber, this.resultsPerPage, this.sort, this.asc, this.search)
+    .getUsers(this.pageIndex, this.pageSize, this.sort, this.asc, this.search)
     .subscribe((response) => {
       let arr: any;
       arr = response;
+      this.totalItems = arr.totalElements;
       for(let obj of arr.content){
         console.log('in for loop, arr = ', arr)
         let u = new User(obj.username, obj.password, obj.email, obj.phone, 

@@ -11,9 +11,9 @@
             <div class="col-md-7">
             </div>
             <div class="col-md-3 mt-auto">
-                <div class="form-group">
-                    <input type="text" class="form-control col-sm-2 col-lg-3" [ngModel]="search"
-                        (ngModelChange)="setSearch($event)" placeholder="Search">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control col-sm-2 col-lg-3" 
+                    [ngModel]="search"(ngModelChange)="setSearch($event)" placeholder="Search">
                     <button type="input" class="btn btn-outline-secondary btn-small" (click)="update()">Search</button>
                 </div>
             </div>
