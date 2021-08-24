@@ -114,7 +114,6 @@ export class UserComponent implements OnInit {
       this.data = { status: "error", content: [], totalElements: 0, totalPages: 0 };
     })
   }
-
   initializeForms() {
     this.updateUserForm = new FormGroup({
       username: new FormControl('',[Validators.required, Validators.maxLength(20)]),
@@ -169,18 +168,18 @@ export class UserComponent implements OnInit {
         this.loadUsers();
       })
     }
+    this.initializeForms();
     //this.loadUsers();
   }
 
-  //{ username: String; password: String; email: String; phone: String; 
+  //{ username: String; password: String; email: String; phone: String;
   //firstName: String; lastName: String; dateOfBirth: String; role: String, userId: String}
   async open(content: any, u: User | null){
     if (u!== null){
       console.log('user pass: ', u.$password);
       this.createNew = false;
       this.modalHeader = 'Edit User';
-      console.log("createModal False");
-      this.updateUserForm = this.fb.group({
+      this.userForm = this.fb.group({
         userId: u.$userId,
         username: u.$username,
         password: u.$password,
@@ -191,7 +190,8 @@ export class UserComponent implements OnInit {
         dateOfBirth: u.$dateOfBirth,
         role: u.$role
       });
-    } else{
+    }
+    else{
       this.modalHeader = 'Add New User';
       const uuid = await this.httpService.getNewUUID('http://localhost:9001/accounts/new');
       this.createNew = true;
@@ -211,7 +211,6 @@ export class UserComponent implements OnInit {
           role: ''
         })
       }
-      
     }
     this.modalRef = this.modalService.open(content);
     this.modalRef.result.then(
@@ -227,7 +226,6 @@ export class UserComponent implements OnInit {
   closeModal(){
     this.modalRef.close();
   }
-
   get username() { return this.updateUserForm.get('username'); }
   get password() { return this.updateUserForm.get('password'); }
   get email() { return this.updateUserForm.get('email'); }
