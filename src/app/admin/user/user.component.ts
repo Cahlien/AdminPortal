@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { HttpService } from 'src/app/shared/services/http.service';
+import { HttpService } from '../../shared/services/http.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/shared/models/user.model';
 import { PageEvent } from '@angular/material/paginator';

@@ -25,7 +25,7 @@
             <tr *ngFor="let c of cards; let i=index">
                 <td>{{ i+1 }}</td>
                 <td>{{ c.$nickname }}</td>
-                <td>{{ c.$balance }}</td>
+                <td>{{ c.$balance.toString() }}</td>
                 <td>{{ c.$createDate }}</td>
                 <td><button type="button" class="btn btn-secondary" (click)="open(cardModal, c)">Edit</button></td>
                 <td><button type="button" class="btn btn-danger" (click)="deleteCard(c.$cardId)">Delete</button></td>
@@ -95,7 +95,7 @@
                         </div>
                         <div class="mb-2">
                             <label for="billCycleLength" class="form-label">Bill Cycle Length: </label>
-                            <input type="text" id="billCycleLengthe" formControlName="billCycleLength" class="form-control"/>
+                            <input type="text" id="billCycleLength" formControlName="billCycleLength" class="form-control"/>
                             <div *ngIf="billCycleLength?.invalid && (billCycleLength?.dirty || billCycleLength?.touched)">
                                 <div *ngIf="billCycleLength?.errors?.required">
                                     <small class="text-danger">bill cycle length is required</small>

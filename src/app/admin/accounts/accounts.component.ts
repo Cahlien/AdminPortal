@@ -25,6 +25,8 @@ export class AccountComponent implements OnInit {
   pageIndex: any;
   pageSize: any;
 
+
+
   @Input() search!: string;
   @Output() searchChange = new EventEmitter<string>();
 
