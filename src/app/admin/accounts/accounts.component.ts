@@ -4,6 +4,7 @@ import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { HttpService } from "src/app/shared/services/http.service";
 import { Account } from "src/app/shared/models/account.model";
 import { User } from "src/app/shared/models/user.model";
+import { PageEvent } from "@angular/material/paginator";
 
 @Component({
   selector: 'app-accounts',
@@ -20,17 +21,12 @@ export class AccountComponent implements OnInit {
   errorMessage: any;
   closeResult: any;
   modalHeader!: String;
-
-  //Pagination items:
+  totalItems: any;
+  pageIndex: any;
+  pageSize: any;
 
   @Input() search!: string;
   @Output() searchChange = new EventEmitter<string>();
-
-  @Input() pageNumber: number = 0;
-  @Output() pageNumberChange = new EventEmitter<number>();
-
-  @Input() resultsPerPage: number = 10;
-  @Output() resultsPerPageChange = new EventEmitter<number>();
 
   @Input() sort!: string;
   @Output() sortChange = new EventEmitter<number>();
@@ -62,17 +58,19 @@ export class AccountComponent implements OnInit {
 
   constructor(private httpService: HttpService, private fb: FormBuilder, private modalService: NgbModal) { }
   ngOnInit(): void {
+    this.totalItems = 0;
+    this.pageIndex = 0;
+    this.pageSize = 5;
     this.update();
   }
 
-  setPage(pageNumber: number) {
-    this.pageNumber = pageNumber;
-    this.update();
-  }
-
-  setResultsPerPage(resultsPerPage: number) {
-    this.pageNumber = 0;
-    this.resultsPerPage = resultsPerPage;
+  onChangePage(pe:PageEvent) {
+    this.pageIndex = pe.pageIndex;
+    if(pe.pageSize !== this.pageSize){
+      this.pageIndex = 0;
+      this.pageSize = pe.pageSize;
+    }
+    this.accounts = new Array();
     this.update();
   }
 
@@ -102,18 +100,17 @@ export class AccountComponent implements OnInit {
   update() {
     this.accounts = [];
     this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
-    this.httpService.getAccounts(this.pageNumber, this.resultsPerPage, this.sort, this.dir, this.search)
+    this.httpService.getAccounts(this.pageIndex, this.pageSize, this.sort, this.dir, this.search)
     .subscribe((res) => {
       console.log(res);
       let arr: any;
       arr = res;
+      this.totalItems = arr.totalElements;
       for (let obj of arr.content) {
         let u = new Account(obj.userId, obj.accountId, obj.activeStatus, obj.balance,
           obj.createDate, obj.interest, obj.nickname, obj.type);
         u.fixBalance(); //<--VERY IMPORTANT!!!
         this.accounts.push(u);
-        console.log('accounts: ', this.accounts)
-        // this.nameAccounts();
       }
       this.data = {
         status: "success",
@@ -121,49 +118,13 @@ export class AccountComponent implements OnInit {
         totalElements: arr.numberOfElements,
         totalPages: arr.totalPages
       };
-      // this.loadUsers();
     }, (err) => {
       console.error("Failed to retrieve accounts", err);
       this.data = { status: "error", content: [], totalElements: 0, totalPages: 0 };
     })
   }
 
-  // loadUsers(): any {
-  //   this.users = [];
-  //   this.httpService
-  //     .getAll('http://localhost:9001/users')
-  //     .subscribe((response) => {
-  //       let arr: any;
-  //       arr = response;
-  //       console.log('response: ', arr.content);
-  //       for (let obj of arr.content) {
-  //         let u = new User(obj.username, obj.password, obj.email, obj.phone,
-  //           obj.firstName, obj.lastName, obj.dateOfBirth, obj.role, obj.userId);
-  //         this.users.push(u);
-  //       }
-  //       this.nameAccounts();
-  //     })
-  // }
-
-  // nameAccounts(): any {
-  //   this.namedAccounts = [];
-  //   for (var i = 0; i < this.users.length; i++) {
-  //     for (var j = 0; j < this.accounts.length; j++) {
-  //       if (this.accounts[j].$userId === this.users[i].$userId) {
-  //         this.accounts[j].$firstName = this.users[i].$firstName;
-  //         this.accounts[j].$lastName = this.users[i].$lastName;
-  //         this.namedAccounts.push(this.accounts[j]);
-  //       }
-  //       else {
-  //         this.accounts[j].$firstName = 'Unrecognized user ID'
-  //         this.accounts[j].$lastName = 'Please Fix'
-  //         this.namedAccounts.push(this.accounts[j])
-  //       }
-  //     }
-  //   }
-  // }
-
-  iinitializeForms() {
+  initializeForms() {
     this.updateAccountForm = new FormGroup({
       userId: new FormControl('', [Validators.required, Validators.minLength(32), Validators.maxLength(32), Validators.pattern("/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/")]),
       activeStatus: new FormControl('', [Validators.required]),
@@ -180,7 +141,6 @@ export class AccountComponent implements OnInit {
       this.httpService.deleteById("http://localhost:9001/accounts/" + id).subscribe((result) => {
         console.log(result);
         this.users.length = 0;
-        // this.loadUsers();
       });
       window.location.reload();
     }

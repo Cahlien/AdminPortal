@@ -69,7 +69,7 @@ fdescribe('AccountsComponent', () => {
         fixture.detectChanges();
         expect(component.users).toEqual(users);
         expect(component.data).toEqual(data);
-        expect(component.namedAccounts.length).toBe(1);
+        expect(component.accounts.length).toBe(1);
     })
 
 });
