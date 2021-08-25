@@ -1,9 +1,18 @@
+<<<<<<< HEAD
+=======
+import {Balance} from "./balance.model";
+
+>>>>>>> local-dev
 export class Card {
 
     private cardId: String;
 	private userId: String;
 	private cardType: String;
+<<<<<<< HEAD
 	private balance: Number;
+=======
+	private balance: Balance;
+>>>>>>> local-dev
 	private cardNumber: String;
 	private interestRate: Number;
 	private createDate: String ;
@@ -11,7 +20,11 @@ export class Card {
 	private billCycleLength: Number;
 	private expireDate: String;
 
+<<<<<<< HEAD
 	constructor($cardId: String, $userId: String, $cardType: String , $balance: Number, $cardNumber: String, $interestRate: Number, $createDate: String , $nickname: String, $billCycleLength: Number, $expireDate: String) {
+=======
+	constructor($cardId: String, $userId: String, $cardType: String , $balance: Balance, $cardNumber: String, $interestRate: Number, $createDate: String , $nickname: String, $billCycleLength: Number, $expireDate: String) {
+>>>>>>> local-dev
 		this.cardId = $cardId;
 		this.userId = $userId;
 		this.cardType = $cardType;
@@ -53,7 +66,11 @@ export class Card {
      * Getter $balance
      * @return {Number}
      */
+<<<<<<< HEAD
 	public get $balance(): Number {
+=======
+	public get $balance(): Balance {
+>>>>>>> local-dev
 		return this.balance;
 	}
 
@@ -133,7 +150,11 @@ export class Card {
      * Setter $balance
      * @param {Number} value
      */
+<<<<<<< HEAD
 	public set $balance(value: Number) {
+=======
+	public set $balance(value: Balance) {
+>>>>>>> local-dev
 		this.balance = value;
 	}
 
@@ -184,6 +205,9 @@ export class Card {
 	public set $expireDate(value: String) {
 		this.expireDate = value;
 	}
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> local-dev
 }
