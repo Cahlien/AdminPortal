@@ -10,11 +10,8 @@ import { HttpHeaders } from '@angular/common/http';
 import { CardRegistration } from '../../shared/models/cardregistration.model';
 import { HttpService } from '../../shared/services/http.service';
 import {PageEvent} from "@angular/material/paginator";
-<<<<<<< HEAD
-=======
 import {Balance} from "../../shared/models/balance.model";
 import {B} from "@angular/cdk/keycodes";
->>>>>>> local-dev
 
 
 @Component({
@@ -44,11 +41,7 @@ export class CardComponent implements OnInit {
   sortByBalance: boolean = false;
   createDateOrder: string = 'desc';
   sortByCreateDate: boolean = false;
-<<<<<<< HEAD
-  sortBy: string[] = new Array();
-=======
   sortBy: string[] = [];
->>>>>>> local-dev
   predicate: string = '?page=0&&size=5';
   searchCriteria: string = '';
 
@@ -56,13 +49,8 @@ export class CardComponent implements OnInit {
     this.pageSize=5;
     this.pageIndex=0;
     this.totalItems=0;
-<<<<<<< HEAD
-    this.loadCards();
-    this.loadCardTypes();
-=======
     this.loadCardTypes();
     this.loadCards();
->>>>>>> local-dev
     this.initializeForms();
   }
 
@@ -71,19 +59,11 @@ export class CardComponent implements OnInit {
     .getAll('http://localhost:9001/cards' + this.predicate)
     .subscribe((response) => {
       let arr: any;
-<<<<<<< HEAD
-      arr = response;
-      this.totalItems = arr.totalElements;
-      for(let obj of arr.content){
-        let c = new Card(obj.cardId, obj.userId, obj.cardType, obj.balance, obj.cardNumber, obj.interestRate,
-          obj.createDate, obj.nickname, obj.billCycleLength, obj.expireDate);
-=======
       arr = response as Card;
       this.totalItems = arr.totalElements;
       for(let obj of arr.content){
         let c = new Card(obj.cardId, obj.userId, obj.cardType, new Balance(obj.balance.dollars, obj.balance.cents),
           obj.cardNumber, obj.interestRate, obj.createDate, obj.nickname, obj.billCycleLength, obj.expireDate);
->>>>>>> local-dev
         console.log(c);
         this.cards.push(c);
       }
@@ -201,28 +181,13 @@ export class CardComponent implements OnInit {
   }
 
   onChangePage(pe:PageEvent) {
-<<<<<<< HEAD
-    console.log("Current pageIndex: " + pe.pageIndex);
-    console.log("Current pageSize: " + pe.pageSize);
-=======
->>>>>>> local-dev
     this.pageIndex = pe.pageIndex;
     if(pe.pageSize !== this.pageSize){
       this.pageIndex = 0;
       this.pageSize = pe.pageSize;
     }
 
-<<<<<<< HEAD
-    this.cards = new Array();
-
-    this.assemblePredicate();
-
-    this.loadCards();
-    this.loadCardTypes();
-    this.initializeForms();
-=======
     this.updatePage();
->>>>>>> local-dev
   }
 
   get cardId() { return this.cardForm.get('cardId'); }
@@ -237,10 +202,6 @@ export class CardComponent implements OnInit {
   get expireDate() { return this.cardForm.get('expireDate'); }
 
   addToSortBy(field: string) {
-<<<<<<< HEAD
-    console.log("added " + field + " to sortby");
-=======
->>>>>>> local-dev
     if(field === 'cardId'){
       this.sortByCardId = true;
       this.cardIdOrder = this.cardIdOrder === 'desc' ? 'asc' : 'desc';
@@ -252,13 +213,7 @@ export class CardComponent implements OnInit {
       this.createDateOrder = this.createDateOrder === 'desc' ? 'asc' : 'desc';
     }
 
-<<<<<<< HEAD
-    this.assemblePredicate();
-    this.cards = new Array();
-    this.loadCards();
-=======
     this.updatePage();
->>>>>>> local-dev
   }
 
   private assembleQueryParams() {
@@ -282,8 +237,6 @@ export class CardComponent implements OnInit {
     this.predicate += this.sortBy.length > 0 ? '&&sortBy=' + this.sortBy : '';
     this.predicate += this.searchCriteria.length > 0 ? "&&search=" + this.searchCriteria : '';
   }
-<<<<<<< HEAD
-=======
 
   search() {
     this.updatePage();
@@ -299,5 +252,4 @@ export class CardComponent implements OnInit {
     this.loadCards();
     this.initializeForms();
   }
->>>>>>> local-dev
 }
