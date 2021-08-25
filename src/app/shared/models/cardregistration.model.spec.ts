@@ -1,7 +1,7 @@
-import { Cardregistration } from './cardregistration.model';
+import { CardRegistration } from './cardregistration.model';
 
 describe('Cardregistration', () => {
   it('should create an instance', () => {
-    expect(new Cardregistration()).toBeTruthy();
+    expect(new CardRegistration("user_id", "card_type", 0.0, "nick_name", 30)).toBeTruthy();
   });
 });
