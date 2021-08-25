@@ -72,8 +72,12 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <div class="mb-2">
+                            <label for="userId" class="form-label">AccountId: </label>
+                            <input type="text" id="accountId" formControlName="accountId" class="form-control"  readonly="readonly"/>
+                        </div>
+                        <div class="mb-2">
                             <label for="userId" class="form-label">UserId: </label>
-                            <input type="text" id="username" formControlName="userId" class="form-control" required />
+                            <input type="text" id="userId" formControlName="userId" class="form-control" required />
                             <div *ngIf="userId?.invalid && (userId?.dirty || userId?.touched)">
                                 <div *ngIf="userId?.errors?.required">
                                     <small class="text-danger">userId is required</small>
