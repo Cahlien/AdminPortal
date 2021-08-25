@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 <div class='container-fluid'>
     <h1 class="text-center mb-2">View All Cards</h1>
     <h3><td><button type="button" class="btn btn-primary btn-lg" style="background-color:green" (click)="open(cardModal, null)">Create</button></td></h3>
@@ -7,6 +8,11 @@
     <h1 class="text-center mb-2">View All Cards</h1>
     <h3><td><button type="button" class="btn btn-primary btn-lg me-5" style="background-color:green" (click)="open(cardModal, null)">Create new Card</button></td></h3>
 >>>>>>> feature/BTLLC-69-71-accounts-mannually-create-view-details
+=======
+<div class='container'>
+    <h1 class="text-center mb-2">View All Cards</h1>
+    <h3><td><button type="button" class="btn btn-primary btn-lg me-5" style="background-color:green" (click)="open(cardModal, null)">Create new Card</button></td></h3>
+>>>>>>> local-dev
     <table class='table table-striped table-hover table-active border border-secondary shadow-lg'>
         <thead>
             <tr>
@@ -39,16 +45,22 @@
         </tbody>
     </table>
 <<<<<<< HEAD
+<<<<<<< HEAD
 </div>
 <div class="mb-5">
   <mat-paginator class="my-5" [length]="this.totalItems" [pageIndex]="this.pageIndex" [pageSizeOptions]="[5, 10, 15, 20, 25, 50]"
                  [pageSize]="this.pageSize" [showFirstLastButtons]="true" (page)="onChangePage($event)"></mat-paginator>
 =======
+=======
+>>>>>>> local-dev
     <div class="mb-5">
         <mat-paginator class="my-5" [length]="this.totalItems" [pageIndex]="this.pageIndex" [pageSizeOptions]="[5, 10, 15, 20, 25, 50]"
                        [pageSize]="this.pageSize" [showFirstLastButtons]="true" (page)="onChangePage($event)"></mat-paginator>
       </div>
+<<<<<<< HEAD
 >>>>>>> feature/BTLLC-69-71-accounts-mannually-create-view-details
+=======
+>>>>>>> local-dev
 </div>
 
 <ng-template #cardModal let-c="close" let-d="dismiss">
@@ -73,6 +85,7 @@
                             <select class="form-select" id="cardType" formControlName="cardType">
                                 <option *ngFor="let c of cardtypes;" value="{{ c.$id }}">{{ c.$typeName }}: {{ c.$baseInterestRate }}</option>
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 <!--
                                 <option value="debit">Debit</option>
                                 <option value="credit">Credit</option>
@@ -83,6 +96,12 @@
                                 <option value="credit">Credit</option>
                                
 >>>>>>> feature/BTLLC-69-71-accounts-mannually-create-view-details
+=======
+                                
+                                <option value="debit">Debit</option>
+                                <option value="credit">Credit</option>
+                               
+>>>>>>> local-dev
                             </select>
                         </div>
                         <div class="mb-2" *ngIf="this.modalHeader === 'Edit Card';">
