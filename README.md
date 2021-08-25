@@ -1,2 +1,2 @@
-# UserPortal
-The BeardTrust front-end for use by regular users
+# Admin Portal
+The BeardTrust front end portal for Admin access
