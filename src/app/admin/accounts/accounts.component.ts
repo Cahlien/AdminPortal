@@ -216,7 +216,7 @@ export class AccountComponent implements OnInit {
         accountId: uuid,
         activeStatus: '',
         balance: '',
-        createDate: '',
+        createDate: new Date().toJSON().slice(0,10),
         interest: '',
         nickname: '',
         type: ''

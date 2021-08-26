@@ -90,12 +90,7 @@
                         </div>
                         <div class="mb-2">
                             <label for="createDate" class="form-label">Creation Date: </label>
-                            <input type="date" id="createDate" formControlName="createDate" class="form-control" />
-                            <div *ngIf="createDate?.invalid && (createDate?.dirty || createDate?.touched)">
-                                <div *ngIf="createDate?.errors?.required">
-                                    <small class="text-danger">creation date is required</small>
-                                </div>
-                            </div>
+                            <input type="text" id="createDate" formControlName="createDate" class="form-control" readonly="readonly"/>
                         </div>
                         <div class="mb-2">
                             <label for="interest" class="form-label">Interest Rate: </label>
