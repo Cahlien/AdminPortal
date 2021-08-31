@@ -24,7 +24,7 @@ export class AccountComponent implements OnInit {
   totalItems: any;
   pageIndex: any;
   pageSize: any;
-
+  editing!: boolean;
 
 
   @Input() search!: string;
@@ -196,6 +196,7 @@ export class AccountComponent implements OnInit {
 
   async open(content: any, u: Account | null) {
     if (u !== null) {
+      this.editing = true;
       this.modalHeader = 'Edit Account';
       this.updateAccountForm = this.fb.group({
         userId: u.$userId,
@@ -208,6 +209,7 @@ export class AccountComponent implements OnInit {
         type: u.$type,
       });
     } else {
+      this.editing = false;
       this.modalHeader = 'Add New Account';
       const uuid = await this.httpService.getNewUUID('http://localhost:9001/accounts/new');
       console.log('rcv\'d: ', uuid);
@@ -216,7 +218,7 @@ export class AccountComponent implements OnInit {
         accountId: uuid,
         activeStatus: '',
         balance: '',
-        createDate: '',
+        createDate: new Date().toJSON().slice(0,10),
         interest: '',
         nickname: '',
         type: ''
