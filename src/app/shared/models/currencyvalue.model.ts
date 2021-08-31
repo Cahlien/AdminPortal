@@ -109,6 +109,14 @@ export class CurrencyValue{
   }
 
   /**
+   * This method returns a string representation of the currency
+   * value object using the USD currency notation conventions.
+   */
+  toString(): string {
+    return (this.isNegative ? '-$' : '$') + this.dollars + '.' + (this.cents < 10 ? '0' : '') + this.cents;
+  }
+
+  /**
    * This method attempts to parse a number object with non-
    * integer values into a CurrencyValue object storing dollars
    * and cents as integer values, which are more accurate for
