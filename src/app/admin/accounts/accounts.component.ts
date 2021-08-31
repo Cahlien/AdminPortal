@@ -110,9 +110,7 @@ export class AccountComponent implements OnInit {
       arr = res;
       this.totalItems = arr.totalElements;
       for (let obj of arr.content) {
-        const balance = new CurrencyValue(obj.balance.negative, obj.balance.dollars, obj.balance.cents);
-        console.log(balance);
-        let u = new Account(obj.userId, obj.accountId, obj.activeStatus, balance,
+        let u = new Account(obj.userId, obj.accountId, obj.activeStatus, CurrencyValue.from(obj.balance),
           obj.createDate, obj.interest, obj.nickname, obj.type);
         this.accounts.push(u);
       }

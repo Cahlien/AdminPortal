@@ -30,7 +30,6 @@ export class CurrencyValue{
     this.cents = Math.abs(Math.trunc(cents));
   }
 
-
   /**
    * Getter for isNegative flag.
    */
@@ -130,11 +129,22 @@ export class CurrencyValue{
    * @param value number the floating point number representing a value
    * @returns {CurrencyValue} CurrencyValue the resulting value object
    */
-  static valueOf(value: number){
+  static valueOf(value: number): CurrencyValue {
     const isNegative = value < 0;
     const dollars = Math.abs(Math.trunc(value));
     const cents = Math.abs(Math.trunc((value * 100) % 100));
 
     return new CurrencyValue(isNegative, dollars, cents);
+  }
+
+  /**
+   * This static method builds a CurrencyValue object from another
+   * object that contains the requisite fields of negative, dollars,
+   * and cents.
+   *
+   * @param value Object an object with the negative, dollars, and cents fields
+   */
+  static from(value: {negative: boolean, dollars: number, cents: number}): CurrencyValue {
+    return new CurrencyValue(value.negative, value.dollars, value.cents);
   }
 }
