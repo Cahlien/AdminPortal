@@ -1,11 +1,11 @@
-import { Balance } from "./currencyvalue.model";
+import { CurrencyValue } from "./currencyvalue.model";
 
 export class Card {
 
     private cardId: String;
 	private userId: String;
 	private cardType: String;
-	private balance: Balance;
+	private balance: CurrencyValue;
 	private cardNumber: String;
 	private interestRate: Number;
 	private createDate: String ;
@@ -13,7 +13,7 @@ export class Card {
 	private billCycleLength: Number;
 	private expireDate: String;
 
-	constructor($cardId: String, $userId: String, $cardType: String , $balance: Balance, $cardNumber: String, $interestRate: Number, $createDate: String , $nickname: String, $billCycleLength: Number, $expireDate: String) {
+	constructor($cardId: String, $userId: String, $cardType: String , $balance: CurrencyValue, $cardNumber: String, $interestRate: Number, $createDate: String , $nickname: String, $billCycleLength: Number, $expireDate: String) {
 		this.cardId = $cardId;
 		this.userId = $userId;
 		this.cardType = $cardType;
@@ -55,7 +55,7 @@ export class Card {
      * Getter $balance
      * @return {Number}
      */
-	public get $balance(): Balance {
+	public get $balance(): CurrencyValue {
 		return this.balance;
 	}
 
@@ -135,7 +135,7 @@ export class Card {
      * Setter $balance
      * @param {Number} value
      */
-	public set $balance(value: Balance) {
+	public set $balance(value: CurrencyValue) {
 		this.balance = value;
 	}
 

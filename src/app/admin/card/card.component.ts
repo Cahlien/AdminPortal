@@ -10,7 +10,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { CardRegistration } from '../../shared/models/cardregistration.model';
 import { HttpService } from '../../shared/services/http.service';
 import {PageEvent} from "@angular/material/paginator";
-import {Balance} from "../../shared/models/currencyvalue.model";
+import {CurrencyValue} from "../../shared/models/currencyvalue.model";
 import {B} from "@angular/cdk/keycodes";
 
 
@@ -62,7 +62,7 @@ export class CardComponent implements OnInit {
       arr = response as Card;
       this.totalItems = arr.totalElements;
       for(let obj of arr.content){
-        let c = new Card(obj.cardId, obj.userId, obj.cardType, new Balance(obj.balance.dollars, obj.balance.cents),
+        let c = new Card(obj.cardId, obj.userId, obj.cardType, new CurrencyValue(obj.isNegative, obj.balance.dollars, obj.balance.cents),
           obj.cardNumber, obj.interestRate, obj.createDate, obj.nickname, obj.billCycleLength, obj.expireDate);
         console.log(c);
         this.cards.push(c);
