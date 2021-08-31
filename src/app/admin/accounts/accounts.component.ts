@@ -5,6 +5,7 @@ import { HttpService } from "src/app/shared/services/http.service";
 import { Account } from "src/app/shared/models/account.model";
 import { User } from "src/app/shared/models/user.model";
 import { PageEvent } from "@angular/material/paginator";
+import {CurrencyValue} from "../../shared/models/currencyvalue.model";
 
 @Component({
   selector: 'app-accounts',
@@ -169,7 +170,7 @@ export class AccountComponent implements OnInit {
         this.updateAccountForm.controls['userId'].value,
         this.updateAccountForm.controls['accountId'].value,
         this.updateAccountForm.controls['activeStatus'].value,
-        this.updateAccountForm.controls['balance'].value * 100,//<-- VERY IMPORTANT!!!
+        CurrencyValue.valueOf(this.updateAccountForm.controls['balance'].value),//<-- VERY IMPORTANT!!!
         this.updateAccountForm.controls['createDate'].value,
         this.updateAccountForm.controls['interest'].value,
         this.updateAccountForm.controls['nickname'].value,
