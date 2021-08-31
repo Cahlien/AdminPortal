@@ -1,4 +1,4 @@
-import { Balance } from "./balance.model";
+import { Balance } from "./currencyvalue.model";
 
 export class Card {
 
