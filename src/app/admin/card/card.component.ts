@@ -10,7 +10,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { CardRegistration } from '../../shared/models/cardregistration.model';
 import { HttpService } from '../../shared/services/http.service';
 import {PageEvent} from "@angular/material/paginator";
-import {Balance} from "../../shared/models/balance.model";
+import {Balance} from "../../shared/models/currencyvalue.model";
 import {B} from "@angular/cdk/keycodes";
 
 
