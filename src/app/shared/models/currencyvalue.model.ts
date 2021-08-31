@@ -10,9 +10,9 @@
  * @author Matthew Crowell <Matthew.Crowell@Smoothstack.com>
  */
 export class CurrencyValue{
-  private _isNegative: boolean;
-  private _dollars: number;
-  private _cents: number;
+  private negative: boolean;
+  private dollars: number;
+  private cents: number;
 
   /**
    * The parameterized constructor for the CurrencyValue class
@@ -25,17 +25,17 @@ export class CurrencyValue{
    * @param cents integer the number of cents
    */
   constructor(isNegative: boolean, dollars: number, cents: number) {
-    this._isNegative = isNegative;
-    this._dollars = Math.abs(Math.trunc(dollars));
-    this._cents = Math.abs(Math.trunc(cents));
+    this.negative = isNegative;
+    this.dollars = Math.abs(Math.trunc(dollars));
+    this.cents = Math.abs(Math.trunc(cents));
   }
 
 
   /**
    * Getter for isNegative flag.
    */
-  get isNegative(): boolean {
-    return this._isNegative;
+  get $negative(): boolean {
+    return this.negative;
   }
 
   /**
@@ -43,15 +43,15 @@ export class CurrencyValue{
    *
    * @param value boolean whether the currency value is negative
    */
-  set isNegative(value: boolean) {
-    this._isNegative = value;
+  set $negative(value: boolean) {
+    this.negative = value;
   }
 
   /**
    * Getter for dollars.
    */
-  get dollars(): number {
-    return this._dollars;
+  get $dollars(): number {
+    return this.dollars;
   }
 
   /**
@@ -59,15 +59,15 @@ export class CurrencyValue{
    *
    * @param value number the dollar value
    */
-  set dollars(value: number) {
-    this._dollars = Math.abs(Math.trunc(value))
+  set $dollars(value: number) {
+    this.dollars = Math.abs(Math.trunc(value))
   }
 
   /**
    * Getter for cents.
    */
-  get cents(): number {
-    return this._cents;
+  get $cents(): number {
+    return this.cents;
   }
 
   /**
@@ -75,8 +75,8 @@ export class CurrencyValue{
    *
    * @param value number the cents value
    */
-  set cents(value: number) {
-    this._cents = Math.abs(Math.trunc(value))
+  set $cents(value: number) {
+    this.cents = Math.abs(Math.trunc(value))
   }
 
   /**
@@ -91,18 +91,18 @@ export class CurrencyValue{
   compareTo(other: CurrencyValue){
     let returnValue = 0;
 
-    if (this.isNegative === other.isNegative) {
+    if (this.$negative === other.$negative) {
       if (this.dollars !== other.dollars) {
         returnValue = this.dollars > other.dollars ? 1 : -1;
       } else {
         returnValue = this.cents > other.cents ? 1 : -1;
       }
 
-      if (this.isNegative) {
+      if (this.$negative) {
         returnValue *= -1;
       }
     } else {
-      returnValue = this.isNegative ? -1 : 1;
+      returnValue = this.$negative ? -1 : 1;
     }
 
     return returnValue;
@@ -113,7 +113,7 @@ export class CurrencyValue{
    * value object using the USD currency notation conventions.
    */
   toString(): string {
-    return (this.isNegative ? '-$' : '$') + this.dollars + '.' + (this.cents < 10 ? '0' : '') + this.cents;
+    return ((this.$negative ? '-$' : '$') + this.dollars + '.' + (this.cents < 10 ? '0' : '') + this.cents);
   }
 
   /**

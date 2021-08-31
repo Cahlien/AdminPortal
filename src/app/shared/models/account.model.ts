@@ -1,10 +1,11 @@
 import { ThisReceiver } from "@angular/compiler";
+import {CurrencyValue} from "./currencyvalue.model";
 
 export class Account {
     private userId: String;
     private accountId: String;
     private activeStatus: boolean;
-    private balance: number;
+    private balance: CurrencyValue;
     private createDate: Date;
     private interest: number;
     private nickname: String;
@@ -12,7 +13,7 @@ export class Account {
     private firstName: any;
     private lastName: any;
 
-    constructor(userId: String, accountId: String, activeStatus: boolean, balance: number, createDate: Date, interest: number, nickname: String, type: String) {
+    constructor(userId: String, accountId: String, activeStatus: boolean, balance: CurrencyValue, createDate: Date, interest: number, nickname: String, type: String) {
         this.userId = userId;
         this.accountId = accountId;
         this.activeStatus = activeStatus;
@@ -51,12 +52,11 @@ export class Account {
         return this.balance
     }
 
-    set $balance(val: number) {
+    set $balance(val: CurrencyValue) {
         this.balance = val
     }
 
-    fixBalance(): number{
-        this.balance = this.balance / 100
+    fixBalance(): CurrencyValue{
         return this.balance
     }
 
