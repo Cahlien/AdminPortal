@@ -1,5 +1,5 @@
 import { Card } from './card.model';
-import { Balance } from "./balance.model";
+import { Balance } from "./currencyvalue.model";
 
 
 describe('Cardregistration', () => {
