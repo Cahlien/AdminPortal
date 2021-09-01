@@ -33,7 +33,7 @@ export class CurrencyValue{
   /**
    * Getter for isNegative flag.
    */
-  get $negative(): boolean {
+  get isNegative(): boolean {
     return this.negative;
   }
 
@@ -42,14 +42,14 @@ export class CurrencyValue{
    *
    * @param value boolean whether the currency value is negative
    */
-  set $negative(value: boolean) {
+  set isNegative(value: boolean) {
     this.negative = value;
   }
 
   /**
    * Getter for dollars.
    */
-  get $dollars(): number {
+  get getDollars(): number {
     return this.dollars;
   }
 
@@ -58,14 +58,14 @@ export class CurrencyValue{
    *
    * @param value number the dollar value
    */
-  set $dollars(value: number) {
+  set setDollars(value: number) {
     this.dollars = Math.abs(Math.trunc(value))
   }
 
   /**
    * Getter for cents.
    */
-  get $cents(): number {
+  get getCents(): number {
     return this.cents;
   }
 
@@ -74,7 +74,7 @@ export class CurrencyValue{
    *
    * @param value number the cents value
    */
-  set $cents(value: number) {
+  set setCents(value: number) {
     this.cents = Math.abs(Math.trunc(value))
   }
 
@@ -90,18 +90,18 @@ export class CurrencyValue{
   compareTo(other: CurrencyValue){
     let returnValue = 0;
 
-    if (this.$negative === other.$negative) {
+    if (this.isNegative === other.isNegative) {
       if (this.dollars !== other.dollars) {
         returnValue = this.dollars > other.dollars ? 1 : -1;
       } else {
         returnValue = this.cents > other.cents ? 1 : -1;
       }
 
-      if (this.$negative) {
+      if (this.isNegative) {
         returnValue *= -1;
       }
     } else {
-      returnValue = this.$negative ? -1 : 1;
+      returnValue = this.isNegative ? -1 : 1;
     }
 
     return returnValue;
@@ -112,7 +112,7 @@ export class CurrencyValue{
    * value object using the USD currency notation conventions.
    */
   toString(): string {
-    return ((this.$negative ? '-$' : '$') + this.dollars + '.' + (this.cents < 10 ? '0' : '') + this.cents);
+    return ((this.isNegative ? '-$' : '$') + this.dollars + '.' + (this.cents < 10 ? '0' : '') + this.cents);
   }
 
   /**
