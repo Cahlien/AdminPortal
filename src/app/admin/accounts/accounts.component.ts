@@ -110,9 +110,8 @@ export class AccountComponent implements OnInit {
       arr = res;
       this.totalItems = arr.totalElements;
       for (let obj of arr.content) {
-        let u = new Account(obj.userId, obj.accountId, obj.activeStatus, obj.balance,
+        let u = new Account(obj.userId, obj.accountId, obj.activeStatus, CurrencyValue.from(obj.balance),
           obj.createDate, obj.interest, obj.nickname, obj.type);
-        u.fixBalance(); //<--VERY IMPORTANT!!!
         this.accounts.push(u);
       }
       this.data = {
@@ -170,12 +169,12 @@ export class AccountComponent implements OnInit {
         this.updateAccountForm.controls['userId'].value,
         this.updateAccountForm.controls['accountId'].value,
         this.updateAccountForm.controls['activeStatus'].value,
-        CurrencyValue.valueOf(this.updateAccountForm.controls['balance'].value),//<-- VERY IMPORTANT!!!
+        CurrencyValue.valueOf(this.updateAccountForm.controls['balance'].value.replace('$', '')),//<-- VERY IMPORTANT!!!
         this.updateAccountForm.controls['createDate'].value,
         this.updateAccountForm.controls['interest'].value,
         this.updateAccountForm.controls['nickname'].value,
         this.updateAccountForm.controls['type'].value);
-
+      console.log(u)
       const body = JSON.stringify(u);
 
       if (!this.updateAccountForm.controls['nickname'].value) {

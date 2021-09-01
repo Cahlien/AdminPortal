@@ -10,9 +10,9 @@
  * @author Matthew Crowell <Matthew.Crowell@Smoothstack.com>
  */
 export class CurrencyValue{
-  private _isNegative: boolean;
-  private _dollars: number;
-  private _cents: number;
+  private negative: boolean;
+  private dollars: number;
+  private cents: number;
 
   /**
    * The parameterized constructor for the CurrencyValue class
@@ -25,17 +25,16 @@ export class CurrencyValue{
    * @param cents integer the number of cents
    */
   constructor(isNegative: boolean, dollars: number, cents: number) {
-    this._isNegative = isNegative;
-    this._dollars = Math.abs(Math.trunc(dollars));
-    this._cents = Math.abs(Math.trunc(cents));
+    this.negative = isNegative;
+    this.dollars = Math.abs(Math.trunc(dollars));
+    this.cents = Math.abs(Math.trunc(cents));
   }
-
 
   /**
    * Getter for isNegative flag.
    */
   get isNegative(): boolean {
-    return this._isNegative;
+    return this.negative;
   }
 
   /**
@@ -44,14 +43,14 @@ export class CurrencyValue{
    * @param value boolean whether the currency value is negative
    */
   set isNegative(value: boolean) {
-    this._isNegative = value;
+    this.negative = value;
   }
 
   /**
    * Getter for dollars.
    */
-  get dollars(): number {
-    return this._dollars;
+  get getDollars(): number {
+    return this.dollars;
   }
 
   /**
@@ -59,15 +58,15 @@ export class CurrencyValue{
    *
    * @param value number the dollar value
    */
-  set dollars(value: number) {
-    this._dollars = Math.abs(Math.trunc(value))
+  set setDollars(value: number) {
+    this.dollars = Math.abs(Math.trunc(value))
   }
 
   /**
    * Getter for cents.
    */
-  get cents(): number {
-    return this._cents;
+  get getCents(): number {
+    return this.cents;
   }
 
   /**
@@ -75,8 +74,8 @@ export class CurrencyValue{
    *
    * @param value number the cents value
    */
-  set cents(value: number) {
-    this._cents = Math.abs(Math.trunc(value))
+  set setCents(value: number) {
+    this.cents = Math.abs(Math.trunc(value))
   }
 
   /**
@@ -113,7 +112,7 @@ export class CurrencyValue{
    * value object using the USD currency notation conventions.
    */
   toString(): string {
-    return (this.isNegative ? '-$' : '$') + this.dollars + '.' + (this.cents < 10 ? '0' : '') + this.cents;
+    return ((this.isNegative ? '-$' : '$') + this.dollars + '.' + (this.cents < 10 ? '0' : '') + this.cents);
   }
 
   /**
@@ -130,11 +129,22 @@ export class CurrencyValue{
    * @param value number the floating point number representing a value
    * @returns {CurrencyValue} CurrencyValue the resulting value object
    */
-  static valueOf(value: number){
+  static valueOf(value: number): CurrencyValue {
     const isNegative = value < 0;
     const dollars = Math.abs(Math.trunc(value));
     const cents = Math.abs(Math.trunc((value * 100) % 100));
 
     return new CurrencyValue(isNegative, dollars, cents);
+  }
+
+  /**
+   * This static method builds a CurrencyValue object from another
+   * object that contains the requisite fields of negative, dollars,
+   * and cents.
+   *
+   * @param value Object an object with the negative, dollars, and cents fields
+   */
+  static from(value: {negative: boolean, dollars: number, cents: number}): CurrencyValue {
+    return new CurrencyValue(value.negative, value.dollars, value.cents);
   }
 }

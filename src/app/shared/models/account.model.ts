@@ -56,7 +56,7 @@ export class Account {
         this.balance = val
     }
 
-    fixBalance(): CurrencyValue {
+    fixBalance(): CurrencyValue{
         return this.balance
     }
 
