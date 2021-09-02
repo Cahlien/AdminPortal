@@ -1,11 +1,11 @@
 export class Cardtype {
 
-    private id: Number;
+    private id: String;
     private typeName: String;
     private baseInterestRate: Number;
 
 
-	constructor($id: Number, $typeName: String, $baseInterestRate: Number) {
+	constructor($id: String, $typeName: String, $baseInterestRate: Number) {
 		this.id = $id;
 		this.typeName = $typeName;
 		this.baseInterestRate = $baseInterestRate;
@@ -15,7 +15,7 @@ export class Cardtype {
      * Getter $id
      * @return {Number}
      */
-	public get $id(): Number {
+	public get $id(): String {
 		return this.id;
 	}
 
@@ -39,7 +39,7 @@ export class Cardtype {
      * Setter $id
      * @param {Number} value
      */
-	public set $id(value: Number) {
+	public set $id(value: String) {
 		this.id = value;
 	}
 
@@ -59,5 +59,7 @@ export class Cardtype {
 		this.baseInterestRate = value;
 	}
 
-
+  public static from(object: {id: String, description: String, baseInterestRate: Number}): Cardtype {
+    return new Cardtype(object.id, object.description, object.baseInterestRate);
+  }
 }

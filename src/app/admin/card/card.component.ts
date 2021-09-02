@@ -44,6 +44,7 @@ export class CardComponent implements OnInit {
   sortBy: string[] = [];
   predicate: string = '?page=0&&size=5';
   searchCriteria: string = '';
+  selectedCardType!: any;
 
   ngOnInit(): void {
     this.pageSize=5;
@@ -147,6 +148,8 @@ export class CardComponent implements OnInit {
   }
 
   open(content: any, c: Card | null){
+    this.clearForm();
+
     if (c !== null){
       this.modalHeader = 'Edit Card';
       this.cardForm = this.fb.group({
@@ -161,6 +164,8 @@ export class CardComponent implements OnInit {
         billCycleLength: c.$billCycleLength,
         expireDate: c.$expireDate
       });
+
+      this.selectedCardType = c !== null ? this.cardForm.get('cardType')?.value.id : null;
     }
     else{
       this.modalHeader = 'Add New Card';
@@ -178,6 +183,22 @@ export class CardComponent implements OnInit {
 
   closeModal(){
     this.modalRef.close();
+  }
+
+  clearForm(){
+    this.selectedCardType = null;
+    this.cardForm = this.fb.group({
+      cardId: null,
+      userId: null,
+      cardType: null,
+      balance: null,
+      cardNumber: null,
+      interestRate: null,
+      createDate: null,
+      nickname: null,
+      billCycleLength: null,
+      expireDate: null
+    });
   }
 
   onChangePage(pe:PageEvent) {
