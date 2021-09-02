@@ -6,7 +6,7 @@
       <input type="text" id="searchBar" class="form-control col-sm-2 col-lg-3" [(ngModel)]="searchCriteria" (keydown.enter)="search()" placeholder="Search" aria-label="Search" aria-describedby="searchButton">
       <button class="btn btn-outline-secondary btn-small" type="button" id="searchButton" (click)="this.search()">Search</button>
     </div>
-  
+
     <table class='table table-striped table-hover table-active border border-secondary shadow-lg'>
       <thead>
       <tr>
@@ -43,7 +43,7 @@
                      [pageSize]="this.pageSize" [showFirstLastButtons]="true" (page)="onChangePage($event)"></mat-paginator>
     </div>
   </div>
-  
+
   <ng-template #cardModal let-c="close" let-d="dismiss">
     <form [formGroup]="cardForm" (ngSubmit)="saveCard(); closeModal()">
       <div class="modal-dialog">
@@ -63,12 +63,10 @@
               </div>
               <div class="input-group mb-2">
                 <label class="input-group-text" for="cardType">Card Type: </label>
-                <select class="form-select" id="cardType" formControlName="cardType">
-                  <option *ngFor="let c of cardtypes;" value="{{ c.$id }}">{{ c.$typeName }}: {{ c.$baseInterestRate }}</option>
-                  <!--
-                  <option value="debit">Debit</option>
-                  <option value="credit">Credit</option>
-                  -->
+                <select class="form-select" id="cardType" formControlName="cardType" [(ngModel)]="selectedCardType" >
+                  <option *ngFor="let c of cardtypes;let i = index" value="{{ c.$id }}">
+                    {{ c.$typeName }}: {{ c.$baseInterestRate }}
+                  </option>
                 </select>
               </div>
               <div class="mb-2" *ngIf="this.modalHeader === 'Edit Card';">
