@@ -64,7 +64,7 @@
               <div class="input-group mb-2">
                 <label class="input-group-text" for="cardType">Card Type: </label>
                 <select class="form-select" id="cardType" formControlName="cardType" [(ngModel)]="selectedCardType" >
-                  <option *ngFor="let c of cardtypes;let i = index" value="{{ c.$id }}">
+                  <option *ngFor="let c of cardtypes;" value="{{ c.$id }}">
                     {{ c.$typeName }}: {{ c.$baseInterestRate }}
                   </option>
                 </select>
@@ -124,7 +124,7 @@
             >
               Close
             </button>
-            <button type="submit" class="btn btn-primary" [disabled]="!cardForm.valid">Save changes</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!this.cardForm">Save changes</button>
           </div>
         </div>
       </div>

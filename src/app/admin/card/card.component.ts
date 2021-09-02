@@ -165,7 +165,7 @@ export class CardComponent implements OnInit {
         expireDate: c.$expireDate
       });
 
-      this.selectedCardType = c !== null ? this.cardForm.get('cardType')?.value.id : this.cardtypes[0];
+      this.selectedCardType = c !== null ? this.cardForm.get('cardType')?.value.id : null;
     }
     else{
       this.modalHeader = 'Add New Card';
