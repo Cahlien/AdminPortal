@@ -6,6 +6,7 @@ import { LayoutComponent } from './layout/layout.component';
 import { AuthComponent } from "./auth/auth.component";
 import { AccountComponent } from "./admin/accounts/accounts.component"
 import { CardComponent } from './admin/card/card.component';
+import { LoantypeComponent } from './admin/loantype/loantype.component';
 
 const routes: Routes = [
   {
@@ -32,7 +33,10 @@ const routes: Routes = [
       {
         path: 'cards',
         component: CardComponent
-      }
+      },
+      {
+        path: 'loantypes',
+        component: LoantypeComponent}
     ]
   }
 
