@@ -53,4 +53,23 @@ describe('LoantypeComponent', () => {
     expect(component).toBeTruthy();
 
   });
+
+  it('should make http POST request', () => {
+    component.loanTypeForm.controls['typeName'].setValue('auto');
+    component.loanTypeForm.controls['description'].setValue('a description of an auto lona');
+    component.loanTypeForm.controls['apr'].setValue('18.99');
+    component.loanTypeForm.controls['numMonths'].setValue('48');
+
+    component.saveLoanType();
+
+    const response = new HttpResponse({
+      body:{},
+      status: 200,
+      statusText: 'OK'
+    });
+
+    const call = loanTypeService.expectOne('http://localhost:9001/loantypes');
+    expect(call.request.method).toEqual('POST');
+    call.flush(response);
+  })
 });
