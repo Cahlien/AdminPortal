@@ -21,7 +21,6 @@ describe('CardComponent', () => {
   let httpService: HttpService;
 
   beforeAll(async () => {
-    console.log("beforeAll 1");
     await TestBed.configureTestingModule({
       imports: [
         FormsModule,
@@ -38,7 +37,6 @@ describe('CardComponent', () => {
   });
 
   beforeAll(() => {
-    console.log("beforeAll 2");
     cardService = TestBed.inject(HttpTestingController);
     httpService = TestBed.inject(HttpService);
     fixture = TestBed.createComponent(CardComponent);

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { HttpService } from '@services/http.service';
-import { Loantype } from 'src/app/shared/models/loantype.model';
+import { HttpService } from '../../shared/services/http.service';
+import { Loantype } from '../../shared/models/loantype.model';
 
 @Component({
   selector: 'app-loantype',
