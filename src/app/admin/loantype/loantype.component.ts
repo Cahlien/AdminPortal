@@ -51,8 +51,8 @@ export class LoantypeComponent implements OnInit {
       arr = response as Loantype;
       this.totalItems = arr.totalElements;
       for(let obj of arr.content){
-        let c = new Loantype(obj.id, obj.typeName, obj.description,
-          obj.apr, obj.numMonths);
+        let c = new Loantype(obj.typeName, obj.description,
+          obj.apr, obj.numMonths, obj.id);
         this.loantypes.push(c);
       }
     })
@@ -70,7 +70,22 @@ export class LoantypeComponent implements OnInit {
   }
 
   saveLoanType(): any{
-    console.log("saving loan type");
+    if(!this.loanTypeForm.controls['id'].value){
+      let lt = new Loantype(
+        this.loanTypeForm.controls['typeName'].value,
+        this.loanTypeForm.controls['description'].value,
+        this.loanTypeForm.controls['apr'].value,
+        this.loanTypeForm.controls['numMonths'].value
+      )
+
+      const body = JSON.stringify(lt);
+
+      this.httpService.create('http://localhost:9001/loantypes', body).subscribe((result)=> {
+        this.loantypes.length = 0;
+        this.loadLoanTypes();
+        this.initializeForms();
+      });
+    }
   }
 
   deleteLoanType(id: String): any{

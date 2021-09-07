@@ -1,18 +1,19 @@
 export class Loantype {
 
-    private id: String;
     private typeName: String;
     private description: String;
     private apr: Number;
     private numMonths: Number;
+    private id: String;
 
 
-	constructor($id: String, $typeName: String, $description: String, $apr: Number, $numMonths: Number) {
-		this.id = $id;
+	constructor($typeName: String, $description: String, $apr: Number, $numMonths: Number, $id?: String) {
+		
 		this.typeName = $typeName;
 		this.description = $description;
 		this.apr = $apr;
 		this.numMonths = $numMonths;
+        this.id = $id!;
 	}
 
 
