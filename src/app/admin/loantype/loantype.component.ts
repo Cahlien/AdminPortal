@@ -65,7 +65,6 @@ export class LoantypeComponent implements OnInit {
       description: new FormControl('',[Validators.required, Validators.maxLength(300)]),
       apr: new FormControl('',[Validators.required, Validators.maxLength(5), Validators.pattern("^\-?[0-9]+(?:\.[0-9]{1,2})?$")]),
       numMonths: new FormControl('',[Validators.required, Validators.maxLength(3), Validators.pattern("^[0-9]*$")]),
-      //isAvailable: new FormControl('',[Validators.required])
     })
   }
 
@@ -81,6 +80,23 @@ export class LoantypeComponent implements OnInit {
       const body = JSON.stringify(lt);
 
       this.httpService.create('http://localhost:9001/loantypes', body).subscribe((result)=> {
+        this.loantypes.length = 0;
+        this.loadLoanTypes();
+        this.initializeForms();
+      });
+    }
+    else{
+      let lt = new Loantype(
+        this.loanTypeForm.controls['typeName'].value,
+        this.loanTypeForm.controls['description'].value,
+        this.loanTypeForm.controls['apr'].value,
+        this.loanTypeForm.controls['numMonths'].value,
+        this.loanTypeForm.controls['id'].value
+      )
+
+      const body = JSON.stringify(lt);
+
+      this.httpService.update('http://localhost:9001/loantypes/', body).subscribe((result)=>{
         this.loantypes.length = 0;
         this.loadLoanTypes();
         this.initializeForms();
@@ -108,6 +124,14 @@ export class LoantypeComponent implements OnInit {
     }
     else{
       this.modalHeader = 'Add New Loan Type';
+      this.loanTypeForm.reset();
+      this.loanTypeForm = this.fb.group({
+        id: '',
+        typeName: '',
+        description: '',
+        apr: '',
+        numMonths: ''
+      })
     }
     this.modalRef = this.modalService.open(content);
     this.modalRef.result.then(

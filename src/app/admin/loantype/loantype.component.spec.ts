@@ -54,7 +54,7 @@ describe('LoantypeComponent', () => {
 
   });
 
-  it('should make http POST request', () => {
+  it('should process form data and make http POST request', () => {
     component.loanTypeForm.controls['typeName'].setValue('auto');
     component.loanTypeForm.controls['description'].setValue('a description of an auto lona');
     component.loanTypeForm.controls['apr'].setValue('18.99');
@@ -86,5 +86,27 @@ describe('LoantypeComponent', () => {
     expect(call1.request.method).toEqual('DELETE');
     call1.flush(response);
     
+  })
+
+  it('should process form data and make http PUT request', () => {
+
+    component.loanTypeForm.controls['id'].setValue('12345-u9u98-4h4ui-1109k');
+    component.loanTypeForm.controls['typeName'].setValue('auto');
+    component.loanTypeForm.controls['description'].setValue('a description of an auto lona');
+    component.loanTypeForm.controls['apr'].setValue('18.99');
+    component.loanTypeForm.controls['numMonths'].setValue('48');
+
+    component.saveLoanType();
+
+    const response = new HttpResponse({
+      body:{},
+      status: 200,
+      statusText: 'OK'
+    });
+
+    const call = loanTypeService.expectOne('http://localhost:9001/loantypes/');
+    expect(call.request.method).toEqual('PUT');
+    call.flush(response);
+
   })
 });
