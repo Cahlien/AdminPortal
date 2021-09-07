@@ -88,8 +88,11 @@ export class LoantypeComponent implements OnInit {
     }
   }
 
-  deleteLoanType(id: String): any{
-    console.log("deleting loan type");
+  deleteLoanType(id: String){
+    this.httpService.deleteById('http://localhost:9001/loantypes/' + id).subscribe((result) => {
+      this.loantypes.length = 0;
+      this.loadLoanTypes();
+    })
   }
 
   open(content: any, lt: Loantype | null){

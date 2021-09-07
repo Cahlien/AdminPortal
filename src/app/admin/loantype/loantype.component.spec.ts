@@ -72,4 +72,19 @@ describe('LoantypeComponent', () => {
     expect(call.request.method).toEqual('POST');
     call.flush(response);
   })
+
+  it('should make http DELETE request', () => {
+    component.deleteLoanType("1");
+
+    const response = new HttpResponse({
+      body:{},
+      status: 200,
+      statusText: 'OK'
+    });
+
+    const call1 = loanTypeService.expectOne('http://localhost:9001/loantypes/1');
+    expect(call1.request.method).toEqual('DELETE');
+    call1.flush(response);
+    
+  })
 });
