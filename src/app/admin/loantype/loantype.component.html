@@ -61,19 +61,60 @@
               </div>
               <div class="mb-2">
                 <label for="typeName" class="form-label">Loan Type: </label>
-                <input type="text" id="typeName" formControlName="typeName" class="form-control" [readonly]="this.modalHeader === 'Edit Loan Type'"/>
+                <input type="text" id="typeName" formControlName="typeName" class="form-control"/>
+                <div *ngIf="typeName?.invalid && (typeName?.dirty || typeName?.touched)">
+                  <div *ngIf="typeName?.errors?.required">
+                    <small class="text-danger">type name is required</small>
+                  </div>
+                  <div *ngIf="typeName?.errors?.maxlength">
+                    <small class="text-danger">cannot be longer than 20 characters</small>
+                  </div>
+                  <div *ngIf="typeName?.errors?.pattern">
+                    <small class="text-danger">must contain only alpha-numeric characters</small>
+                  </div>
+                </div>
               </div>
               <div class="mb-2">
                 <label for="description" class="form-label">Description: </label>
                 <input type="text" id="description" formControlName="description" class="form-control"/>
+                <div *ngIf="description?.invalid && (description?.dirty || description?.touched)">
+                  <div *ngIf="description?.errors?.required">
+                    <small class="text-danger">description is required</small>
+                  </div>
+                  <div *ngIf="description?.errors?.maxlength">
+                    <small class="text-danger">cannot be longer than 300 characters</small>
+                  </div>
+                </div>
               </div>
               <div class="mb-2">
                 <label for="apr" class="form-label">APR: </label>
                 <input type="text" id="apr" formControlName="apr" class="form-control"/>
+                <div *ngIf="apr?.invalid && (apr?.dirty || apr?.touched)">
+                  <div *ngIf="apr?.errors?.required">
+                    <small class="text-danger">apr is required</small>
+                  </div>
+                  <div *ngIf="apr?.errors?.pattern">
+                    <small class="text-danger">must be a number with at most 2 decimal places</small>
+                  </div>
+                  <div *ngIf="apr?.errors?.maxlength">
+                    <small class="text-danger">cannot be longer than 5 characters</small>
+                  </div>
+                </div>
               </div>
               <div class="mb-2">
                 <label for="numMonths" class="form-label">Months: </label>
                 <input type="text" id="numMonths" formControlName="numMonths" class="form-control"/>
+                <div *ngIf="numMonths?.invalid && (numMonths?.dirty || numMonths?.touched)">
+                  <div *ngIf="numMonths?.errors?.required">
+                      <small class="text-danger">number of months is required</small>
+                  </div>
+                  <div *ngIf="numMonths?.errors?.pattern">
+                      <small class="text-danger">must be a whole number</small>
+                  </div>
+                  <div *ngIf="numMonths?.errors?.maxlength">
+                    <small class="text-danger">cannot be longer than 3 digits</small>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

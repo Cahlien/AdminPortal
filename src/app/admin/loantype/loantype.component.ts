@@ -61,10 +61,10 @@ export class LoantypeComponent implements OnInit {
   initializeForms(){
     this.loanTypeForm = this.fb.group({
       id: new FormControl(''),
-      typeName: new FormControl('',[Validators.required]),
-      description: new FormControl('',[Validators.required]),
-      apr: new FormControl(''),
-      numMonths: new FormControl(''),
+      typeName: new FormControl('',[Validators.required, Validators.maxLength(20), Validators.pattern("^[a-zA-Z]+$")]),
+      description: new FormControl('',[Validators.required, Validators.maxLength(300)]),
+      apr: new FormControl('',[Validators.required, Validators.maxLength(5), Validators.pattern("^\-?[0-9]+(?:\.[0-9]{1,2})?$")]),
+      numMonths: new FormControl('',[Validators.required, Validators.maxLength(3), Validators.pattern("^[0-9]*$")]),
       //isAvailable: new FormControl('',[Validators.required])
     })
   }
@@ -181,5 +181,10 @@ export class LoantypeComponent implements OnInit {
     this.loadLoanTypes();
     this.initializeForms();
   }
+
+  get typeName() {return this.loanTypeForm.get('typeName'); }
+  get description() {return this.loanTypeForm.get('description'); }
+  get apr() {return this.loanTypeForm.get('apr'); }
+  get numMonths() {return this.loanTypeForm.get('numMonths'); }
 
 }
