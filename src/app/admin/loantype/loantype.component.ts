@@ -25,15 +25,15 @@ export class LoantypeComponent implements OnInit {
   pageIndex: any;
   totalItems: any;
   pageSize: any;
-  //cardIdOrder: string = 'desc';
-  //sortByCardId: boolean = false;
-  //balanceOrder: string = 'desc';
-  //sortByBalance: boolean = false;
-  //createDateOrder: string = 'desc';
-  //sortByCreateDate: boolean = false;
-  //sortBy: string[] = [];
+  typeNameOrder: string = 'desc';
+  sortByTypeName: boolean = false;
+  aprOrder: string = 'desc';
+  sortByApr: boolean = false;
+  numMonthsOrder: string = 'desc';
+  sortByNumMonths: boolean = false;
+  sortBy: string[] = [];
   predicate: string = '?page=0&&size=5';
-  //searchCriteria: string = '';
+  searchCriteria: string = '';
 
   ngOnInit(): void {
     this.pageSize=5;
@@ -45,10 +45,11 @@ export class LoantypeComponent implements OnInit {
 
   loadLoanTypes(): any{
     this.httpService
-    .getAll('http://localhost:9001/loantypes/')
+    .getAll('http://localhost:9001/loantypes' + this.predicate)
     .subscribe((response: any) => {
       let arr: any;
       arr = response as Loantype;
+      this.totalItems = arr.totalElements;
       for(let obj of arr.content){
         let c = new Loantype(obj.id, obj.typeName, obj.description,
           obj.apr, obj.numMonths);
@@ -115,10 +116,52 @@ export class LoantypeComponent implements OnInit {
     this.updatePage();
   }
 
+  addToSortBy(field: string) {
+    if(field === 'typeName'){
+      this.sortByTypeName = true;
+      this.typeNameOrder = this.typeNameOrder === 'desc' ? 'asc' : 'desc';
+    } else if(field === 'apr') {
+      this.sortByApr = true;
+      this.aprOrder = this.aprOrder === 'desc' ? 'asc' : 'desc';
+    } else if(field === 'createDate'){
+      this.sortByNumMonths = true;
+      this.numMonthsOrder = this.numMonthsOrder === 'desc' ? 'asc' : 'desc';
+    }
+
+    this.updatePage();
+  }
+
+  private assembleQueryParams() {
+    this.sortBy = [];
+
+    if(this.sortByTypeName){
+      this.sortBy.push('typeName,' + this.typeNameOrder);
+    }
+    if(this.sortByApr){
+      this.sortBy.push('apr,' + this.aprOrder);
+    }
+    if(this.sortByNumMonths){
+      this.sortBy.push('numMonths,' + this.numMonthsOrder);
+    }
+  }
+
+  private assemblePredicate(){
+    this.assembleQueryParams()
+
+    this.predicate = "?page=" + this.pageIndex + "&&size=" + this.pageSize;
+    this.predicate += this.sortBy.length > 0 ? '&&sortBy=' + this.sortBy : '';
+    this.predicate += this.searchCriteria.length > 0 ? "&&search=" + this.searchCriteria : '';
+  }
+
+  search() {
+    this.updatePage();
+
+  }
+
   updatePage(){
     this.loantypes = [];
 
-    //this.assemblePredicate();
+    this.assemblePredicate();
 
     this.loadLoanTypes();
     this.initializeForms();
