@@ -124,7 +124,7 @@ export class LoantypeComponent implements OnInit {
     }
     else{
       this.modalHeader = 'Add New Loan Type';
-      this.loanTypeForm.reset();
+      //this.loanTypeForm.reset();
       this.loanTypeForm = this.fb.group({
         id: '',
         typeName: '',
