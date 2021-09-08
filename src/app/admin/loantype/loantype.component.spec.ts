@@ -55,8 +55,10 @@ describe('LoantypeComponent', () => {
   });
 
   it('should make http POST request', () => {
+    component.createNew = true;
+
     component.loanTypeForm.controls['typeName'].setValue('auto');
-    component.loanTypeForm.controls['description'].setValue('a description of an auto lona');
+    component.loanTypeForm.controls['description'].setValue('a description of an auto loan');
     component.loanTypeForm.controls['apr'].setValue('18.99');
     component.loanTypeForm.controls['numMonths'].setValue('48');
 
@@ -86,5 +88,27 @@ describe('LoantypeComponent', () => {
     expect(call1.request.method).toEqual('DELETE');
     call1.flush(response);
     
+  })
+
+  it('should make http PUT request', () => {
+    component.createNew = false;
+
+    component.loanTypeForm.controls['id'].setValue('1234-ajuh-7h8j-12kl');
+    component.loanTypeForm.controls['typeName'].setValue('auto');
+    component.loanTypeForm.controls['description'].setValue('a description of an auto loan');
+    component.loanTypeForm.controls['apr'].setValue('18.99');
+    component.loanTypeForm.controls['numMonths'].setValue('48');
+
+    component.saveLoanType();
+
+    const response = new HttpResponse({
+      body:{},
+      status: 200,
+      statusText: 'OK'
+    });
+
+    const call = loanTypeService.expectOne('http://localhost:9001/loantypes');
+    expect(call.request.method).toEqual('PUT');
+    call.flush(response);
   })
 });

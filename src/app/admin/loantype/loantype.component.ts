@@ -61,6 +61,7 @@ export class LoantypeComponent implements OnInit {
 
   initializeForms(){
     this.loanTypeForm = new FormGroup({
+      id: new FormControl(''),
       typeName: new FormControl('',[Validators.required, Validators.maxLength(20), Validators.pattern("^[a-zA-Z]+$")]),
       description: new FormControl('',[Validators.required, Validators.maxLength(300)]),
       apr: new FormControl('',[Validators.required, Validators.maxLength(5), Validators.pattern("^\-?[0-9]+(?:\.[0-9]{1,2})?$")]),
@@ -86,6 +87,23 @@ export class LoantypeComponent implements OnInit {
         this.initializeForms();
       });
     }
+    else{
+      let lt = new Loantype(
+        this.loanTypeForm.controls['typeName'].value,
+        this.loanTypeForm.controls['description'].value,
+        this.loanTypeForm.controls['apr'].value,
+        this.loanTypeForm.controls['numMonths'].value,
+        this.loanTypeForm.controls['id'].value
+      )
+
+      const body = JSON.stringify(lt);
+
+      this.httpService.update('http://localhost:9001/loantypes', body).subscribe((result) =>{
+        this.loantypes.length = 0;
+        this.loadLoanTypes();
+        this.initializeForms();
+      });
+    }
   }
 
   deleteLoanType(id: String){
@@ -96,11 +114,29 @@ export class LoantypeComponent implements OnInit {
   }
 
   async open(content: any, lt: Loantype | null){
+    this.initializeForms();
     if (lt !== null){
       this.createNew = false;
       this.modalHeader = 'Edit Loan Type';
+      console.log(this.loanTypeForm);
+      this.loanTypeForm.controls['id'].setValue(lt.$id);
+      this.loanTypeForm.controls['typeName'].setValue(lt.$typeName);
+      this.loanTypeForm.controls['description'].setValue(lt.$description);
+      this.loanTypeForm.controls['apr'].setValue(lt.$apr);
+      this.loanTypeForm.controls['numMonths'].setValue(lt.$numMonths);
+      /*
+      this.loanTypeForm = this.fb.group({
+        id: lt.$id,
+        typeName: lt.$typeName,
+        description: lt.$description,
+        apr: lt.$apr,
+        numMonths: lt.$numMonths
+      })
+      console.log(this.loanTypeForm);
+      */
     }
     else{
+      console.log(this.loanTypeForm);
       this.createNew = true;
       this.modalHeader = 'Add New Loan Type';
     }
