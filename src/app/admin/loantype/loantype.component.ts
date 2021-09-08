@@ -34,6 +34,7 @@ export class LoantypeComponent implements OnInit {
   sortBy: string[] = [];
   predicate: string = '?page=0&&size=5';
   searchCriteria: string = '';
+  createNew: boolean = false;
 
   ngOnInit(): void {
     this.pageSize=5;
@@ -59,8 +60,7 @@ export class LoantypeComponent implements OnInit {
   }
 
   initializeForms(){
-    this.loanTypeForm = this.fb.group({
-      id: new FormControl(''),
+    this.loanTypeForm = new FormGroup({
       typeName: new FormControl('',[Validators.required, Validators.maxLength(20), Validators.pattern("^[a-zA-Z]+$")]),
       description: new FormControl('',[Validators.required, Validators.maxLength(300)]),
       apr: new FormControl('',[Validators.required, Validators.maxLength(5), Validators.pattern("^\-?[0-9]+(?:\.[0-9]{1,2})?$")]),
@@ -70,7 +70,7 @@ export class LoantypeComponent implements OnInit {
   }
 
   saveLoanType(): any{
-    if(!this.loanTypeForm.controls['id'].value){
+    if(this.createNew){
       let lt = new Loantype(
         this.loanTypeForm.controls['typeName'].value,
         this.loanTypeForm.controls['description'].value,
@@ -95,18 +95,13 @@ export class LoantypeComponent implements OnInit {
     })
   }
 
-  open(content: any, lt: Loantype | null){
+  async open(content: any, lt: Loantype | null){
     if (lt !== null){
+      this.createNew = false;
       this.modalHeader = 'Edit Loan Type';
-      this.loanTypeForm = this.fb.group({
-        id: lt.$id,
-        typeName: lt.$typeName,
-        description: lt.$description,
-        apr: lt.$apr,
-        numMonths: lt.$numMonths
-      });
     }
     else{
+      this.createNew = true;
       this.modalHeader = 'Add New Loan Type';
     }
     this.modalRef = this.modalService.open(content);
