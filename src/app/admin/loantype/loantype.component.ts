@@ -124,16 +124,6 @@ export class LoantypeComponent implements OnInit {
       this.loanTypeForm.controls['description'].setValue(lt.$description);
       this.loanTypeForm.controls['apr'].setValue(lt.$apr);
       this.loanTypeForm.controls['numMonths'].setValue(lt.$numMonths);
-      /*
-      this.loanTypeForm = this.fb.group({
-        id: lt.$id,
-        typeName: lt.$typeName,
-        description: lt.$description,
-        apr: lt.$apr,
-        numMonths: lt.$numMonths
-      })
-      console.log(this.loanTypeForm);
-      */
     }
     else{
       console.log(this.loanTypeForm);
@@ -165,46 +155,12 @@ export class LoantypeComponent implements OnInit {
     this.updatePage();
   }
 
-  addToSortBy(field: string) {
-    if(field === 'typeName'){
-      this.sortByTypeName = true;
-      this.typeNameOrder = this.typeNameOrder === 'desc' ? 'asc' : 'desc';
-    } else if(field === 'apr') {
-      this.sortByApr = true;
-      this.aprOrder = this.aprOrder === 'desc' ? 'asc' : 'desc';
-    } else if(field === 'createDate'){
-      this.sortByNumMonths = true;
-      this.numMonthsOrder = this.numMonthsOrder === 'desc' ? 'asc' : 'desc';
-    }
-
-    this.updatePage();
-  }
-
-  private assembleQueryParams() {
-    this.sortBy = [];
-
-    if(this.sortByTypeName){
-      this.sortBy.push('typeName,' + this.typeNameOrder);
-    }
-    if(this.sortByApr){
-      this.sortBy.push('apr,' + this.aprOrder);
-    }
-    if(this.sortByNumMonths){
-      this.sortBy.push('numMonths,' + this.numMonthsOrder);
-    }
-  }
-
   private assemblePredicate(){
-    this.assembleQueryParams()
+    this.sortBy = [];
 
     this.predicate = "?page=" + this.pageIndex + "&&size=" + this.pageSize;
     this.predicate += this.sortBy.length > 0 ? '&&sortBy=' + this.sortBy : '';
     this.predicate += this.searchCriteria.length > 0 ? "&&search=" + this.searchCriteria : '';
-  }
-
-  search() {
-    this.updatePage();
-
   }
 
   updatePage(){
