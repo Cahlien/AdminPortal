@@ -17,6 +17,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { CardComponent } from './admin/card/card.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { LoantypeComponent } from './admin/loantype/loantype.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
     UserComponent,
     AuthComponent,
     AccountComponent,
-    CardComponent
+    CardComponent,
+    LoantypeComponent
   ],
   imports: [
     BrowserModule,
