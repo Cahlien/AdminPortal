@@ -1,7 +1,7 @@
 FROM node:alpine AS builder
 WORKDIR /app
 COPY . .
-RUN yarn install && yarn build --configuration development
+RUN npm install && npm run build
 
 FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
