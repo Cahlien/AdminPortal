@@ -16,7 +16,7 @@ export class LoantypeComponent implements OnInit {
 
   //constructor(private http: HttpClient, private fb: FormBuilder, private modalService: NgbModal) { }
 
-  loantypes: Loantype[] = new Array(); 
+  loantypes: Loantype[] = new Array();
   loanTypeForm!: FormGroup;
   modalRef!: NgbModalRef;
   errorMessage: any;
@@ -46,7 +46,7 @@ export class LoantypeComponent implements OnInit {
 
   loadLoanTypes(): any{
     this.httpService
-    .getAll('http://localhost:9001/loantypes' + this.predicate)
+    .getAll('http://gateway:9001/loantypes' + this.predicate)
     .subscribe((response: any) => {
       let arr: any;
       arr = response as Loantype;
@@ -81,7 +81,7 @@ export class LoantypeComponent implements OnInit {
 
       const body = JSON.stringify(lt);
 
-      this.httpService.create('http://localhost:9001/loantypes', body).subscribe((result)=> {
+      this.httpService.create('http://gateway:9001/loantypes', body).subscribe((result)=> {
         this.loantypes.length = 0;
         this.loadLoanTypes();
         this.initializeForms();
@@ -98,7 +98,7 @@ export class LoantypeComponent implements OnInit {
 
       const body = JSON.stringify(lt);
 
-      this.httpService.update('http://localhost:9001/loantypes', body).subscribe((result) =>{
+      this.httpService.update('http://gateway:9001/loantypes', body).subscribe((result) =>{
         this.loantypes.length = 0;
         this.loadLoanTypes();
         this.initializeForms();
@@ -107,7 +107,7 @@ export class LoantypeComponent implements OnInit {
   }
 
   deleteLoanType(id: String){
-    this.httpService.deleteById('http://localhost:9001/loantypes/' + id).subscribe((result) => {
+    this.httpService.deleteById('http://gateway:9001/loantypes/' + id).subscribe((result) => {
       this.loantypes.length = 0;
       this.loadLoanTypes();
     })

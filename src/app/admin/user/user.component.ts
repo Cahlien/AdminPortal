@@ -96,7 +96,7 @@ export class UserComponent implements OnInit {
       this.totalItems = arr.totalElements;
       for(let obj of arr.content){
         console.log('in for loop, arr = ', arr)
-        let u = new User(obj.username, obj.password, obj.email, obj.phone, 
+        let u = new User(obj.username, obj.password, obj.email, obj.phone,
           obj.firstName, obj.lastName, obj.dateOfBirth, obj.role, obj.userId);
         console.log(u);
         this.users.push(u);
@@ -130,7 +130,7 @@ export class UserComponent implements OnInit {
 
   deleteUser(id: String){
     window.confirm("delete user " + id + "?");
-    this.httpService.deleteById('http://localhost:9001/admin/users/' + id).subscribe((result)=>{
+    this.httpService.deleteById('http://gateway:9001/admin/users/' + id).subscribe((result)=>{
       console.log(result);
       this.users.length = 0;
       this.loadUsers();
@@ -144,17 +144,17 @@ export class UserComponent implements OnInit {
       this.updateUserForm.controls['password'].value,
       this.updateUserForm.controls['email'].value,
       this.updateUserForm.controls['phone'].value,
-      this.updateUserForm.controls['firstName'].value, 
+      this.updateUserForm.controls['firstName'].value,
       this.updateUserForm.controls['lastName'].value,
       this.updateUserForm.controls['dateOfBirth'].value,
       this.updateUserForm.controls['role'].value,
       this.updateUserForm.controls['userId'].value);
-    
+
     let body = u;
 
     if (this.createNew){
       console.log("saving...");
-      this.httpService.create('http://localhost:9001/users', body).subscribe((result)=>{
+      this.httpService.create('http://gateway:9001/users', body).subscribe((result)=>{
         console.log("save " + result);
         this.users.length = 0;
         this.createNew = false;
@@ -163,7 +163,7 @@ export class UserComponent implements OnInit {
     }
     else{
       console.log("editing...");
-      this.httpService.update('http://localhost:9001/admin/users/' + this.updateUserForm.controls['userId'].value, body).subscribe((result)=>{
+      this.httpService.update('http://gateway:9001/admin/users/' + this.updateUserForm.controls['userId'].value, body).subscribe((result)=>{
         console.log("updating: " + result);
         this.users.length = 0;
         this.loadUsers();
@@ -172,7 +172,7 @@ export class UserComponent implements OnInit {
     this.initializeForms();
     //this.loadUsers();
   }
-  
+
   async open(content: any, u: User | null){
     if (u!== null){
       console.log('user pass: ', u.$password);
@@ -192,7 +192,7 @@ export class UserComponent implements OnInit {
     }
     else{
       this.modalHeader = 'Add New User';
-      const uuid = await this.httpService.getNewUUID('http://localhost:9001/accounts/new');
+      const uuid = await this.httpService.getNewUUID('http://gateway:9001/accounts/new');
       this.createNew = true;
       console.log("createModal True");
       if(this.updateUserForm){

@@ -56,7 +56,7 @@ describe('AuthComponent', () => {
       statusText: 'OK'
     });
 
-    const call = userService.expectOne('http://localhost:9001/users/login');
+    const call = userService.expectOne('http://gateway:9001/users/login');
     expect(call.request.method).toEqual('POST');
     call.flush(response);
 

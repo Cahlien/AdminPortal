@@ -16,7 +16,7 @@ describe('LoantypeComponent', () => {
 
   beforeAll(async () => {
     await TestBed.configureTestingModule({
-      imports: [         
+      imports: [
         FormsModule,
         HttpClientTestingModule,
         ReactiveFormsModule,
@@ -43,7 +43,7 @@ describe('LoantypeComponent', () => {
       status: 200,
       statusText: 'OK'
     });
-    const call = loanTypeService.expectOne('http://localhost:9001/loantypes?page=0&&size=5');
+    const call = loanTypeService.expectOne('http://gateway:9001/loantypes?page=0&&size=5');
     expect(call.request.method).toEqual('GET');
     call.flush(response);
     //cardService.verify();
@@ -70,7 +70,7 @@ describe('LoantypeComponent', () => {
       statusText: 'OK'
     });
 
-    const call = loanTypeService.expectOne('http://localhost:9001/loantypes');
+    const call = loanTypeService.expectOne('http://gateway:9001/loantypes');
     expect(call.request.method).toEqual('POST');
     call.flush(response);
   })
@@ -84,10 +84,10 @@ describe('LoantypeComponent', () => {
       statusText: 'OK'
     });
 
-    const call1 = loanTypeService.expectOne('http://localhost:9001/loantypes/1');
+    const call1 = loanTypeService.expectOne('http://gateway:9001/loantypes/1');
     expect(call1.request.method).toEqual('DELETE');
     call1.flush(response);
-    
+
   })
 
   it('should make http PUT request', () => {
@@ -107,7 +107,7 @@ describe('LoantypeComponent', () => {
       statusText: 'OK'
     });
 
-    const call = loanTypeService.expectOne('http://localhost:9001/loantypes');
+    const call = loanTypeService.expectOne('http://gateway:9001/loantypes');
     expect(call.request.method).toEqual('PUT');
     call.flush(response);
   })

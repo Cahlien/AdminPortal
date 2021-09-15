@@ -6,7 +6,7 @@ import {Router} from "@angular/router";
 export class AuthService {
   isLoggedIn: boolean;
 
-  url: string = 'http://localhost:9001/users/login';
+  url: string = 'http://gateway:9001/users/login';
   headers: HttpHeaders = new HttpHeaders({
     'Content-Type': 'application/json',
     'Accept': 'application/json',

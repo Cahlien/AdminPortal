@@ -140,7 +140,7 @@ export class AccountComponent implements OnInit {
 
   deactivateAccount(id: String) {
     if (window.confirm('Are you sure you want to remove: ' + id + '? It will be removed from the database completely.')) {
-      this.httpService.deleteById("http://localhost:9001/accounts/" + id).subscribe((result) => {
+      this.httpService.deleteById("http://gateway:9001/accounts/" + id).subscribe((result) => {
         console.log(result);
         this.users.length = 0;
       });
@@ -183,7 +183,7 @@ export class AccountComponent implements OnInit {
       else {
         window.confirm('Save Acount ' + this.updateAccountForm.controls['nickname'].value + '?');
       }
-      this.httpService.update('http://localhost:9001/accounts', body).subscribe((result) => {
+      this.httpService.update('http://gateway:9001/accounts', body).subscribe((result) => {
         console.log("updating" + result);
         this.accounts.length = 0;
         this.update()
@@ -211,7 +211,7 @@ export class AccountComponent implements OnInit {
     } else {
       this.editing = false;
       this.modalHeader = 'Add New Account';
-      const uuid = await this.httpService.getNewUUID('http://localhost:9001/accounts/new');
+      const uuid = await this.httpService.getNewUUID('http://gateway:9001/accounts/new');
       console.log('rcv\'d: ', uuid);
       this.updateAccountForm = this.fb.group({
         userId: '',

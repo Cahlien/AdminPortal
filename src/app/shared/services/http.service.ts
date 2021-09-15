@@ -51,7 +51,7 @@ export class HttpService {
   }
 
   getAccounts(page: number, size: number, sort?: string, dir?: string, search?: string) {
-    let query = `http://localhost:9001/accounts/all?pageNum=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(size)}`;
+    let query = `http://gateway:9001/accounts/all?pageNum=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(size)}`;
     if (sort === undefined && dir === undefined) {
       sort = "accountId"; dir = "asc";
     }
@@ -69,7 +69,7 @@ export class HttpService {
   }
 
   getUsers(page: number, size: number, sort?: string, asc?: boolean, search?: string) {
-    let query = `http://localhost:9001/admin/users?page=${encodeURIComponent(page)}&size=${encodeURIComponent(size)}`;
+    let query = `http://gateway:9001/admin/users?page=${encodeURIComponent(page)}&size=${encodeURIComponent(size)}`;
     if (sort !== undefined) {
       query += `&sort=${encodeURIComponent(sort)}&asc=${encodeURIComponent(!!asc)}`;
     }

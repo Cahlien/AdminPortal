@@ -51,7 +51,7 @@ describe('UserComponent', () => {
       status: 200,
       statusText: 'OK'
     });
-    const call = cardService.expectOne('http://localhost:9001/admin/users');
+    const call = cardService.expectOne('http://gateway:9001/admin/users');
     expect(call.request.method).toEqual('GET');
     call.flush(response);
     cardService.verify();
@@ -68,8 +68,8 @@ describe('UserComponent', () => {
     });
     */
 
-    //const call = cardService.expectOne('http://localhost:9001/cards/');
-    //const call2 = cardService.expectOne('http://localhost:9001/admin/users');
+    //const call = cardService.expectOne('http://gateway:9001/cards/');
+    //const call2 = cardService.expectOne('http://gateway:9001/admin/users');
     //expect(call.request.method).toEqual('GET');
     //expect(call2.request.method).toEqual('GET');
     //call.flush(response);
@@ -85,10 +85,10 @@ describe('UserComponent', () => {
       statusText: 'OK'
     });
 
-    const call1 = cardService.expectOne('http://localhost:9001/admin/users/1');
+    const call1 = cardService.expectOne('http://gateway:9001/admin/users/1');
     expect(call1.request.method).toEqual('DELETE');
     call1.flush(response);
-    
+
   })
 
   it('should process form data and register new user with POST http request', () => {
@@ -96,7 +96,7 @@ describe('UserComponent', () => {
     component.userForm.controls['username'].setValue('user_name');
     component.userForm.controls['password'].setValue('password');
     component.userForm.controls['email'].setValue('mock@email.com');
-    component.userForm.controls['firstName'].setValue('name_first'); 
+    component.userForm.controls['firstName'].setValue('name_first');
     component.userForm.controls['lastName'].setValue('name_last');
     component.userForm.controls['dateOfBirth'].setValue('2021-08-14');
     component.userForm.controls['role'].setValue('admin');
@@ -109,7 +109,7 @@ describe('UserComponent', () => {
       statusText: 'OK'
     });
 
-    const call = cardService.expectOne('http://localhost:9001/users');
+    const call = cardService.expectOne('http://gateway:9001/users');
     expect(call.request.method).toEqual('POST');
     call.flush(response);
 
@@ -121,7 +121,7 @@ describe('UserComponent', () => {
     component.userForm.controls['userId'].setValue('234568-890145');
     component.userForm.controls['password'].setValue('password');
     component.userForm.controls['email'].setValue('mock@email.com');
-    component.userForm.controls['firstName'].setValue('name_first'); 
+    component.userForm.controls['firstName'].setValue('name_first');
     component.userForm.controls['lastName'].setValue('name_last');
     component.userForm.controls['dateOfBirth'].setValue('2021-08-14');
     component.userForm.controls['role'].setValue('admin');
@@ -134,7 +134,7 @@ describe('UserComponent', () => {
       statusText: 'OK'
     });
 
-    const call = cardService.expectOne('http://localhost:9001/admin/users/234568-890145');
+    const call = cardService.expectOne('http://gateway:9001/admin/users/234568-890145');
     expect(call.request.method).toEqual('PUT');
     call.flush(response);
 

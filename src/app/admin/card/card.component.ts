@@ -57,7 +57,7 @@ export class CardComponent implements OnInit {
 
   loadCards(): any{
     this.httpService
-    .getAll('http://localhost:9001/cards' + this.predicate)
+    .getAll('http://gateway:9001/cards' + this.predicate)
     .subscribe((response) => {
       let arr: any;
       arr = response as Card;
@@ -73,7 +73,7 @@ export class CardComponent implements OnInit {
 
   loadCardTypes(): any{
     this.httpService
-    .getAll('http://localhost:9001/cardtypes/')
+    .getAll('http://gateway:9001/cardtypes/')
     .subscribe((response) => {
       let arr: any;
       arr = response;
@@ -99,7 +99,7 @@ export class CardComponent implements OnInit {
   }
 
   deleteCard(id: String){
-    this.httpService.deleteById('http://localhost:9001/cards/' + id).subscribe((result)=>{
+    this.httpService.deleteById('http://gateway:9001/cards/' + id).subscribe((result)=>{
       this.cards.length = 0;
       this.loadCards();
     })
@@ -117,7 +117,7 @@ export class CardComponent implements OnInit {
 
       const body = JSON.stringify(c);
 
-      this.httpService.create('http://localhost:9001/cards/register/' + this.cardForm.controls['userId'].value, body).subscribe((result)=>{
+      this.httpService.create('http://gateway:9001/cards/register/' + this.cardForm.controls['userId'].value, body).subscribe((result)=>{
         this.cards.length = 0;
         this.loadCards();
         this.initializeForms();
@@ -138,7 +138,7 @@ export class CardComponent implements OnInit {
 
       const body = JSON.stringify(c);
 
-      this.httpService.update('http://localhost:9001/cards/', body).subscribe((result)=>{
+      this.httpService.update('http://gateway:9001/cards/', body).subscribe((result)=>{
         this.cards.length = 0;
         this.loadCards();
         this.initializeForms();
