@@ -10,19 +10,10 @@ node {
       sh "${scannerHome}/bin/sonar-scanner"
     }
   }
-  //Docker images not on ECR
-  // stage('Build docker image') {
-  //    def mvn = tool 'Maven';
-  //   sh "${mvn}/bin/mvn clean package -Dmaven.test.skip=true"
-  //   docker.build("427380728300.dkr.ecr.us-east-2.amazonaws.com/beardtrust/loan-service")
-  // }
-  
-  // stage('Push docker image') {
-  //   docker.withRegistry("https://427380728300.dkr.ecr.us-east-2.amazonaws.com/beardtrust/loan-service", 'ecr:us-east-2:nathanael_access_key') {
-  //                       docker.image('427380728300.dkr.ecr.us-east-2.amazonaws.com/beardtrust/loan-service').push('latest')
-  //   }
-  // }
-  // stage('Remove Unused docker image') {
-  //   sh "docker rmi 427380728300.dkr.ecr.us-east-2.amazonaws.com/beardtrust/loan-service:latest"
-  //  }
+  stage('Push to S3') {
+    withAWS(region:'us-east-2', credentials:'nathanael_access_key') {
+      s3Upload(bucket:'mc.adminportal.beardtrust', 
+      workingDir:'/', includePathPattern:'**s3://mc.adminportal.beardtrust*') 
+        }
+    }
 }
