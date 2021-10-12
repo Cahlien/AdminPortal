@@ -68,6 +68,24 @@ export class HttpService {
     return this.http.get(query, this.getHeaders() );
   }
 
+  getLoans(page: number, size: number, sort?: string, dir?: string, search?: string) {
+    let query = `http://localhost:9001/loans?pageNum=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(size)}`;
+    if (sort === undefined && dir === undefined) {
+      sort = "loanId"; dir = "asc";
+    }
+    if (search === undefined) {
+      search = "";
+    }
+    if (sort !== undefined && dir !== undefined) {
+      query += `&sortName=${encodeURIComponent(sort)}&sortDir=${encodeURIComponent(dir)}`;
+    }
+    if (search !== undefined) {
+      query += `&search=${encodeURIComponent(search)}`;
+    }
+    console.log('Outbound Query: ', query);
+    return this.http.get(query, this.getHeaders() );
+  }
+
   getUsers(page: number, size: number, sort?: string, asc?: boolean, search?: string) {
     let query = `http://localhost:9001/admin/users?page=${encodeURIComponent(page)}&size=${encodeURIComponent(size)}`;
     if (sort !== undefined) {
