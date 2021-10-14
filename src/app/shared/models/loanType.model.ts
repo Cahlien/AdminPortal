@@ -1,6 +1,6 @@
 
 export class LoanType {
-    private typeId: String;
+    private id: String;
      activeStatus: boolean;
     private createDate: Date;
      numMonths: number;
@@ -8,8 +8,8 @@ export class LoanType {
     typeName: String;
      apr: number;
 
-    constructor(typeId: String, activeStatus: boolean, createDate: Date, numMonths: number, description: String, typeName: String, apr: number) {
-        this.typeId = typeId;
+    constructor(id: String, activeStatus: boolean, createDate: Date, numMonths: number, description: String, typeName: String, apr: number) {
+        this.id = id;
         this.activeStatus = activeStatus;
         this.createDate = createDate;
         this.numMonths = numMonths
@@ -18,12 +18,12 @@ export class LoanType {
         this.apr = apr;
     }
 
-    get $typeId() {
-        return this.typeId
+    get $id() {
+        return this.id
     }
 
-    set $typeId(val: String) {
-        this.typeId = val
+    set $id(val: String) {
+        this.id = val
     }
 
     get $activeStatus() {

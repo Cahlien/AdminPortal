@@ -11,8 +11,8 @@
  */
 export class CurrencyValue{
   private negative: boolean;
-  private dollars: number;
-  private cents: number;
+   dollars: number;
+   cents: number;
 
   /**
    * The parameterized constructor for the CurrencyValue class

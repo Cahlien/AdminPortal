@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 })
 export class HttpService {
 
-  private accountId: String = '';
+  private newId: any = '';
 
   constructor(private http: HttpClient) { }
 
@@ -36,18 +36,19 @@ export class HttpService {
     return this.http.get(url, this.getHeaders());
   }
 
-  async getNewUUID(url: string): Promise<String> {
+  async getNewUUID(url: string): Promise<any> {
     console.log('inbound url: ', url)
     await this.http.get(url, this.getHeaders()).toPromise().then(
       (res) => {
         let uuid: any;
         uuid = res;
-        this.accountId = uuid.accountId;
+        this.newId = uuid;
       }, err => {
         alert(err);
       }
     );
-    return this.accountId;
+    console.log('newId: ', this.newId)
+    return this.newId;
   }
 
   getAccounts(page: number, size: number, sort?: string, dir?: string, search?: string) {
