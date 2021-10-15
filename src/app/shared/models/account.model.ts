@@ -1,21 +1,23 @@
 import { ThisReceiver } from "@angular/compiler";
+import { AccountType } from "./accountType.model";
 import {CurrencyValue} from "./currencyvalue.model";
+import { User } from "./user.model";
 
 export class Account {
-    private userId: String;
-    private accountId: String;
+    private user: User;
+    private id: String;
     private activeStatus: boolean;
     private balance: CurrencyValue;
     private createDate: Date;
     private interest: number;
     private nickname: String;
-    private type: String;
+    private type: AccountType;
     private firstName: any;
     private lastName: any;
 
-    constructor(userId: String, accountId: String, activeStatus: boolean, balance: CurrencyValue, createDate: Date, interest: number, nickname: String, type: String) {
-        this.userId = userId;
-        this.accountId = accountId;
+    constructor(user: User, id: String, activeStatus: boolean, balance: CurrencyValue, createDate: Date, interest: number, nickname: String, type: AccountType) {
+        this.user = user;
+        this.id = id;
         this.activeStatus = activeStatus;
         this.balance = balance;
         this.createDate = createDate;
@@ -24,20 +26,20 @@ export class Account {
         this.type = type;
     }
 
-    get $userId() {
-        return this.userId
+    get $user() {
+        return this.user
     }
 
-    set $userId(val: String) {
-        this.userId = val
+    set $user(val: User) {
+        this.user = val
     }
 
-    get $accountId() {
-        return this.accountId
+    get $id() {
+        return this.id
     }
 
-    set $accountId(val: String) {
-        this.accountId = val
+    set $id(val: String) {
+        this.id = val
     }
 
     get $activeStatus() {
@@ -88,7 +90,7 @@ export class Account {
         return this.type
     }
 
-    set $type(val: String) {
+    set $type(val: AccountType) {
         this.type = val
     }
 

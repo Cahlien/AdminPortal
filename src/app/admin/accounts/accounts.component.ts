@@ -6,6 +6,7 @@ import { Account } from "src/app/shared/models/account.model";
 import { User } from "src/app/shared/models/user.model";
 import { PageEvent } from "@angular/material/paginator";
 import {CurrencyValue} from "../../shared/models/currencyvalue.model";
+import { AccountType } from "src/app/shared/models/accountType.model";
 
 @Component({
   selector: 'app-accounts',
@@ -48,14 +49,15 @@ export class AccountComponent implements OnInit {
   } = { status: "notYetPending", content: [], totalElements: 0, totalPages: 0 };
 
   account = [
-    { name: "userId", displayName: "User ID", class: "col-2" },
-    { name: "accountId", displayName: "Account ID", class: "col-3" },
+    { name: "user", displayName: "User ID", class: "col-2" },
+    { name: "id", displayName: "Account ID", class: "col-3" },
+    { name: "type", displayName: "Account Type", class: "col-3" },
+    { name: "name", displayName: "Name", class: "col-3" },
+    { name: "nickname", displayName: "Nickname", class: "col-3" },
     { name: "activeStatus", displayName: "Is Active", class: "col-3" },
     { name: "balance", displayName: "Balance", class: "col-2" },
     { name: "createDate", displayName: "Date Created", class: "col-2" },
-    { name: "interest", displayName: "Interest Rate", class: "col-2" },
-    { name: "nickname", displayName: "Nickname", class: "col-3" },
-    { name: "type", displayName: "Account Type", class: "col-3" }
+    { name: "interest", displayName: "Interest Rate", class: "col-2" }
   ];
 
 
@@ -110,7 +112,7 @@ export class AccountComponent implements OnInit {
       arr = res;
       this.totalItems = arr.totalElements;
       for (let obj of arr.content) {
-        let u = new Account(obj.userId, obj.accountId, obj.activeStatus, CurrencyValue.from(obj.balance),
+        let u = new Account(obj.user, obj.id, obj.activeStatus, CurrencyValue.from(obj.balance),
           obj.createDate, obj.interest, obj.nickname, obj.type);
         this.accounts.push(u);
       }
@@ -150,7 +152,7 @@ export class AccountComponent implements OnInit {
 
   formFilledCheck() {
     if (this.updateAccountForm.controls['userId'].value &&
-      this.updateAccountForm.controls['accountId'].value &&
+      this.updateAccountForm.controls['id'].value &&
       this.updateAccountForm.controls['balance'].value &&
       this.updateAccountForm.controls['interest'].value &&
       this.updateAccountForm.controls['createDate'].value &&
@@ -167,7 +169,7 @@ export class AccountComponent implements OnInit {
     if (this.formFilledCheck()) {
       let u = new Account(
         this.updateAccountForm.controls['userId'].value,
-        this.updateAccountForm.controls['accountId'].value,
+        this.updateAccountForm.controls['id'].value,
         this.updateAccountForm.controls['activeStatus'].value,
         CurrencyValue.valueOf(this.updateAccountForm.controls['balance'].value.replace('$', '')),//<-- VERY IMPORTANT!!!
         this.updateAccountForm.controls['createDate'].value,
@@ -178,7 +180,7 @@ export class AccountComponent implements OnInit {
       const body = JSON.stringify(u);
 
       if (!this.updateAccountForm.controls['nickname'].value) {
-        window.confirm('Save Acount ' + this.updateAccountForm.controls['accountId'].value + '?');
+        window.confirm('Save Acount ' + this.updateAccountForm.controls['id'].value + '?');
       }
       else {
         window.confirm('Save Acount ' + this.updateAccountForm.controls['nickname'].value + '?');
@@ -196,17 +198,18 @@ export class AccountComponent implements OnInit {
 
   async open(content: any, u: Account | null) {
     if (u !== null) {
+      console.log('user found: ', u.$user)
       this.editing = true;
       this.modalHeader = 'Edit Account';
       this.updateAccountForm = this.fb.group({
-        userId: u.$userId,
-        accountId: u.$accountId,
+        user: u.$user.$userId,
+        id: u.$id,
         activeStatus: u.$activeStatus,
         balance: u.$balance,
         createDate: u.$createDate,
         interest: u.$interest,
         nickname: u.$nickname,
-        type: u.$type,
+        type: u.$type.$id
       });
     } else {
       this.editing = false;
@@ -214,8 +217,8 @@ export class AccountComponent implements OnInit {
       const uuid = await this.httpService.getNewUUID('http://localhost:9001/accounts/new');
       console.log('rcv\'d: ', uuid);
       this.updateAccountForm = this.fb.group({
-        userId: '',
-        accountId: uuid,
+        user: '',
+        id: uuid,
         activeStatus: '',
         balance: '',
         createDate: new Date().toJSON().slice(0,10),

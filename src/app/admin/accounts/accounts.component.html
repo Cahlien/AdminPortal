@@ -25,20 +25,21 @@
         <tbody>
             <tr *ngFor="let a of accounts; let i=index">
                 <td>{{ i+1 }}</td>
-                <td>{{ a.$userId }}</td>
-                <td>{{ a.$accountId }}</td>
+                <td>{{ a.$user.userId }}</td>
+                <td>{{ a.$id }}</td>
+                <td>{{ a.$type.id }}</td>
+                <td>{{ a.$type.name }}</td>
+                <td>{{ a.$nickname }}</td>
                 <td>{{ a.$activeStatus }}</td>
                 <td>{{ a.$balance.toString() }}</td>
                 <td>{{ a.$createDate }}</td>
                 <td>{{ a.$interest }}%</td>
-                <td>{{ a.$nickname }}</td>
-                <td>{{ a.$type }}</td>
                 <td>
                     <button type="button" class="btn btn-secondary" (click)="open(updateAccountModal, a)">Edit</button>
                 </td>
                 <td>
                     <button type="button" class="btn btn-danger"
-                        (click)="deactivateAccount(a.$accountId)">Delete</button>
+                        (click)="deactivateAccount(a.$id)">Delete</button>
                 </td>
             </tr>
         </tbody>
@@ -61,8 +62,8 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <div class="mb-2">
-                            <label for="accountId" class="form-label">AccountId: </label>
-                            <input type="text" id="accountId" formControlName="accountId" class="form-control"
+                            <label for="id" class="form-label">id: </label>
+                            <input type="text" id="id" formControlName="id" class="form-control"
                                 readonly="readonly" />
                         </div>
                         <div class="mb-2">
