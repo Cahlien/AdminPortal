@@ -50,7 +50,7 @@ export class LoanComponent implements OnInit {
 
   loan = [
     { name: "userId", displayName: "User ID", class: "col-2" },
-    { name: "loanId", displayName: "Loan ID", class: "col-3" },
+    { name: "id", displayName: "Loan ID", class: "col-3" },
     { name: "loanType.typeName", displayName: "Type", class: "col-2" },
     { name: "loanType.apr", displayName: "APR", class: "col-2" },
     { name: "balance", displayName: "Balance", class: "col-2" },
@@ -113,7 +113,7 @@ export class LoanComponent implements OnInit {
         arr = res;
         this.totalItems = arr.totalElements;
         for (let obj of arr.content) {
-          let u = new Loan(obj.createDate, CurrencyValue.from(obj.balance), CurrencyValue.from(obj.principal), obj.loanId, obj.loanType,
+          let u = new Loan(obj.createDate, CurrencyValue.from(obj.balance), CurrencyValue.from(obj.principal), obj.id, obj.loanType,
             obj.nextDueDate, obj.previousDueDate, obj.userId, obj.valueTitle);
           this.loans.push(u);
         }
@@ -131,7 +131,7 @@ export class LoanComponent implements OnInit {
 
   initializeForms() {
     this.updateLoanForm = new FormGroup({
-      loanId: new FormControl('', [Validators.required, Validators.minLength(32), Validators.maxLength(32), Validators.pattern("/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/")]),
+      id: new FormControl('', [Validators.required, Validators.minLength(32), Validators.maxLength(32), Validators.pattern("/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/")]),
       userId: new FormControl('', [Validators.required, Validators.minLength(32), Validators.maxLength(32), Validators.pattern("/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/")]),
       typeName: new FormControl('', [Validators.required]),
       dollars: new FormControl('', [Validators.required]),
@@ -205,7 +205,7 @@ export class LoanComponent implements OnInit {
         this.updateLoanForm.controls['typeName'].value,
         this.updateLoanForm.controls['apr'].value,
       )
-      uuid = loan.loanId
+      uuid = loan.id
       let u = new Loan(
         this.updateLoanForm.controls['createDate'].value,
         c,
@@ -257,7 +257,7 @@ export class LoanComponent implements OnInit {
       this.modalHeader = 'Edit Loan';
       this.updateLoanForm = this.fb.group({
         userId: u.$userId,
-        loanId: u.$loanId,
+        id: u.$id,
         dollars: u.$balance.dollars,
         cents: u.$balance.cents,
         negative: u.$balance.isNegative,
@@ -282,7 +282,7 @@ export class LoanComponent implements OnInit {
       p.setDate(today.getDate() - 30);
       this.updateLoanForm = this.fb.group({
         typeName: '',
-        loanId: '',
+        id: '',
         apr: '',
         numMonths: '',
         description: '',
@@ -312,7 +312,7 @@ export class LoanComponent implements OnInit {
   }
 
   get userId() { return this.updateLoanForm.get('userId'); }
-  get loanId() { return this.updateLoanForm.get('loanId'); }
+  get id() { return this.updateLoanForm.get('id'); }
   get balance() { return this.updateLoanForm.get('balance'); }
   get createDate() { return this.updateLoanForm.get('createDate'); }
   get nextDueDate() { return this.updateLoanForm.get('nextDueDate'); }

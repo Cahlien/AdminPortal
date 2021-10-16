@@ -72,7 +72,7 @@ export class HttpService {
   getLoans(page: number, size: number, sort?: string, dir?: string, search?: string) {
     let query = `http://localhost:9001/loans?pageNum=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(size)}`;
     if (sort === undefined && dir === undefined) {
-      sort = "loanId"; dir = "asc";
+      sort = "id"; dir = "asc";
     }
     if (search === undefined) {
       search = "";

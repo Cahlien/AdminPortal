@@ -26,7 +26,7 @@
             <tr *ngFor="let a of loans; let i=index">
                 <td>{{ i+1 }}</td>
                 <td>{{ a.$userId }}</td>
-                <td>{{ a.$loanId }}</td>
+                <td>{{ a.$id }}</td>
                 <td>{{ a.$loanType.typeName }}</td>
                 <td>{{ a.$loanType.apr }}%</td>
                 <td>{{ a.$balance }}</td>
@@ -40,7 +40,7 @@
                 </td>
                 <td>
                     <button type="button" class="btn btn-danger"
-                        (click)="deleteLoan(a.$loanId)">Delete</button>
+                        (click)="deleteLoan(a.$id)">Delete</button>
                 </td>
             </tr>
         </tbody>
@@ -63,8 +63,8 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <div *ngIf="editing" class="mb-2">
-                            <label for="loanId" class="form-label">LoanId: </label>
-                            <input type="text" id="loanId" formControlName="loanId" class="form-control"
+                            <label for="id" class="form-label">id: </label>
+                            <input type="text" id="id" formControlName="id" class="form-control"
                                 readonly="readonly" />
                         </div>
                         <div *ngIf="editing" class="mb-2">
