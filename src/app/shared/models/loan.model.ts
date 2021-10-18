@@ -4,7 +4,7 @@ import { LoanType } from "./loanType.model";
 
 export class Loan {
     private userId: String;
-    private loanId: String;
+    private id: String;
     private balance: CurrencyValue;
     private principal: CurrencyValue;
     private loanType: LoanType;
@@ -13,10 +13,10 @@ export class Loan {
     private previousDueDate: Date;
     private valueTitle: String;
 
-    constructor(createDate: Date, balance: CurrencyValue, principal: CurrencyValue, loanId: String, loanType: LoanType, 
+    constructor(createDate: Date, balance: CurrencyValue, principal: CurrencyValue, id: String, loanType: LoanType, 
         nextDueDate: Date, previousDueDate: Date,  userId: String, valueTitle: String) {
         this.userId = userId;
-        this.loanId = loanId;
+        this.id = id;
         this.balance = balance;
         this.principal = principal;
         this.loanType = loanType;
@@ -34,12 +34,12 @@ export class Loan {
         this.userId = val
     }
 
-    get $loanId() {
-        return this.loanId
+    get $id() {
+        return this.id
     }
 
-    set $loanId(val: String) {
-        this.loanId = val
+    set $id(val: String) {
+        this.id = val
     }
 
     get $balance() {

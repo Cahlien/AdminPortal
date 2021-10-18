@@ -1,75 +1,117 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from 'src/app/shared/services/http.service';
-import { FormBuilder } from '@angular/forms';
-import { AccountComponent } from './loans.component';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LoanComponent } from './loans.component';
 import { of } from 'rxjs';
-import { Account } from 'src/app/shared/models/account.model';
+import { Loan } from 'src/app/shared/models/loan.model';
 import { User } from 'src/app/shared/models/user.model';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { CurrencyValue } from 'src/app/shared/models/currencyvalue.model';
+import { LoanType } from 'src/app/shared/models/loanType.model';
+import { HttpResponse } from '@angular/common/http';
 
-fdescribe('AccountsComponent', () => {
-    let component: AccountComponent;
-    let fixture: ComponentFixture<AccountComponent>;
-    let httpServiceSpy: jasmine.SpyObj<HttpService>;
+describe('LoansComponent', () => {
+  let component: LoanComponent;
+  let loanService: HttpTestingController;
+  let fixture: ComponentFixture<LoanComponent>;
+  let httpService: HttpService;
 
-    beforeEach(async () => {
-        httpServiceSpy = jasmine.createSpyObj('HttpService', ['getAccounts', 'getNewAccounts', 'update', 'deleteById', 'getAll'])
-        await TestBed.configureTestingModule({
-            declarations: [AccountComponent],
-            providers: [{
-                provide: HttpService,
-                useValue: httpServiceSpy
-            }, NgbModal, FormBuilder]
+  beforeAll(async () => {
+      await TestBed.configureTestingModule({
+          imports: [
+            FormsModule,
+            HttpClientTestingModule,
+            ReactiveFormsModule,
+            MatPaginatorModule,
+            BrowserAnimationsModule,
+            NoopAnimationsModule
+          ],
+          declarations: [ LoanComponent ],
+          providers: [HttpService]
         })
-            .compileComponents();
-    });
+        .compileComponents();
+      });
+    beforeAll(() => {
+    loanService = TestBed.inject(HttpTestingController);
+    httpService = TestBed.inject(HttpService);
+    fixture = TestBed.createComponent(LoanComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(AccountComponent);
-        component = fixture.componentInstance;
+    afterEach(() => {
+    const response = new HttpResponse({
+      body:{},
+      status: 200,
+      statusText: 'OK'
     });
+    const call = loanService.expectOne('http://localhost:9001/loans?page=0&&size=5');
+    expect(call.request.method).toEqual('GET');
+    call.flush(response);
+    loanService.verify();
+  });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+  it('should create component and send two http GET requests', () => {
+    expect(component).toBeTruthy();
+
+    const response = new HttpResponse({
+      body:{},
+      status: 200,
+      statusText: 'OK'
     });
+    //const call = cardService.expectOne('http://localhost:9001/cards/');
+    const call2 = loanService.expectOne('http://localhost:9001/loantypes/');
+    //expect(call.request.method).toEqual('GET');
+    expect(call2.request.method).toEqual('GET');
+    //call.flush(response);
+    call2.flush(response);
+    };
 
-    it('should get accounts', () => {
+    it('should get Loans', () => {
+        const c = new CurrencyValue(false, 0, 0)
+        const lt = new LoanType(
+            'd44c62cd-c1e5-4273-82ec-2b1fa9654b0a',
+            true,
+            new Date(),
+            10,
+            '',
+            'test',
+            0
+        )
         const users = [new User('abcd', 'abcd', 'abcd@abcd.com',
             '1111111111', 'abcd', 'abcd',
             '2000-01-01', 'abcd',
             'd44c62cd-c1e5-4273-82ec-2b1fa9654b0a')]
-        httpServiceSpy.getAll.and.returnValue(of(users));
-        const account = new Account(
+        httpService.getAll.and.returnValue(of(users));
+        const loan = new Loan(
+            new Date(),
+            c,
+            c,
             'd44c62cd-c1e5-4273-82ec-2b1fa9654b0a',
+            lt,
+            new Date(),
+            new Date(),
             'd44c62cd-c1e5-4273-82ec-2b1fa9654b0a',
-            true, 100, new Date(2000, 1, 1), 1, 'abcd', 'abcd')
-        account.$firstName = 'abcd';
-        account.$lastName = 'abcd';
-        const accounts = [account];
-        const page = {
-            status: 'success',
-            content: accounts,
-            numberOfElements: 1,
-            totalPages: 1
-        }
-        const account2 = new Account(
+            'title'
+            )
+        const Loan2 = new Loan(
+            new Date(),
+            c,
+            c,
             'd44c62cd-c1e5-4273-82ec-2b1fa9654b0a',
+            lt,
+            new Date(),
+            new Date(),
             'd44c62cd-c1e5-4273-82ec-2b1fa9654b0a',
-            true, 100, new Date(2000, 1, 1), 1, 'abcd', 'abcd')
-        account2.$firstName = 'abcd';
-        account2.$lastName = 'abcd';
-        const otherAccounts = [account2];
-        const data = {
-            status: "success",
-            content: otherAccounts,
-            totalElements: 1,
-            totalPages: 1
-        }
-        httpServiceSpy.getAccounts.and.returnValue(of(page));
+            'title2'
+            )
+        const data = httpService.getAll("http://localhost:9001/loans");
         fixture.detectChanges();
-        expect(component.users).toEqual(users);
+        // expect(component.users).toEqual(users);
         expect(component.data).toEqual(data);
-        expect(component.accounts.length).toBe(1);
     })
 
 });

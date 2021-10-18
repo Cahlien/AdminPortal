@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { Account } from 'src/app/shared/models/account.model';
 import { User } from 'src/app/shared/models/user.model';
 
-fdescribe('AccountsComponent', () => {
+describe('AccountsComponent', () => {
     let component: AccountComponent;
     let fixture: ComponentFixture<AccountComponent>;
     let httpServiceSpy: jasmine.SpyObj<HttpService>;
