@@ -1,12 +1,14 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from "@angular/router";
+import {environment} from "../../environments/environment";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
   isLoggedIn: boolean;
 
-  url: string = 'http://localhost:9001/users/login';
+  url: string = environment.baseUrl;
+
   headers: HttpHeaders = new HttpHeaders({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
