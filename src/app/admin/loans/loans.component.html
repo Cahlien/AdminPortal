@@ -25,7 +25,7 @@
         <tbody>
             <tr *ngFor="let a of loans; let i=index">
                 <td>{{ i+1 }}</td>
-                <td>{{ a.$userId }}</td>
+                <td>{{ a.$user.userId }}</td>
                 <td>{{ a.$id }}</td>
                 <td>{{ a.$loanType.typeName }}</td>
                 <td>{{ a.$loanType.apr }}%</td>
@@ -68,13 +68,13 @@
                                 readonly="readonly" />
                         </div>
                         <div *ngIf="editing" class="mb-2">
-                            <label for="userId" class="form-label">UserId: </label>
-                            <input type="text" id="userId" formControlName="userId" class="form-control" required 
+                            <label for="user" class="form-label">UserId: </label>
+                            <input type="text" id="user" formControlName="user" class="form-control" required 
                                 readonly="readonly"/>
                         </div>
                         <div *ngIf="!editing" class="mb-2">
-                            <label for="userId" class="form-label">UserId: </label>
-                            <input type="text" id="userId" formControlName="userId" class="form-control" required />
+                            <label for="user" class="form-label">UserId: </label>
+                            <input type="text" id="user" formControlName="user" class="form-control" required />
                         </div>
                         <div class="mb-2">
                             <label for="typeName" class="form-label">Loan Type: </label>

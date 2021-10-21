@@ -18,7 +18,6 @@ export class LoanComponent implements OnInit {
   users: User[] = new Array();
   loanTypes: LoanType[] = new Array();
   updateLoanForm!: FormGroup;
-
   modalRef!: NgbModalRef;
   errorMessage: any;
   closeResult: any;
@@ -49,7 +48,7 @@ export class LoanComponent implements OnInit {
   } = { status: "notYetPending", content: [], totalElements: 0, totalPages: 0 };
 
   loan = [
-    { name: "userId", displayName: "User ID", class: "col-2" },
+    { name: "user", displayName: "User ID", class: "col-2" },
     { name: "id", displayName: "Loan ID", class: "col-3" },
     { name: "loanType.typeName", displayName: "Type", class: "col-2" },
     { name: "loanType.apr", displayName: "APR", class: "col-2" },
@@ -68,6 +67,7 @@ export class LoanComponent implements OnInit {
     this.pageIndex = 0;
     this.pageSize = 5;
     this.update();
+    this.initializeForms();
   }
 
   onChangePage(pe: PageEvent) {
@@ -112,9 +112,10 @@ export class LoanComponent implements OnInit {
         let arr: any;
         arr = res;
         this.totalItems = arr.totalElements;
+        console.log('found: ', res)
         for (let obj of arr.content) {
           let u = new Loan(obj.createDate, CurrencyValue.from(obj.balance), CurrencyValue.from(obj.principal), obj.id, obj.loanType,
-            obj.nextDueDate, obj.previousDueDate, obj.userId, obj.valueTitle);
+            obj.nextDueDate, obj.previousDueDate, obj.user, obj.valueTitle);
           this.loans.push(u);
         }
         this.data = {
@@ -132,8 +133,13 @@ export class LoanComponent implements OnInit {
   initializeForms() {
     this.updateLoanForm = new FormGroup({
       id: new FormControl('', [Validators.required, Validators.minLength(32), Validators.maxLength(32), Validators.pattern("/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/")]),
-      userId: new FormControl('', [Validators.required, Validators.minLength(32), Validators.maxLength(32), Validators.pattern("/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/")]),
+      user: new FormControl('', [Validators.required, Validators.minLength(32), Validators.maxLength(32), Validators.pattern("/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/")]),
       typeName: new FormControl('', [Validators.required]),
+      negative: new FormControl('', [Validators.required]),
+      numMonths: new FormControl('', [Validators.required]),
+      createDate: new FormControl('', [Validators.required]),
+      nextDueDate: new FormControl('', [Validators.required]),
+      previousDueDate: new FormControl('', [Validators.required]),
       dollars: new FormControl('', [Validators.required]),
       cents: new FormControl('', [Validators.required]),
       apr: new FormControl('', [Validators.required, Validators.maxLength(3)])
@@ -151,7 +157,7 @@ export class LoanComponent implements OnInit {
   };
 
   formFilledCheck() {
-    if (this.updateLoanForm.controls['userId'].value &&
+    if (this.updateLoanForm.controls['user'].value &&
       this.updateLoanForm.controls['typeName'].value &&
       this.updateLoanForm.controls['apr'].value &&
       this.updateLoanForm.controls['dollars'].value &&
@@ -167,7 +173,7 @@ export class LoanComponent implements OnInit {
     } else {
       console.log('form isn\'t filled');
       console.log('form found: ',
-        'userId: ', this.updateLoanForm.controls['userId'].value,
+        'user: ', this.updateLoanForm.controls['user'].value,
         'typeName: ', this.updateLoanForm.controls['typeName'].value,
         'apr: ', this.updateLoanForm.controls['apr'].value,
         'dollars: ', this.updateLoanForm.controls['dollars'].value,
@@ -185,8 +191,9 @@ export class LoanComponent implements OnInit {
   async saveLoan() {
     if (this.formFilledCheck()) {
       console.log('form filled')
-      const loan = await this.httpService.getNewUUID('http://localhost:9001/loans/new');
+      const loan = await this.httpService.getNewUUID('http://localhost:9001/loans/new', this.updateLoanForm.controls['user'].value);
       const loanType = await this.httpService.getNewUUID('http://localhost:9001/loantypes/new');
+      console.log('loan body made: ', loan)
       let c = new CurrencyValue(
         this.updateLoanForm.controls['negative'].value,
         this.updateLoanForm.controls['dollars'].value,
@@ -214,11 +221,11 @@ export class LoanComponent implements OnInit {
         t,
         this.updateLoanForm.controls['nextDueDate'].value,
         this.updateLoanForm.controls['previousDueDate'].value,
-        this.updateLoanForm.controls['userId'].value,
+        loan.user,
         this.updateLoanForm.controls['valueTitle'].value);
       const loanBody = JSON.stringify(u);
       const typeBody = JSON.stringify(t);
-      console.log('loanBody to send: ', loanBody)
+      console.log('loanBody to send: ', u)
       console.log('typeBody to send: ', typeBody)
 
       if (!uuid) {
@@ -234,7 +241,7 @@ export class LoanComponent implements OnInit {
         console.log("updating" + result);
         this.loans.length = 0;
         this.update()
-        window.location.reload();
+        // window.location.reload();
       });
     }
     else {
@@ -242,7 +249,7 @@ export class LoanComponent implements OnInit {
         console.log("creating loan" + result);
         this.loans.length = 0;
         this.update()
-        window.location.reload();
+        // window.location.reload();
       });
     }
     } else {
@@ -252,19 +259,19 @@ export class LoanComponent implements OnInit {
 
   async open(content: any, u: Loan | null) {
     if (u !== null) {
-      console.log('editing existing loan...')
+      console.log('editing existing loan...', u)
       this.editing = true;
       this.modalHeader = 'Edit Loan';
       this.updateLoanForm = this.fb.group({
-        userId: u.$userId,
+        user: u.$user.userId,
         id: u.$id,
         dollars: u.$balance.dollars,
         cents: u.$balance.cents,
         negative: u.$balance.isNegative,
-        typeName: u.$loanType.typeName,
-        apr: u.$loanType.apr,
-        numMonths: u.$loanType.numMonths,
-        description: u.$loanType.description,
+        typeName: u.$loanType.$typeName,
+        apr: u.$loanType.$apr,
+        numMonths: u.$loanType.$numMonths,
+        description: u.$loanType.$description,
         createDate: u.$createDate,
         nextDueDate: u.$nextDueDate,
         previousDueDate: u.$previousDueDate,
@@ -282,11 +289,12 @@ export class LoanComponent implements OnInit {
       p.setDate(today.getDate() - 30);
       this.updateLoanForm = this.fb.group({
         typeName: '',
+        userId: '',
         id: '',
         apr: '',
         numMonths: '',
         description: '',
-        userId: '',
+        user: '',
         dollars: '',
         cents: '',
         negative: '',
@@ -311,7 +319,7 @@ export class LoanComponent implements OnInit {
     this.modalRef.close();
   }
 
-  get userId() { return this.updateLoanForm.get('userId'); }
+  get user() { return this.updateLoanForm.get('user'); }
   get id() { return this.updateLoanForm.get('id'); }
   get balance() { return this.updateLoanForm.get('balance'); }
   get createDate() { return this.updateLoanForm.get('createDate'); }

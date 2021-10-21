@@ -1,9 +1,10 @@
 import { ThisReceiver } from "@angular/compiler";
 import {CurrencyValue} from "./currencyvalue.model";
 import { LoanType } from "./loanType.model";
+import { User } from "./user.model";
 
 export class Loan {
-    private userId: String;
+    private user: User;
     private id: String;
     private balance: CurrencyValue;
     private principal: CurrencyValue;
@@ -14,8 +15,8 @@ export class Loan {
     private valueTitle: String;
 
     constructor(createDate: Date, balance: CurrencyValue, principal: CurrencyValue, id: String, loanType: LoanType, 
-        nextDueDate: Date, previousDueDate: Date,  userId: String, valueTitle: String) {
-        this.userId = userId;
+        nextDueDate: Date, previousDueDate: Date,  user: User, valueTitle: String) {
+        this.user = user;
         this.id = id;
         this.balance = balance;
         this.principal = principal;
@@ -26,12 +27,12 @@ export class Loan {
         this.valueTitle = valueTitle;
     }
 
-    get $userId() {
-        return this.userId
+    get $user() {
+        return this.user
     }
 
-    set $userId(val: String) {
-        this.userId = val
+    set $user(val: User) {
+        this.user = val
     }
 
     get $id() {

@@ -36,9 +36,10 @@ export class HttpService {
     return this.http.get(url, this.getHeaders());
   }
 
-  async getNewUUID(url: string): Promise<any> {
+  async getNewUUID(url: string, id?: string): Promise<any> {
     console.log('inbound url: ', url)
-    await this.http.get(url, this.getHeaders()).toPromise().then(
+    if (id) {
+    await this.http.post(url, id, this.getHeaders()).toPromise().then(
       (res) => {
         let uuid: any;
         uuid = res;
@@ -46,7 +47,21 @@ export class HttpService {
       }, err => {
         alert(err);
       }
+    
     );
+    }
+    else {
+      await this.http.get(url, this.getHeaders()).toPromise().then(
+        (res) => {
+          let uuid: any;
+          uuid = res;
+          this.newId = uuid;
+        }, err => {
+          alert(err);
+        }
+      
+      );
+    }
     console.log('newId: ', this.newId)
     return this.newId;
   }
