@@ -69,7 +69,7 @@ export class HttpService {
   getAccounts(page: number, size: number, sort?: string, dir?: string, search?: string) {
     let query = `http://localhost:9001/accounts/all?pageNum=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(size)}`;
     if (sort === undefined && dir === undefined) {
-      sort = "accountId"; dir = "asc";
+      sort = "id"; dir = "asc";
     }
     if (search === undefined) {
       search = "";
@@ -124,6 +124,7 @@ export class HttpService {
 
   update(url: string, obj: any) {
     console.log('update called')
+    console.log('update object: ', obj)
     return this.http.put(url, obj, this.getHeaders());
   }
 

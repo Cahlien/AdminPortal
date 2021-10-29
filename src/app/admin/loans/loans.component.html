@@ -30,11 +30,15 @@
                 <td>{{ a.$loanType.typeName }}</td>
                 <td>{{ a.$loanType.apr }}%</td>
                 <td>{{ a.$balance }}</td>
+                <td>{{ a.$minMonthFee }}</td>
+                <td>{{ a.$minDue }}</td>
+                <td>{{ a.$lateFee }}</td>
                 <td>{{ a.$principal }}</td>
                 <td>{{ a.$loanType.numMonths }}</td>
                 <td>{{ a.$createDate }}</td>
                 <td>{{ a.$nextDueDate }}</td>
                 <td>{{ a.$previousDueDate }}</td>
+                <td>{{ a.$hasPaid }}</td>
                 <td>
                     <button type="button" class="btn btn-secondary" (click)="open(updateLoanModal, a)">Edit</button>
                 </td>
@@ -63,18 +67,18 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <div *ngIf="editing" class="mb-2">
-                            <label for="id" class="form-label">id: </label>
+                            <label for="id" class="form-label">Id: </label>
                             <input type="text" id="id" formControlName="id" class="form-control"
                                 readonly="readonly" />
                         </div>
                         <div *ngIf="editing" class="mb-2">
-                            <label for="user" class="form-label">UserId: </label>
-                            <input type="text" id="user" formControlName="user" class="form-control" required 
+                            <label for="userId" class="form-label">UserId: </label>
+                            <input type="text" id="userId" formControlName="userId" class="form-control" required 
                                 readonly="readonly"/>
                         </div>
                         <div *ngIf="!editing" class="mb-2">
-                            <label for="user" class="form-label">UserId: </label>
-                            <input type="text" id="user" formControlName="user" class="form-control" required />
+                            <label for="userId" class="form-label">UserId: </label>
+                            <input type="text" id="userId" formControlName="userId" class="form-control" required />
                         </div>
                         <div class="mb-2">
                             <label for="typeName" class="form-label">Loan Type: </label>
@@ -103,6 +107,24 @@
                             <input type="text" id="cents" formControlName="cents" class="form-control sr-only" />
                             <div *ngIf="balance?.invalid && (balance?.dirty || balance?.touched)">
                                 <div *ngIf="balance?.errors?.required">
+                                    <small class="text-danger">Balance is required. It can be 0</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="minDue" class="form-label">Current Minimum Due: </label>
+                            <input type="text" id="minDue" formControlName="minDue" class="form-control sr-only" />
+                            <div *ngIf="minDue?.invalid && (minDue?.dirty || minDue?.touched)">
+                                <div *ngIf="minDue?.errors?.required">
+                                    <small class="text-danger">Balance is required. It can be 0</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="minMonthFee" class="form-label">Normal Minimum Due: </label>
+                            <input type="text" id="minMonthFee" formControlName="minMonthFee" class="form-control sr-only" />
+                            <div *ngIf="minMonthFee?.invalid && (minMonthFee?.dirty || minMonthFee?.touched)">
+                                <div *ngIf="minMonthFee?.errors?.required">
                                     <small class="text-danger">Balance is required. It can be 0</small>
                                 </div>
                             </div>

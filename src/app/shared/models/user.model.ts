@@ -1,6 +1,6 @@
 export class User {
 
-     userId: String;
+    userId: String;
     private username: String;
     private password: String;
     private email: String;
@@ -10,7 +10,7 @@ export class User {
     private dateOfBirth: String;
     private role: String;
 
-	constructor(username: String, password: String, email: String, phone: String, firstName: String, lastName: String, dateOfBirth: String, role: String, userId?: String) {
+	constructor(username: String, password: String, email: String, phone: String, firstName: String, lastName: String, dateOfBirth: String, role: String, userId: String) {
         this.password = password;
 		this.email = email;
 		this.phone = phone;
@@ -19,7 +19,7 @@ export class User {
 		this.username = username;
 		this.dateOfBirth = dateOfBirth;
         this.role = role;
-        this.userId = userId!;
+        this.userId = userId;
     }
 
 

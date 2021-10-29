@@ -8,23 +8,45 @@ export class Loan {
     private id: String;
     private balance: CurrencyValue;
     private principal: CurrencyValue;
+    private minDue: CurrencyValue;
+    private lateFee: CurrencyValue;
     private loanType: LoanType;
     private createDate: Date;
     private nextDueDate: Date;
     private previousDueDate: Date;
-    private valueTitle: String;
+    private minMonthFee: String;
+    private hasPaid: boolean;
 
-    constructor(createDate: Date, balance: CurrencyValue, principal: CurrencyValue, id: String, loanType: LoanType, 
-        nextDueDate: Date, previousDueDate: Date,  user: User, valueTitle: String) {
+    constructor(createDate: Date, balance: CurrencyValue, principal: CurrencyValue, minDue: CurrencyValue, lateFee: CurrencyValue, id: String, loanType: LoanType, 
+        nextDueDate: Date, previousDueDate: Date,  user: User, minMonthFee: String, hasPaid: boolean) {
         this.user = user;
         this.id = id;
         this.balance = balance;
         this.principal = principal;
+        this.minDue = minDue;
+        this.lateFee = lateFee;
         this.loanType = loanType;
         this.createDate = createDate;
         this.nextDueDate = nextDueDate;
         this.previousDueDate = previousDueDate;
-        this.valueTitle = valueTitle;
+        this.minMonthFee = minMonthFee;
+        this.hasPaid = hasPaid;
+    }
+
+    get $minDue() {
+        return this.minDue
+    }
+
+    set $minDue(val: CurrencyValue) {
+        this.minDue = val
+    }
+
+    get $lateFee() {
+        return this.lateFee
+    }
+
+    set $lateFee(val: CurrencyValue) {
+        this.lateFee = val
     }
 
     get $user() {
@@ -91,11 +113,19 @@ export class Loan {
         this.previousDueDate = val
     }
 
-    get $valueTitle() {
-        return this.valueTitle
+    get $minMonthFee() {
+        return this.minMonthFee
     }
 
-    set $valueTitle(val: String) {
-        this.valueTitle = val
+    set $minMonthFee(val: String) {
+        this.minMonthFee = val
+    }
+
+    get $hasPaid() {
+        return this.hasPaid
+    }
+
+    set $hasPaid(val: boolean) {
+        this.hasPaid = val
     }
 }

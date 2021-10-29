@@ -48,8 +48,8 @@ export class AccountComponent implements OnInit {
   } = { status: "notYetPending", content: [], totalElements: 0, totalPages: 0 };
 
   account = [
-    { name: "userId", displayName: "User ID", class: "col-2" },
-    { name: "accountId", displayName: "Account ID", class: "col-3" },
+    { name: "user", displayName: "User ID", class: "col-2" },
+    { name: "id", displayName: "Account ID", class: "col-3" },
     { name: "activeStatus", displayName: "Is Active", class: "col-3" },
     { name: "balance", displayName: "Balance", class: "col-2" },
     { name: "createDate", displayName: "Date Created", class: "col-2" },
@@ -110,7 +110,7 @@ export class AccountComponent implements OnInit {
       arr = res;
       this.totalItems = arr.totalElements;
       for (let obj of arr.content) {
-        let u = new Account(obj.userId, obj.accountId, obj.activeStatus, CurrencyValue.from(obj.balance),
+        let u = new Account(obj.user, obj.id, obj.activeStatus, CurrencyValue.from(obj.balance),
           obj.createDate, obj.interest, obj.nickname, obj.type);
         this.accounts.push(u);
       }
@@ -128,7 +128,7 @@ export class AccountComponent implements OnInit {
 
   initializeForms() {
     this.updateAccountForm = new FormGroup({
-      userId: new FormControl('', [Validators.required, Validators.minLength(32), Validators.maxLength(32), Validators.pattern("/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/")]),
+      user: new FormControl('', [Validators.required, Validators.minLength(32), Validators.maxLength(32), Validators.pattern("/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/")]),
       activeStatus: new FormControl('', [Validators.required]),
       balance: new FormControl('', [Validators.required]),
       createDate: new FormControl('', [Validators.required]),
@@ -149,8 +149,8 @@ export class AccountComponent implements OnInit {
   };
 
   formFilledCheck() {
-    if (this.updateAccountForm.controls['userId'].value &&
-      this.updateAccountForm.controls['accountId'].value &&
+    if (this.updateAccountForm.controls['user'].value &&
+      this.updateAccountForm.controls['id'].value &&
       this.updateAccountForm.controls['balance'].value &&
       this.updateAccountForm.controls['interest'].value &&
       this.updateAccountForm.controls['createDate'].value &&
@@ -166,8 +166,8 @@ export class AccountComponent implements OnInit {
   saveAccount() {
     if (this.formFilledCheck()) {
       let u = new Account(
-        this.updateAccountForm.controls['userId'].value,
-        this.updateAccountForm.controls['accountId'].value,
+        this.updateAccountForm.controls['user'].value,
+        this.updateAccountForm.controls['id'].value,
         this.updateAccountForm.controls['activeStatus'].value,
         CurrencyValue.valueOf(this.updateAccountForm.controls['balance'].value.replace('$', '')),//<-- VERY IMPORTANT!!!
         this.updateAccountForm.controls['createDate'].value,
@@ -178,7 +178,7 @@ export class AccountComponent implements OnInit {
       const body = JSON.stringify(u);
 
       if (!this.updateAccountForm.controls['nickname'].value) {
-        window.confirm('Save Acount ' + this.updateAccountForm.controls['accountId'].value + '?');
+        window.confirm('Save Acount ' + this.updateAccountForm.controls['id'].value + '?');
       }
       else {
         window.confirm('Save Acount ' + this.updateAccountForm.controls['nickname'].value + '?');
@@ -190,6 +190,13 @@ export class AccountComponent implements OnInit {
         window.location.reload();
       });
     } else {
+      console.log('user: ', this.updateAccountForm.controls['user'].value)
+      console.log('id: ', this.updateAccountForm.controls['id'].value)
+      console.log('active: ', this.updateAccountForm.controls['active'].value)
+      console.log('balance: ', this.updateAccountForm.controls['balance'].value)
+      console.log('createDate: ', this.updateAccountForm.controls['createDate'].value)
+      console.log('nickname: ', this.updateAccountForm.controls['nickname'].value)
+      console.log('type: ', this.updateAccountForm.controls['type'].value)
       alert("Only the Nickname and Activity sections may be left blank.")
     }
   }
@@ -199,8 +206,9 @@ export class AccountComponent implements OnInit {
       this.editing = true;
       this.modalHeader = 'Edit Account';
       this.updateAccountForm = this.fb.group({
-        userId: u.$userId,
-        accountId: u.$accountId,
+        user: u.$user,
+        userId: u.$user.$userId,
+        id: u.$id,
         activeStatus: u.$activeStatus,
         balance: u.$balance,
         createDate: u.$createDate,
@@ -214,8 +222,8 @@ export class AccountComponent implements OnInit {
       const uuid = await this.httpService.getNewUUID('http://localhost:9001/accounts/new');
       console.log('rcv\'d: ', uuid);
       this.updateAccountForm = this.fb.group({
-        userId: '',
-        accountId: uuid,
+        user: '',
+        id: uuid,
         activeStatus: '',
         balance: '',
         createDate: new Date().toJSON().slice(0,10),
@@ -238,7 +246,7 @@ export class AccountComponent implements OnInit {
     this.modalRef.close();
   }
 
-  get userId() { return this.updateAccountForm.get('userId'); }
+  get user() { return this.updateAccountForm.get('user'); }
   get activeStatus() { return this.updateAccountForm.get('activeStatus'); }
   get balance() { return this.updateAccountForm.get('balance'); }
   get createDate() { return this.updateAccountForm.get('createDate'); }
