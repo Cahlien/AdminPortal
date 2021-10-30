@@ -7,6 +7,7 @@ import { User } from "../../shared/models/user.model";
 import { PageEvent } from "@angular/material/paginator";
 import { CurrencyValue } from "../../shared/models/currencyvalue.model";
 import { LoanType } from "../../shared/models/loanType.model";
+import { setWrapHostForTest } from "@angular/compiler-cli/src/transformers/compiler_host";
 
 @Component({
   selector: 'app-loans',
@@ -16,6 +17,16 @@ import { LoanType } from "../../shared/models/loanType.model";
 export class LoanComponent implements OnInit {
   loans: Loan[] = new Array();
   users: User[] = new Array();
+  persLoanDur: number[] = [1, 2, 3, 4, 5, 6, 12, 24, 36, 48, 60, 72, 80, 92, 104];
+  specLoanDur: number[] = [1, 2, 3, 4, 5, 6, 12, 24, 36, 48, 60, 72, 80, 92, 104, 116, 128, 140, 152, 180, 360, 480, 600];
+  autoLoanDur: number[] = [36, 48, 60, 72, 80, 84];
+  mortLoanDur: number[] = [180, 360, 480, 600];
+  autoLoanApr: number[] = [];
+  specLoanApr: number[] = [];
+  mortLoanApr: number[] = [];
+  persLoanApr: number[] = [];
+  curLoanApr!: number[];
+  curLoanList!: number[];
   loanTypes: LoanType[] = new Array();
   updateLoanForm!: FormGroup;
   modalRef!: NgbModalRef;
@@ -27,6 +38,7 @@ export class LoanComponent implements OnInit {
   pageSize: any;
   editing!: boolean;
   activeLoan!: Loan;
+  activeLoanType!: LoanType;
 
 
   @Input() search!: string;
@@ -71,6 +83,9 @@ export class LoanComponent implements OnInit {
     this.totalItems = 0;
     this.pageIndex = 0;
     this.pageSize = 5;
+    this.persLoanApr = this.setAPR(100);
+    this.mortLoanApr = this.setAPR(6);
+    this.autoLoanApr = this.setAPR(10);
     this.update();
     this.initializeForms();
   }
@@ -83,6 +98,45 @@ export class LoanComponent implements OnInit {
     }
     this.loans = new Array();
     this.update();
+  }
+
+  async creditReport() {
+    console.log('sending credit report ...')
+    var loanType = await this.httpService.getNewUUID('http://localhost:9001/loantypes/new');
+    loanType.activeStatus = true;
+    console.log('apr found: ', this.updateLoanForm)
+    loanType.apr = this.updateLoanForm.controls['apr'].value;
+    loanType.createDate = this.updateLoanForm.controls['createDate'].value;
+    loanType.description = this.updateLoanForm.controls['description'].value;
+    loanType.numMonths = this.updateLoanForm.controls['numMonths'].value
+    loanType.typeName = this.updateLoanForm.controls['typeName'].value
+    this.activeLoanType = loanType;
+    var userId = this.updateLoanForm.controls['userId'].value;
+    console.log('userId found: ', userId)
+    if (!this.updateLoanForm.controls['userId'].invalid && !this.updateLoanForm.controls['typeName'].invalid) {
+      console.log('outbound loantype: ', loanType)
+     await this.httpService.creditCheck('http://localhost:9001/loans/check/' + userId, this.activeLoanType)
+     .subscribe((res) => {
+      console.log('loan received: ', res);
+      let loan: any;
+      loan = res;
+      this.activeLoan = loan;
+      console.log(loan.balance); 
+      this.updateLoanForm.controls['balance'].setValue(loan.balance.dollars + (loan.balance.cents / 100));
+      this.updateLoanForm.controls['minDue'].setValue(loan.minDue.dollars + (loan.minDue.cents / 100));
+      this.updateLoanForm.controls['principal'].setValue(loan.principal.dollars + (loan.principal.cents / 100));
+     });
+    } else {
+      window.alert('Invalid input! Check userId and loan type fields!.')
+    }
+  }
+
+  setAPR(props: number) {
+    var l: number[] = []
+    for (var i = 0; i < props; i++) {
+      l.push(i + 0.99);
+    }
+    return l;
   }
 
   setSort(property: string) {
@@ -119,8 +173,8 @@ export class LoanComponent implements OnInit {
         this.totalItems = arr.totalElements;
         console.log('found: ', res)
         for (let obj of arr.content) {
-          let u = new Loan(obj.createDate, CurrencyValue.from(obj.balance), CurrencyValue.from(obj.principal), 
-          CurrencyValue.from(obj.minDue), CurrencyValue.from(obj.lateFee), obj.id, obj.loanType,
+          let u = new Loan(obj.createDate, CurrencyValue.from(obj.balance), CurrencyValue.from(obj.principal),
+            CurrencyValue.from(obj.minDue), CurrencyValue.from(obj.lateFee), obj.id, obj.loanType,
             obj.nextDueDate, obj.previousDueDate, obj.user, obj.minMonthFee, obj.hasPaid);
           this.loans.push(u);
         }
@@ -139,7 +193,6 @@ export class LoanComponent implements OnInit {
 
   initializeForms() {
     this.updateLoanForm = new FormGroup({
-      id: new FormControl('', [Validators.required, Validators.minLength(32), Validators.maxLength(32), Validators.pattern("/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/")]),
       userId: new FormControl('', [Validators.required, Validators.minLength(32), Validators.maxLength(32), Validators.pattern("/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/")]),
       typeName: new FormControl('', [Validators.required]),
       negative: new FormControl('', [Validators.required]),
@@ -147,10 +200,11 @@ export class LoanComponent implements OnInit {
       createDate: new FormControl('', [Validators.required]),
       nextDueDate: new FormControl('', [Validators.required]),
       previousDueDate: new FormControl('', [Validators.required]),
+      balance: new FormControl('', [Validators.required]),
       dollars: new FormControl('', [Validators.required]),
       cents: new FormControl('', [Validators.required]),
       minDue: new FormControl('', [Validators.required]),
-      lateFee: new FormControl('', [Validators.required]), 
+      lateFee: new FormControl('', [Validators.required]),
       apr: new FormControl('', [Validators.required, Validators.maxLength(3)])
     })
   }
@@ -165,12 +219,20 @@ export class LoanComponent implements OnInit {
     }
   };
 
+  async lateFeeCheck() {
+    let body = JSON.parse(JSON.stringify(this.activeLoan));
+    const r = await this.httpService.update("http://localhost:9001/loans/late", body)
+    console.log('result: ', r)
+    window.alert('Checking for past due fees...')
+    window.location.reload();
+  }
+
   formFilledCheck() {
     if (this.updateLoanForm.controls['userId'].value &&
       this.updateLoanForm.controls['typeName'].value &&
       this.updateLoanForm.controls['apr'].value &&
-      this.updateLoanForm.controls['dollars'].value &&
-      this.updateLoanForm.controls['cents'].value &&
+      this.updateLoanForm.controls['balance'].value &&
+      this.updateLoanForm.controls['principal'].value &&
       this.updateLoanForm.controls['numMonths'].value &&
       this.updateLoanForm.controls['createDate'].value &&
       this.updateLoanForm.controls['nextDueDate'].value &&
@@ -180,17 +242,17 @@ export class LoanComponent implements OnInit {
     } else {
       console.log('form isn\'t filled');
       console.log('form found: ',
-        'user: ', this.updateLoanForm.controls['userId'].value,
-        'typeName: ', this.updateLoanForm.controls['typeName'].value,
-        'apr: ', this.updateLoanForm.controls['apr'].value,
-        'dollars: ', this.updateLoanForm.controls['dollars'].value,
-        'cents: ', this.updateLoanForm.controls['cents'].value,
-        'negative: ', this.updateLoanForm.controls['negative'].value &&
-      'months: ', this.updateLoanForm.controls['numMonths'].value,
+        '\nuser: ', this.updateLoanForm.controls['userId'].value,
+        '\ntypeName: ', this.updateLoanForm.controls['typeName'].value,
+        '\napr: ', this.updateLoanForm.controls['apr'].value,
+        '\balance: ', this.updateLoanForm.controls['balance'].value,
+        '\principal: ', this.updateLoanForm.controls['principal'].value,
+        '\nnegative: ', this.updateLoanForm.controls['negative'].value &&
+        '\nmonths: ', this.updateLoanForm.controls['numMonths'].value,
         // this.updateLoanForm.controls['description'].value,
-        'create: ', this.updateLoanForm.controls['createDate'].value,
-        'next: ', this.updateLoanForm.controls['nextDueDate'].value,
-        'previous: ', this.updateLoanForm.controls['previousDueDate'].value)
+        '\ncreate: ', this.updateLoanForm.controls['createDate'].value,
+        '\nnext: ', this.updateLoanForm.controls['nextDueDate'].value,
+        '\nprevious: ', this.updateLoanForm.controls['previousDueDate'].value)
       return false;
     }
   }
@@ -236,16 +298,16 @@ export class LoanComponent implements OnInit {
         new CurrencyValue(false, 0, 0),
         new CurrencyValue(false, 0, 0),
         uuid,
-        t,
+        loanType,
         this.updateLoanForm.controls['nextDueDate'].value,
         this.updateLoanForm.controls['previousDueDate'].value,
         loan.$user,
         this.updateLoanForm.controls['minMonthFee'].value,
         false);
-      const loanBody = JSON.stringify(u);
-      const typeBody = JSON.stringify(t);
-      console.log('loanBody to send: ', u)
-      console.log('typeBody to send: ', typeBody)
+      const loanBody = u;
+      const typeBody = JSON.stringify(loanType);
+      console.log('loanBody to send: ', this.activeLoan)
+      console.log('typeBody to send: ', this.activeLoan.$loanType)
 
       if (!uuid) {
         console.log('Id value found')
@@ -253,10 +315,10 @@ export class LoanComponent implements OnInit {
       }
       else {
         console.log('no Id found')
-        window.confirm('Save Loan ' + uuid + '?');
+        window.confirm('Save Loan ' + uuid + '?')
       }
       if (this.editing) {
-        this.httpService.update('http://localhost:9001/loans', loanBody).subscribe((result) => {
+        this.httpService.update('http://localhost:9001/loans', this.activeLoan).subscribe((result) => {
           console.log("updating" + result);
           this.loans.length = 0;
           this.update()
@@ -264,12 +326,12 @@ export class LoanComponent implements OnInit {
         });
       }
       else {
-        this.httpService.create('http://localhost:9001/loantypes', typeBody).subscribe((result) => {
+        this.httpService.create('http://localhost:9001/loantypes', this.activeLoanType).subscribe((result) => {
           console.log("creating loantype " + result);
           this.loans.length = 0;
           this.update()
         });
-        this.httpService.create('http://localhost:9001/loans', loanBody).subscribe((result) => {
+        this.httpService.create('http://localhost:9001/loans', this.activeLoan).subscribe((result) => {
           console.log("creating loan " + result);
           this.loans.length = 0;
           this.update()
@@ -279,6 +341,30 @@ export class LoanComponent implements OnInit {
     } else {
       alert("Only the Negative and Description sections may be left blank.")
     }
+  }
+
+  setType() {
+    console.log('set type...')
+    switch (this.updateLoanForm.controls['typeName'].value) {
+      case 'Auto':
+        this.curLoanList = this.autoLoanDur;
+        this.curLoanApr = this.autoLoanApr;
+        break;
+      case 'Personal':
+        this.curLoanList = this.persLoanDur;
+        this.curLoanApr = this.persLoanApr;
+        break;
+      case 'Special':
+        this.curLoanList = this.specLoanDur;
+        this.curLoanApr = this.specLoanApr;
+        break;
+      case 'Mortgage':
+        this.curLoanList = this.mortLoanDur;
+        this.curLoanApr = this.mortLoanApr;
+        break;
+    }
+    this.updateLoanForm.controls['numMonths'].setValue(this.curLoanList[0])
+    this.updateLoanForm.controls['apr'].setValue(this.curLoanApr[0])
   }
 
   async open(content: any, u: Loan | null) {
@@ -327,6 +413,7 @@ export class LoanComponent implements OnInit {
         numMonths: '',
         description: '',
         user: '',
+        balance: '',
         dollars: '',
         minDue: '',
         cents: '',
@@ -355,12 +442,12 @@ export class LoanComponent implements OnInit {
   get user() { return this.updateLoanForm.get('user'); }
   get id() { return this.updateLoanForm.get('id'); }
   get balance() { return this.updateLoanForm.get('balance'); }
-  get minDue() {return this.updateLoanForm.get('minDue')}
-  get lateFee() {return this.updateLoanForm.get('lateFee')}
+  get minDue() { return this.updateLoanForm.get('minDue') }
+  get lateFee() { return this.updateLoanForm.get('lateFee') }
   get createDate() { return this.updateLoanForm.get('createDate'); }
   get nextDueDate() { return this.updateLoanForm.get('nextDueDate'); }
   get previousDueDate() { return this.updateLoanForm.get('previousDueDate'); }
   get principal() { return this.updateLoanForm.get('principal'); }
   get minMonthFee() { return this.updateLoanForm.get('minMonthFee'); }
-  get hasPaid() {return this.updateLoanForm.get('hasPaid')}
+  get hasPaid() { return this.updateLoanForm.get('hasPaid') }
 }

@@ -1,6 +1,7 @@
 
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { LoanType } from '../models/loanType.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,10 @@ export class HttpService {
       })
     };
     return httpOptions;
+  }
+
+  creditCheck(url: string, body: LoanType) {
+    return this.http.post(url, body, this.getHeaders());
   }
 
   getAll(url: string) {
