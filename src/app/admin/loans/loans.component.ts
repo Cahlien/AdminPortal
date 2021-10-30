@@ -271,13 +271,10 @@ export class LoanComponent implements OnInit {
       }
       console.log('loan body made: ', loan)
       console.log('loantype body made: ', loanType)
-      let c = new CurrencyValue(
-        this.updateLoanForm.controls['negative'].value,
-        this.updateLoanForm.controls['dollars'].value,
-        this.updateLoanForm.controls['cents'].value,
-      )
+      let c: CurrencyValue = this.updateLoanForm.controls['balance'].value;
+      console.log('balance found: ', c)
       let num = c.getDollars + (c.getCents / 100);
-      let c2 = CurrencyValue.valueOf(num * this.updateLoanForm.controls['apr'].value)
+      let c2 = CurrencyValue.valueOf(this.updateLoanForm.controls['principal'].value)
       console.log('principal calculated: ', c2.toString())
       let uuid = loanType.$id
       let t = new LoanType(
@@ -306,7 +303,7 @@ export class LoanComponent implements OnInit {
         false);
       const loanBody = u;
       const typeBody = JSON.stringify(loanType);
-      console.log('loanBody to send: ', this.activeLoan)
+      console.log('loanBody to send: ', loanBody)
       console.log('typeBody to send: ', this.activeLoan.$loanType)
 
       if (!uuid) {
@@ -316,9 +313,10 @@ export class LoanComponent implements OnInit {
       else {
         console.log('no Id found')
         window.confirm('Save Loan ' + uuid + '?')
+        window.location.reload();
       }
       if (this.editing) {
-        this.httpService.update('http://localhost:9001/loans', this.activeLoan).subscribe((result) => {
+        this.httpService.update('http://localhost:9001/loans', loanBody).subscribe((result) => {
           console.log("updating" + result);
           this.loans.length = 0;
           this.update()
@@ -339,7 +337,7 @@ export class LoanComponent implements OnInit {
         });
       }
     } else {
-      alert("Only the Negative and Description sections may be left blank.")
+      alert("Only the the Description section may be left blank.")
     }
   }
 
@@ -372,27 +370,24 @@ export class LoanComponent implements OnInit {
       console.log('editing existing loan...', u)
       this.activeLoan = u;
       let userId = u.$user.userId
-      console.log('user id found: ', userId)
+      console.log('description found: ', u.$loanType.description)
       this.editing = true;
       this.modalHeader = 'Edit Loan';
       this.updateLoanForm = this.fb.group({
-        user: u.$user,
         userId: u.$user.userId,
         id: u.$id,
         balance: u.$balance,
-        dollars: u.$balance.dollars,
-        cents: u.$balance.cents,
         minDue: u.$minDue,
         lateFee: u.$lateFee,
         negative: u.$balance.isNegative,
         typeName: u.$loanType.typeName,
         apr: u.$loanType.apr,
         numMonths: u.$loanType.numMonths,
-        description: u.$loanType.$description,
+        description: u.$loanType.description,
         createDate: u.$createDate,
         nextDueDate: u.$nextDueDate,
         previousDueDate: u.$previousDueDate,
-        principal: u.$principal,
+        principal: u.$principal.dollars + u.$principal.cents / 100,
         minMonthFee: u.$minMonthFee,
         hasPaid: u.$hasPaid
       });

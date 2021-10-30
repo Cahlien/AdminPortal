@@ -88,7 +88,11 @@
                                 <option value="Special">Special</option>
                             </select>
                         </div>
-                        <div class="input-group mb-2">
+                        <div *ngIf="editing" class="input-group mb-2">
+                            <label for="numMonths" class="input-group-text">Months Remaining: </label>
+                            <input type="text" id="numMonths" formControlName="numMonths" class="form-control" required />
+                        </div>
+                        <div *ngIf="!editing" class="input-group mb-2">
                             <label for="numMonths" class="input-group-text">Month Duration: </label>
                             <select type="text" id="numMonths" formControlName="numMonths" class="form-select">
                                 <option id="numMonthOption" *ngFor="let a of curLoanList; let i = index" [ngValue]="a">
@@ -109,20 +113,20 @@
                         </div>
                         <div *ngIf="editing" class="input-group mb-2">
                             <label for="apr" class="input-group-text">APR: </label>
-                            <input type="text" id="apr" formControlName="" class="form-control sr-only" />
+                            <input type="text" id="apr" formControlName="apr" class="form-control sr-only" />
                             <div class="input-group-append">
                                 <label for="dollars" class="input-group-text">%</label>
                             </div>
                         </div>
                         <div class="input-group mb-2">
-                            <label for="descrription" class="input-group-text">Description: </label>
+                            <label for="description" class="input-group-text">Description: </label>
                             <textarea type="text" id="description" formControlName="description"
                                 class="form-control sr-only"></textarea>
                         </div>
                         <div *ngIf="editing" class="input-group mb-2">
-                            <label for="dollars" class="input-group-text">Current Balance</label>
-                            <label for="dollars" class="input-group-text">$</label>
-                            <input type="text" step="0.01" id="dollars" formControlName="balance"
+                            <label for="balance" class="input-group-text">Current Balance</label>
+                            <label for="balance" class="input-group-text">$</label>
+                            <input type="text" step="0.01" id="balance" formControlName="balance"
                                 class="form-control sr-only" readonly="readonly" />
                             <div *ngIf="balance?.invalid && (balance?.dirty || balance?.touched)">
                                 <div *ngIf="balance?.errors?.required">
@@ -133,7 +137,7 @@
                         <div *ngIf="!editing" class="input-group mb-2">
                             <label for="principal" class="input-group-text">Offered Principal</label>
                             <label for="principal" class="input-group-text">$</label>
-                            <input type="number" id="dollars" formControlName="principal" class="form-control sr-only"
+                            <input type="number" id="principal" formControlName="principal" class="form-control sr-only"
                                 readonly="readonly" />
                             <div *ngIf="balance?.invalid && (balance?.dirty || balance?.touched)">
                                 <div *ngIf="balance?.errors?.required">
@@ -191,9 +195,10 @@
                                     <small class="text-danger">Late fee is required. It can be 0</small>
                                 </div>
                             </div>
-                        </div>
-                        <div *ngIf="editing" class="mb-2">
-                            <button (click)="lateFeeCheck()">Check a late fee?</button>
+                            <div *ngIf="editing" class="input-group-text-append">
+                                <button class="btn btn-outline-secondary" (click)="lateFeeCheck()">
+                                    Check a late fee?</button>
+                            </div>
                         </div>
                         <div class="input-group mb-2">
                             <label for="previousDueDate" class="input-group-text">Previous Payment Date: </label>
@@ -202,7 +207,8 @@
                         </div>
                         <div *ngIf="editing" class="input-group mb-2">
                             <label for="principal" class="input-group-text">Principal: </label>
-                            <input type="text" id="principal" formControlName="principal" class="form-control" />
+                            <label for="principalDollarSign" class="input-group-text">$</label>
+                            <input type="number" id="principal" formControlName="principal" class="form-control" />
                             <div *ngIf="principal?.invalid && (principal?.dirty || principal?.touched)">
                                 <div *ngIf="principal?.errors?.required">
                                     <small class="text-danger">Principal is required</small>
