@@ -1,9 +1,13 @@
 <div class="container">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <h1 class="text-center mb-2">View All Loans</h1>
     <div class="input-group mb-3">
         <button type="button" class="btn btn-primary btn-lg me-5" style="background-color:green"
             (click)="open(updateLoanModal, null)">Create new Loan</button>
         <span class="col-xs-1 col-md-4 col-lg-6 col-xl-7"></span>
+        <button type="submit" (click)="refresh()" class="btn btn-outline-secondary btn-small">
+            <mat-icon>refresh</mat-icon>
+        </button>
         <input type="text" class="form-control col-sm-2 col-lg-3" [ngModel]="search" (ngModelChange)="setSearch($event)"
             placeholder="Search">
         <button type="input" class="btn btn-outline-secondary btn-small" (click)="update()">Search</button>

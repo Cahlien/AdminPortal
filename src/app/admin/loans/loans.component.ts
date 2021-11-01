@@ -162,6 +162,16 @@ export class LoanComponent implements OnInit {
     this.search = search;
   }
 
+  refresh() {
+    this.search = "";
+    this.sort = 'Id';
+    this.dir = 'asc';
+    this.totalItems = 0;
+    this.pageIndex = 0;
+    this.pageSize = 5;
+    this.update();
+  }
+
   update() {
     this.loans = [];
     this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };

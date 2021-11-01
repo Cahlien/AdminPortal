@@ -8,10 +8,12 @@ import { PageEvent } from "@angular/material/paginator";
 import { CurrencyValue } from "../../shared/models/currencyvalue.model";
 import { AccountType } from "src/app/shared/models/accounttype.model";
 
+
 @Component({
   selector: 'app-accounts',
   templateUrl: './accounts.component.html',
   styleUrls: ['./accounts.component.css'],
+  
 })
 export class AccountComponent implements OnInit {
   accounts: Account[] = new Array();
@@ -126,9 +128,10 @@ export class AccountComponent implements OnInit {
   }
 
   async requestAccount() {
-    if (!this.updateAccountForm.controls['userId'].invalid &&
-      !this.updateAccountForm.controls['type'].invalid &&
-      !this.updateAccountForm.controls['interest'].invalid) {
+    if (this.updateAccountForm.controls['userId'].value &&
+    this.updateAccountForm.controls['interest'].value &&
+    this.updateAccountForm.controls['createDate'].value &&
+    this.updateAccountForm.controls['type'].value) {
       let today = new Date();
       let expire = today.getDate() + 3000
       console.log('expire date: ', expire)
@@ -150,8 +153,18 @@ export class AccountComponent implements OnInit {
       this.activeAccount.interest = this.updateAccountForm.value.interest;
       this.activeAccountType = at;
     } else {
-      window.alert('Only the description field may be left blank. Please fill out all other fields before attempting to activate a new account.')
+      window.alert('Only the description and Nickname fields may be left blank. Please fill out all other fields before attempting to activate a new account.')
     }
+  }
+
+  refresh() {
+    this.search = "";
+    this.sort = 'Id';
+    this.dir = 'asc';
+    this.totalItems = 0;
+    this.pageIndex = 0;
+    this.pageSize = 5;
+    this.update();
   }
 
   update() {
@@ -212,7 +225,6 @@ export class AccountComponent implements OnInit {
 
   formFilledCheck() {
     if (this.updateAccountForm.controls['userId'].value &&
-      this.updateAccountForm.controls['id'].value &&
       this.updateAccountForm.controls['balance'].value &&
       this.updateAccountForm.controls['interest'].value &&
       this.updateAccountForm.controls['createDate'].value &&
@@ -268,7 +280,7 @@ export class AccountComponent implements OnInit {
         window.confirm('Save Acount ' + this.updateAccountForm.controls['nickname'].value + '?');
       }
       if (!this.editing) {
-        this.httpService.create('http://localhost:9001/accounts/create', body).subscribe((result) => {
+        this.httpService.create('http://localhost:9001/accounts', modelBody).subscribe((result) => {
           console.log("creating " + result);
           this.accounts.length = 0;
           this.update()
@@ -284,7 +296,7 @@ export class AccountComponent implements OnInit {
       }
     } else {
       console.log('userId: ', this.updateAccountForm.controls['userId'].value)
-      console.log('active: ', this.updateAccountForm.controls['active'].value)
+      console.log('activeStatus: ', this.updateAccountForm.controls['activeStatus'].value)
       console.log('balance: ', this.updateAccountForm.controls['balance'].value)
       console.log('createDate: ', this.updateAccountForm.controls['createDate'].value)
       console.log('nickname: ', this.updateAccountForm.controls['nickname'].value)

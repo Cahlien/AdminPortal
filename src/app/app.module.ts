@@ -18,6 +18,7 @@ import { CardComponent } from './admin/card/card.component';
 import { LoanComponent } from './admin/loans/loans.component'
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import {MatIconModule} from '@angular/material/icon'
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
     HttpClientModule,
     NgxPaginationModule,
     MatPaginatorModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]
