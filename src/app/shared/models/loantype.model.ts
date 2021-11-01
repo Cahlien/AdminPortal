@@ -1,7 +1,7 @@
 
 export class LoanType {
-    private id: String;
-     activeStatus: boolean;
+    id: String;
+    activeStatus: boolean;
     private createDate: Date;
      numMonths: number;
      description: String;

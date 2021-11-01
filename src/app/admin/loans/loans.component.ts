@@ -296,7 +296,9 @@ export class LoanComponent implements OnInit {
         this.updateLoanForm.controls['typeName'].value,
         this.updateLoanForm.controls['apr'].value,
       )
-      console.log('loan id: ', loan.$id)
+      console.log('form desc: ', this.updateLoanForm.controls['description'].value)
+      t.$id = loanType.id
+      console.log('loantype made: ', t)
       uuid = loan.$id
       let u = new Loan(
         this.updateLoanForm.controls['createDate'].value,
@@ -305,16 +307,17 @@ export class LoanComponent implements OnInit {
         new CurrencyValue(false, 0, 0),
         new CurrencyValue(false, 0, 0),
         uuid,
-        loanType,
+        t,
         this.updateLoanForm.controls['nextDueDate'].value,
         this.updateLoanForm.controls['previousDueDate'].value,
         loan.$user,
         this.updateLoanForm.controls['minMonthFee'].value,
         false);
       const loanBody = u;
-      const typeBody = JSON.stringify(loanType);
+      const typeBody = t;
+      this.activeLoanType = typeBody;
       console.log('loanBody to send: ', loanBody)
-      console.log('typeBody to send: ', this.activeLoan.$loanType)
+      console.log('typeBody to send: ', typeBody)
 
       if (!uuid) {
         console.log('Id value found')
