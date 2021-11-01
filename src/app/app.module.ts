@@ -15,9 +15,10 @@ import { AuthComponent } from './auth/auth.component';
 import { AccountComponent } from './admin/accounts/accounts.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { CardComponent } from './admin/card/card.component';
+import { LoanComponent } from './admin/loans/loans.component'
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { LoantypeComponent } from './admin/loantype/loantype.component';
+import {MatIconModule} from '@angular/material/icon'
 
 @NgModule({
   declarations: [
@@ -30,7 +31,7 @@ import { LoantypeComponent } from './admin/loantype/loantype.component';
     AuthComponent,
     AccountComponent,
     CardComponent,
-    LoantypeComponent
+    LoanComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +42,8 @@ import { LoantypeComponent } from './admin/loantype/loantype.component';
     HttpClientModule,
     NgxPaginationModule,
     MatPaginatorModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]

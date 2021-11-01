@@ -55,6 +55,14 @@ export class CardComponent implements OnInit {
     this.initializeForms();
   }
 
+  refresh() {
+    this.predicate = '?page=0&&size=5';
+    this.totalItems = 0;
+    this.pageIndex = 0;
+    this.pageSize = 5;
+    this.loadCards();
+  }
+
   loadCards(): any{
     this.httpService
     .getAll('http://localhost:9001/cards' + this.predicate)

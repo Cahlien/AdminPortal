@@ -1,13 +1,14 @@
 
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { LoanType } from '../models/loanType.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpService {
 
-  private accountId: String = '';
+  private newId: any = '';
 
   constructor(private http: HttpClient) { }
 
@@ -28,6 +29,10 @@ export class HttpService {
     return httpOptions;
   }
 
+  creditCheck(url: string, body: LoanType) {
+    return this.http.post(url, body, this.getHeaders());
+  }
+
   getAll(url: string) {
     return this.http.get(url, this.getHeaders());
   }
@@ -36,24 +41,58 @@ export class HttpService {
     return this.http.get(url, this.getHeaders());
   }
 
-  async getNewUUID(url: string): Promise<String> {
+  async getNewUUID(url: string, id?: string): Promise<any> {
     console.log('inbound url: ', url)
-    await this.http.get(url, this.getHeaders()).toPromise().then(
+    if (id) {
+    await this.http.post(url, id, this.getHeaders()).toPromise().then(
       (res) => {
         let uuid: any;
         uuid = res;
-        this.accountId = uuid.accountId;
+        this.newId = uuid;
       }, err => {
         alert(err);
       }
+    
     );
-    return this.accountId;
+    }
+    else {
+      await this.http.get(url, this.getHeaders()).toPromise().then(
+        (res) => {
+          let uuid: any;
+          uuid = res;
+          this.newId = uuid;
+        }, err => {
+          alert(err);
+        }
+      
+      );
+    }
+    console.log('newId: ', this.newId)
+    return this.newId;
   }
 
   getAccounts(page: number, size: number, sort?: string, dir?: string, search?: string) {
     let query = `http://localhost:9001/accounts/all?pageNum=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(size)}`;
     if (sort === undefined && dir === undefined) {
-      sort = "accountId"; dir = "asc";
+      sort = "id"; dir = "asc";
+    }
+    if (search === undefined) {
+      search = "";
+    }
+    if (sort !== undefined && dir !== undefined) {
+      query += `&sortName=${encodeURIComponent(sort)}&sortDir=${encodeURIComponent(dir)}`;
+    }
+    if (search !== undefined) {
+      query += `&search=${encodeURIComponent(search)}`;
+    }
+    console.log('Outbound Query: ', query);
+    return this.http.get(query, this.getHeaders() );
+  }
+
+  getLoans(page: number, size: number, sort?: string, dir?: string, search?: string) {
+    let query = `http://localhost:9001/loans?pageNum=${encodeURIComponent(page)}&pageSize=${encodeURIComponent(size)}`;
+    if (sort === undefined && dir === undefined) {
+      sort = "id"; dir = "asc";
     }
     if (search === undefined) {
       search = "";
@@ -90,6 +129,7 @@ export class HttpService {
 
   update(url: string, obj: any) {
     console.log('update called')
+    console.log('update object: ', obj)
     return this.http.put(url, obj, this.getHeaders());
   }
 

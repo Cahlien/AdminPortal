@@ -85,6 +85,16 @@ export class UserComponent implements OnInit {
     this.search = search;
   }
 
+  refresh() {
+    this.search = "";
+    this.sort = 'Id';
+    this.asc = true;
+    this.totalItems = 0;
+    this.pageIndex = 0;
+    this.pageSize = 5;
+    this.loadUsers();
+  }
+
   loadUsers() {
     this.users = [];
     this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
