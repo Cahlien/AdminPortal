@@ -1,15 +1,15 @@
 
 
 export class AccountType {
-    private id: String;
+    private id: number;
     name: String;
-    private description: String;
+    description: String;
     private isActive: boolean;
     private createDate: Date;
     private expireDate: Date;
     private nickname: String;
 
-    constructor(id: String, name: String, description: String, isActive: boolean, createDate: Date, expireDate: Date, nickname: String) {
+    constructor(id: number, name: String, description: String, isActive: boolean, createDate: Date, expireDate: Date, nickname: String) {
         this.id = id;
         this.isActive = isActive;
         this.name = name;
@@ -23,7 +23,7 @@ export class AccountType {
         return this.id
     }
 
-    set $id(val: String) {
+    set $id(val: number) {
         this.id = val
     }
 

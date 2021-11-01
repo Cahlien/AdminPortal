@@ -1,17 +1,17 @@
 import { ThisReceiver } from "@angular/compiler";
-import {CurrencyValue} from "./currencyvalue.model";
+import { CurrencyValue } from "./currencyvalue.model";
 import { User } from "./user.model";
 import { AccountType } from "./accounttype.model";
 
 export class Account {
-    private user: User;
-    private id: String;
+    user: User;
+    id: String;
     private activeStatus: boolean;
     private balance: CurrencyValue;
     private createDate: Date;
-    private interest: number;
+    interest: number;
     private nickname: String;
-    private type: AccountType;
+    type: AccountType;
     private firstName: any;
     private lastName: any;
 
@@ -58,7 +58,7 @@ export class Account {
         this.balance = val
     }
 
-    fixBalance(): CurrencyValue{
+    fixBalance(): CurrencyValue {
         return this.balance
     }
 
