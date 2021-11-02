@@ -1,0 +1,238 @@
+<div class="container">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <h1 class="text-center mb-2">View All Loans</h1>
+    <div class="input-group mb-3">
+        <button type="button" class="btn btn-primary btn-lg me-5" style="background-color:green"
+            (click)="open(updateLoanModal, null)">Create new Loan</button>
+        <span class="col-xs-1 col-md-4 col-lg-6 col-xl-7"></span>
+        <button type="submit" (click)="refresh()" class="btn btn-outline-secondary btn-small">
+            <mat-icon>refresh</mat-icon>
+        </button>
+        <input type="text" class="form-control col-sm-2 col-lg-3" [ngModel]="search" (ngModelChange)="setSearch($event)"
+            placeholder="Search">
+        <button type="input" class="btn btn-outline-secondary btn-small" (click)="update()">Search</button>
+    </div>
+    <table class="table table-striped table-hover table-active border border-secondary shadow-lg">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th *ngFor="let a of loan" scope="col" [class]="a.class" (click)="setSort(a.name)">
+                    {{a.displayName}}
+                    <span *ngIf="sort === a.name">
+                        {{asc ? ' ↑' : ' ↓'}}
+                    </span>
+                </th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let a of loans; let i=index">
+                <td>{{ i+1 }}</td>
+                <td>{{ a.$user.userId }}</td>
+                <td>{{ a.$id }}</td>
+                <td>{{ a.$loanType.typeName }}</td>
+                <td>{{ a.$loanType.apr }}%</td>
+                <td>{{ a.$balance }}</td>
+                <td>{{ a.$minMonthFee }}</td>
+                <td>{{ a.$minDue }}</td>
+                <td>{{ a.$lateFee }}</td>
+                <td>{{ a.$principal }}</td>
+                <td>{{ a.$loanType.numMonths }}</td>
+                <td>{{ a.$createDate }}</td>
+                <td>{{ a.$nextDueDate }}</td>
+                <td>{{ a.$previousDueDate }}</td>
+                <td>{{ a.$hasPaid }}</td>
+                <td>
+                    <button type="button" class="btn btn-secondary" (click)="open(updateLoanModal, a)">Edit</button>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" (click)="deleteLoan(a.$id)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="mb-5">
+        <mat-paginator class="my-5" [length]="this.totalItems" [pageIndex]="this.pageIndex"
+            [pageSizeOptions]="[5, 10, 15, 20, 25, 50]" [pageSize]="this.pageSize" [showFirstLastButtons]="true"
+            (page)="onChangePage($event)"></mat-paginator>
+    </div>
+</div>
+
+
+<ng-template #updateLoanModal let-c="close" let-d="dismiss">
+    <form [formGroup]="updateLoanForm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ modalHeader }}</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div *ngIf="editing" class="input-group mb-2">
+                            <label for="id" class="input-group-text">Id: </label>
+                            <input type="text" id="id" formControlName="id" class="form-control" readonly="readonly" />
+                        </div>
+                        <div *ngIf="editing" class="input-group mb-2">
+                            <label for="userId" class="input-group-text">UserId: </label>
+                            <input type="text" id="userId" formControlName="userId" class="form-control" required
+                                readonly="readonly" />
+                        </div>
+                        <div *ngIf="!editing" class="input-group mb-2">
+                            <label for="userId" class="input-group-text">UserId: </label>
+                            <input type="text" id="userId" formControlName="userId" class="form-control" required />
+                        </div>
+                        <div class="input-group mb-2">
+                            <label for="typeName" class="input-group-text">Loan Type: </label>
+                            <select (ngModelChange)="setType()" type="text" id="typeName" formControlName="typeName"
+                                class="form-select">
+                                <option value="Auto">Auto</option>
+                                <option value="Personal">Personal</option>
+                                <option value="Mortgage">Mortgage</option>
+                                <option value="Special">Special</option>
+                            </select>
+                        </div>
+                        <div *ngIf="editing" class="input-group mb-2">
+                            <label for="numMonths" class="input-group-text">Months Remaining: </label>
+                            <input type="text" id="numMonths" formControlName="numMonths" class="form-control" required />
+                        </div>
+                        <div *ngIf="!editing" class="input-group mb-2">
+                            <label for="numMonths" class="input-group-text">Month Duration: </label>
+                            <select type="text" id="numMonths" formControlName="numMonths" class="form-select">
+                                <option id="numMonthOption" *ngFor="let a of curLoanList; let i = index" [ngValue]="a">
+                                    {{ curLoanList[i] }}
+                                </option>
+                            </select>
+                        </div>
+                        <div *ngIf="!editing" class="input-group mb-2">
+                            <label for="apr" class="input-group-text">APR: </label>
+                            <select type="text" id="apr" formControlName="apr" class="form-select">
+                                <option id="aprOption" *ngFor="let a of curLoanApr; let i = index" [ngValue]="a">
+                                    {{ curLoanApr[i] }}
+                                </option>
+                            </select>
+                            <div class="input-group-append">
+                                <label for="dollars" class="input-group-text">%</label>
+                            </div>
+                        </div>
+                        <div *ngIf="editing" class="input-group mb-2">
+                            <label for="apr" class="input-group-text">APR: </label>
+                            <input type="text" id="apr" formControlName="apr" class="form-control sr-only" />
+                            <div class="input-group-append">
+                                <label for="dollars" class="input-group-text">%</label>
+                            </div>
+                        </div>
+                        <div class="input-group mb-2">
+                            <label for="description" class="input-group-text">Description: </label>
+                            <textarea type="text" id="description" formControlName="description"
+                                class="form-control sr-only"></textarea>
+                        </div>
+                        <div *ngIf="editing" class="input-group mb-2">
+                            <label for="balance" class="input-group-text">Current Balance</label>
+                            <label for="balance" class="input-group-text">$</label>
+                            <input type="text" step="0.01" id="balance" formControlName="balance"
+                                class="form-control sr-only" readonly="readonly" />
+                            <div *ngIf="balance?.invalid && (balance?.dirty || balance?.touched)">
+                                <div *ngIf="balance?.errors?.required">
+                                    <small class="text-danger">Balance is required. It can be 0</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="!editing" class="input-group mb-2">
+                            <label for="principal" class="input-group-text">Offered Principal</label>
+                            <label for="principal" class="input-group-text">$</label>
+                            <input type="number" id="principal" formControlName="principal" class="form-control sr-only"
+                                readonly="readonly" />
+                            <div *ngIf="balance?.invalid && (balance?.dirty || balance?.touched)">
+                                <div *ngIf="balance?.errors?.required">
+                                    <small class="text-danger">Balance is required. It can be 0</small>
+                                </div>
+                            </div>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" (click)="creditReport()"
+                                    *ngIf="!editing">Credit check</button>
+                            </div>
+                        </div>
+                        <div *ngIf="!editing" class="input-group mb-2">
+                            <label for="balance" class="input-group-text">Initial Balance</label>
+                            <label for="balance" class="input-group-text">$</label>
+                            <input type="number" id="dollars" formControlName="balance" class="form-control sr-only"
+                                readonly="readonly" />
+                            <div *ngIf="balance?.invalid && (balance?.dirty || balance?.touched)">
+                                <div *ngIf="balance?.errors?.required">
+                                    <small class="text-danger">Balance is required. It can be 0</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="editing" class="input-group mb-2">
+                            <label for="minMonthFee" class="input-group-text">Normal Minimum Due</label>
+                            <label for="dollars" class="input-group-text">$</label>
+                            <input type="text" id="minMonthFee" formControlName="minMonthFee"
+                                class="form-control sr-only" />
+                            <div *ngIf="minMonthFee?.invalid && (minMonthFee?.dirty || minMonthFee?.touched)">
+                                <div *ngIf="minMonthFee?.errors?.required">
+                                    <small class="text-danger">Normal minimum is required. It can be 0</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group mb-2">
+                            <label for="minDue" class="input-group-text">Monthly Minimum Due</label>
+                            <label for="dollars" class="input-group-text">$</label>
+                            <input type="text" id="minDue" formControlName="minDue" class="form-control sr-only"
+                                readonly="readonly" />
+                            <div *ngIf="minDue?.invalid && (minDue?.dirty || minDue?.touched)">
+                                <div *ngIf="minDue?.errors?.required">
+                                    <small class="text-danger">Current minimum is required. It can be 0</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group mb-2">
+                            <label for="nextDueDate" class="input-group-text">Next Payment Date: </label>
+                            <input type="text" id="nextDueDate" formControlName="nextDueDate" class="form-control"
+                                readonly="readonly" />
+                        </div>
+                        <div *ngIf="editing" class="input-group mb-2">
+                            <label for="lateFee" class="input-group-text">Late Fee: </label>
+                            <input type="text" id="lateFee" formControlName="lateFee" class="form-control sr-only" />
+                            <div *ngIf="lateFee?.invalid && (minMonthFee?.dirty || lateFee?.touched)">
+                                <div *ngIf="lateFee?.errors?.required">
+                                    <small class="text-danger">Late fee is required. It can be 0</small>
+                                </div>
+                            </div>
+                            <div *ngIf="editing" class="input-group-text-append">
+                                <button class="btn btn-outline-secondary" (click)="lateFeeCheck()">
+                                    Check a late fee?</button>
+                            </div>
+                        </div>
+                        <div class="input-group mb-2">
+                            <label for="previousDueDate" class="input-group-text">Previous Payment Date: </label>
+                            <input type="text" id="previousDueDate" formControlName="previousDueDate"
+                                class="form-control" readonly="readonly" />
+                        </div>
+                        <div *ngIf="editing" class="input-group mb-2">
+                            <label for="principal" class="input-group-text">Principal: </label>
+                            <label for="principalDollarSign" class="input-group-text">$</label>
+                            <input type="number" id="principal" formControlName="principal" class="form-control" />
+                            <div *ngIf="principal?.invalid && (principal?.dirty || principal?.touched)">
+                                <div *ngIf="principal?.errors?.required">
+                                    <small class="text-danger">Principal is required</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-2 input-group">
+                            <label for="createDate" class="input-group-text">Creation Date: </label>
+                            <input type="text" id="createDate" formControlName="createDate" class="form-control"
+                                readonly="readonly" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">
+                            Close
+                        </button>
+                        <button type="submit" (click)="saveLoan()" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>

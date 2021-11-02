@@ -1,9 +1,13 @@
 <div class="container">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <h1 class="text-center mb-2">View All Accounts</h1>
     <div class="input-group mb-3">
         <button type="button" class="btn btn-primary btn-lg me-5" style="background-color:green"
             (click)="open(updateAccountModal, null)">Create new Account</button>
         <span class="col-xs-1 col-md-4 col-lg-6 col-xl-7"></span>
+        <button type="submit" (click)="refresh()" class="btn btn-outline-secondary btn-small">
+            <mat-icon>refresh</mat-icon>
+        </button>
         <input type="text" class="form-control col-sm-2 col-lg-3" [ngModel]="search" (ngModelChange)="setSearch($event)"
             placeholder="Search">
         <button type="input" class="btn btn-outline-secondary btn-small" (click)="update()">Search</button>
@@ -25,20 +29,20 @@
         <tbody>
             <tr *ngFor="let a of accounts; let i=index">
                 <td>{{ i+1 }}</td>
-                <td>{{ a.$userId }}</td>
-                <td>{{ a.$accountId }}</td>
+                <td>{{ a.$user.userId }}</td>
+                <td>{{ a.$id }}</td>
                 <td>{{ a.$activeStatus }}</td>
                 <td>{{ a.$balance.toString() }}</td>
                 <td>{{ a.$createDate }}</td>
                 <td>{{ a.$interest }}%</td>
                 <td>{{ a.$nickname }}</td>
-                <td>{{ a.$type }}</td>
+                <!-- <td>{{ a.$type.description }}</td> -->
+                <td>{{ a.$type.name }}</td>
                 <td>
                     <button type="button" class="btn btn-secondary" (click)="open(updateAccountModal, a)">Edit</button>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-danger"
-                        (click)="deactivateAccount(a.$accountId)">Delete</button>
+                    <button type="button" class="btn btn-danger" (click)="deactivateAccount(a.$id)">Delete</button>
                 </td>
             </tr>
         </tbody>
@@ -60,53 +64,22 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <div class="mb-2">
-                            <label for="accountId" class="form-label">AccountId: </label>
-                            <input type="text" id="accountId" formControlName="accountId" class="form-control"
+                        <div *ngIf="editing" class="input-group mb-2">
+                            <label for="id" class="input-group-text">Id: </label>
+                            <input type="text" id="id" formControlName="id" class="form-control" readonly="readonly" />
+                        </div>
+                        <div *ngIf="editing" class="input-group mb-2">
+                            <label for="userId" class="input-group-text">UserId: </label>
+                            <input type="text" id="userId" formControlName="userId" class="form-control" required
                                 readonly="readonly" />
                         </div>
-                        <div class="mb-2">
-                            <label for="userId" class="form-label">UserId: </label>
+                        <div *ngIf="!editing" class="input-group mb-2">
+                            <label for="userId" class="input-group-text">UserId: </label>
                             <input type="text" id="userId" formControlName="userId" class="form-control" required />
-                            <div *ngIf="userId?.invalid && (userId?.dirty || userId?.touched)">
-                                <div *ngIf="userId?.errors?.required">
-                                    <small class="text-danger">userId is required</small>
-                                </div>
-                                <div *ngIf="userId?.errors?.maxlength">
-                                    <small class="text-danger">userId should be a standard UUID string</small>
-                                </div>
-                            </div>
                         </div>
-                        <div class="mb-2">
-                            <label for="balance" class="form-label">Balance: </label>
-                            <input type="text" id="balance" formControlName="balance" class="form-control sr-only" />
-                            <div *ngIf="balance?.invalid && (balance?.dirty || balance?.touched)">
-                                <div *ngIf="balance?.errors?.required">
-                                    <small class="text-danger">Balance is required. It can be 0</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <label for="activeStatus">Active Status:</label>
-                            <input type="checkbox" id="activeStatus" formControlName="activeStatus" />
-                        </div>
-                        <div class="mb-2">
-                            <label for="createDate" class="form-label">Creation Date: </label>
-                            <input type="text" id="createDate" formControlName="createDate" class="form-control"
-                                readonly="readonly" />
-                        </div>
-                        <div class="mb-2">
-                            <label for="interest" class="form-label">Interest Rate: </label>
-                            <input type="text" id="interest" formControlName="interest" class="form-control" />
-                            <div *ngIf="interest?.invalid && (interest?.dirty || interest?.touched)">
-                                <div *ngIf="interest?.errors?.required">
-                                    <small class="text-danger">Interest is required</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <label for="nickname" class="form-label">Nickname: </label>
-                            <input type="text" id="nickname" formControlName="nickname" class="form-control" />
+                        <div *ngIf="editing" class="input-group mb-2">
+                            <label for="type" class="input-group-text">Account Type: </label>
+                            <input type="text" id="type" formControlName="type" class="form-control" readonly="readonly" />
                         </div>
                         <div *ngIf="!editing" class="input-group mb-2">
                             <label class="input-group-text" for="type">Account Type</label>
@@ -116,17 +89,66 @@
                                 <option value="Recovery">Recovery</option>
                             </select>
                         </div>
-                    </div>
-                    <div *ngIf="editing" class="mb-2">
-                        <label for="type" class="form-label">Account Type: </label>
-                            <input type="text" id="type" formControlName="type" class="form-control"
+                        <div *ngIf="!editing" class="input-group mb-2">
+                            <label for="description" class="input-group-text">Custom Description: </label>
+                            <textarea type="text" id="description" formControlName="description"
+                                class="form-control sr-only"></textarea>
+                        </div>
+                        <div *ngIf="editing" class="input-group mb-2">
+                            <label for="description" class="input-group-text">Description: </label>
+                            <textarea type="text" id="description" formControlName="description"
+                                class="form-control sr-only"></textarea>
+                        </div>
+                        <div class="input-group mb-2">
+                            <label for="interest" class="input-group-text">Interest Rate: </label>
+                                <input type="number" step="0.01" id="interest" formControlName="interest"
+                                    class="form-control" />
+                                <div *ngIf="interest?.invalid && (interest?.dirty || interest?.touched)">
+                                    <div *ngIf="interest?.errors?.required">
+                                        <small class="text-danger">Interest is required</small>
+                                    </div>
+                                </div>
+                                <div class="input-group-append">
+                                    <label for="interestSymbol" class="input-group-text">%</label>
+                                </div>
+                        </div>
+                        <div class="input-group mb-2">
+                            <label for="nickname" class="input-group-text">Nickname: </label>
+                            <input type="text" id="nickname" formControlName="nickname" class="form-control" />
+                        </div>
+                        <div *ngIf="!editing" class="input-group mb-2" >
+                            <button class="btn btn-secondary" type="button" (click)="requestAccount()">Activate
+                                Account</button>
+                                <label *ngIf="depositReady" class="input-group-text" id="depositTitle" >Enter an Initial Deposit:</label>
+                        </div>
+                        <div *ngIf="editing || depositReady" class="input-group mb-2">
+                            <label for="balance" class="input-group-text">Balance: </label>
+                            <label for="balance" class="input-group-text">$</label>
+                            <input type="number" step="0.01" id="balance" formControlName="balance"
+                                class="form-control sr-only" />
+                            <div *ngIf="balance?.invalid && (balance?.dirty || balance?.touched)">
+                                <div *ngIf="balance?.errors?.required">
+                                    <small class="text-danger">Balance is required. It can be 0</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="editing || depositReady"  class="input-group mb-2">
+                            <div class="input-group-text">
+                                <label for="activeStatus">Active Status:</label>
+                                <input type="checkbox" id="activeStatus" formControlName="activeStatus" value="true"/>
+                            </div>
+                        </div>
+                        <div *ngIf="editing || depositReady"  class="input-group mb-2">
+                            <label for="createDate" class="input-group-text">Creation Date: </label>
+                            <input type="text" id="createDate" formControlName="createDate" class="form-control"
                                 readonly="readonly" />
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">
                             Close
                         </button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button *ngIf="editing || depositReady" type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </div>
             </div>
