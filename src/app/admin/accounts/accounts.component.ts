@@ -258,6 +258,7 @@ export class AccountComponent implements OnInit {
         userId: a.user.userId,
         balance: a.$balance,
         createDate: a.$createDate,
+        type_id: this.activeAccountType.$id,
         type: {
           id: this.activeAccountType.$id,
           name: this.activeAccountType.name,

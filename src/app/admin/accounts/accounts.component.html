@@ -84,8 +84,8 @@
                         <div *ngIf="!editing" class="input-group mb-2">
                             <label class="input-group-text" for="type">Account Type</label>
                             <select class="form-select" id="type" formControlName="type">
-                                <option value="Savings">Savings</option>
-                                <option value="Checking">Checking</option>
+                                <option value="SuperSaver">SuperSavers</option>
+                                <option value="CoolCash">CoolCash</option>
                                 <option value="Recovery">Recovery</option>
                             </select>
                         </div>
@@ -94,11 +94,11 @@
                             <textarea type="text" id="description" formControlName="description"
                                 class="form-control sr-only"></textarea>
                         </div>
-                        <div *ngIf="editing" class="input-group mb-2">
+                        <!-- <div *ngIf="editing" class="input-group mb-2">
                             <label for="description" class="input-group-text">Description: </label>
                             <textarea type="text" id="description" formControlName="description"
                                 class="form-control sr-only"></textarea>
-                        </div>
+                        </div> -->
                         <div class="input-group mb-2">
                             <label for="interest" class="input-group-text">Interest Rate: </label>
                                 <input type="number" step="0.01" id="interest" formControlName="interest"

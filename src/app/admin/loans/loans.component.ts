@@ -86,6 +86,7 @@ export class LoanComponent implements OnInit {
     this.persLoanApr = this.setAPR(100);
     this.mortLoanApr = this.setAPR(6);
     this.autoLoanApr = this.setAPR(10);
+    this.specLoanApr = this.setAPR(50);
     this.update();
     this.initializeForms();
   }
@@ -321,7 +322,7 @@ export class LoanComponent implements OnInit {
 
       if (!uuid) {
         console.log('Id value found')
-        window.confirm('Save Loan ' + uuid + '?');
+        window.confirm('Save ' + typeBody.$typeName + ' Loan?');
       }
       else {
         console.log('no Id found')
