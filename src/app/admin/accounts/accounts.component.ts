@@ -194,7 +194,7 @@ export class AccountComponent implements OnInit {
         if (err.status === 503) {
           setTimeout(() => {
             console.log('sleeping...')
-            window.alert('Servers did not respond. They may be down, or your connection may be interrupted. Page will refresh until a connedction can be established')
+            window.alert('[503 ERROR: ACCOUNTSERVICE] \nServers did not respond. They may be down, or your connection may be interrupted. Page will refresh until a connedction can be established')
             window.location.reload();
           }, 5000);
         }

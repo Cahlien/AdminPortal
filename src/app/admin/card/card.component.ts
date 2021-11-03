@@ -76,6 +76,16 @@ export class CardComponent implements OnInit {
         console.log(c);
         this.cards.push(c);
       }
+    }, (err) => {
+      console.error("Failed to retrieve cards", err);
+      console.log('error status: ', err.status)
+      if (err.status === 503) {
+        setTimeout(() => {
+          console.log('sleeping...')
+          window.alert('[503 ERROR: CARDSERVICE] \nServers did not respond. They may be down, or your connection may be interrupted. Page will refresh until a connedction can be established')
+          window.location.reload();
+        }, 5000);
+      }
     })
   }
 

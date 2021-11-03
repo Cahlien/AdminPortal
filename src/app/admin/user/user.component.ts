@@ -121,8 +121,16 @@ export class UserComponent implements OnInit {
       console.log('data: ', this.data)
       console.log('totalelems: ', arr.totalElements)
     }, (err) => {
-      console.error("Failed to retrieve accounts", err);
+      console.error("Failed to retrieve users", err);
+      console.log('error status: ', err.status)
       this.data = { status: "error", content: [], totalElements: 0, totalPages: 0 };
+      if (err.status === 503) {
+        setTimeout(() => {
+          console.log('sleeping...')
+          window.alert('[503 ERROR: USERSERVICE] \nServers did not respond. They may be down, or your connection may be interrupted. Page will refresh until a connedction can be established')
+          window.location.reload();
+        }, 5000);
+      }
     })
   }
   initializeForms() {

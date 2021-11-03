@@ -197,8 +197,15 @@ export class LoanComponent implements OnInit {
         };
       }, (err) => {
         console.error("Failed to retrieve loans", err);
-        window.alert("Error trying to retrieve Loans")
+        console.log('error status: ', err.status)
         this.data = { status: "error", content: [], totalElements: 0, totalPages: 0 };
+        if (err.status === 503) {
+          setTimeout(() => {
+            console.log('sleeping...')
+            window.alert('[503 ERROR: LOANSERVICE] \nServers did not respond. They may be down, or your connection may be interrupted. Page will refresh until a connedction can be established')
+            window.location.reload();
+          }, 5000);
+        }
       })
   }
 
