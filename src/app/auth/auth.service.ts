@@ -7,7 +7,7 @@ import {environment} from "../../environments/environment";
 export class AuthService {
   isLoggedIn: boolean;
 
-  url: string = environment.baseUrl;
+  url: string = environment.baseUrl + environment.authEndpoint;
 
   headers: HttpHeaders = new HttpHeaders({
     'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators, } from "@angular/forms";
 import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { HttpService } from "src/app/shared/services/http.service";
@@ -32,6 +32,7 @@ export class AccountComponent implements OnInit {
   pageSize: any;
   editing!: boolean;
   depositReady: boolean = false;
+  width!: number;
 
 
   @Input() search!: string;
@@ -54,24 +55,31 @@ export class AccountComponent implements OnInit {
   } = { status: "notYetPending", content: [], totalElements: 0, totalPages: 0 };
 
   account = [
-    { name: "user", displayName: "User ID", class: "col-2" },
-    { name: "id", displayName: "Account ID", class: "col-3" },
-    { name: "activeStatus", displayName: "Is Active", class: "col-3" },
-    { name: "balance", displayName: "Balance", class: "col-2" },
-    { name: "createDate", displayName: "Date Created", class: "col-2" },
-    { name: "interest", displayName: "Interest Rate", class: "col-2" },
-    { name: "nickname", displayName: "Nickname", class: "col-3" },
+    { name: "user", displayName: "User ID", class: "col-1", maxWidth: 500},
+    { name: "id", displayName: "Account ID", class: "col-1", maxWidth: 300},
+    { name: "activeStatus", displayName: "Is Active", class: "col-1", maxWidth: 500},
+    { name: "balance", displayName: "Balance", class: "col-1", maxWidth: 400},
+    { name: "createDate", displayName: "Date Created", class: "col-1", maxWidth: 900},
+    { name: "interest", displayName: "Interest Rate", class: "col-1", maxWidth: 950},
+    { name: "nickname", displayName: "Nickname", class: "col-1", maxWidth: 1050},
     // { name: "description", displayName: "Description", class: "col-3" },
-    { name: "type", displayName: "Account Type", class: "col-3" }
+    { name: "type", displayName: "Account Type", class: "col-1", maxWidth: 850}
   ];
 
 
   constructor(private httpService: HttpService, private fb: FormBuilder, private modalService: NgbModal) { }
   ngOnInit(): void {
+    this.width = window.innerWidth;
     this.totalItems = 0;
     this.pageIndex = 0;
     this.pageSize = 5;
     this.update();
+  }
+
+  @HostListener('window:resize', [])
+  private onResize() {
+    this.width = window.innerWidth;
+    console.log('resized to: ' + this.width)
   }
 
   onChangePage(pe: PageEvent) {

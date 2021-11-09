@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators, } from "@angular/forms";
 import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import { HttpService } from "../../shared/services/http.service";
@@ -39,6 +39,7 @@ export class LoanComponent implements OnInit {
   editing!: boolean;
   activeLoan!: Loan;
   activeLoanType!: LoanType;
+  width!: number;
 
 
   @Input() search!: string;
@@ -80,6 +81,8 @@ export class LoanComponent implements OnInit {
 
   constructor(private httpService: HttpService, private fb: FormBuilder, private modalService: NgbModal) { }
   ngOnInit(): void {
+    this.width = window.innerWidth;
+    console.log('width: ', this.width)
     this.totalItems = 0;
     this.pageIndex = 0;
     this.pageSize = 5;
@@ -89,6 +92,12 @@ export class LoanComponent implements OnInit {
     this.specLoanApr = this.setAPR(50);
     this.update();
     this.initializeForms();
+  }
+
+  @HostListener('window:resize', [])
+  private onResize() {
+    this.width = window.innerWidth;
+    console.log('resized to: ' + this.width)
   }
 
   onChangePage(pe: PageEvent) {
@@ -116,17 +125,17 @@ export class LoanComponent implements OnInit {
     console.log('userId found: ', userId)
     if (!this.updateLoanForm.controls['userId'].invalid && !this.updateLoanForm.controls['typeName'].invalid) {
       console.log('outbound loantype: ', loanType)
-     await this.httpService.creditCheck('http://localhost:9001/loans/check/' + userId, this.activeLoanType)
-     .subscribe((res) => {
-      console.log('loan received: ', res);
-      let loan: any;
-      loan = res;
-      this.activeLoan = loan;
-      console.log(loan.balance); 
-      this.updateLoanForm.controls['balance'].setValue(loan.balance.dollars + (loan.balance.cents / 100));
-      this.updateLoanForm.controls['minDue'].setValue(loan.minDue.dollars + (loan.minDue.cents / 100));
-      this.updateLoanForm.controls['principal'].setValue(loan.principal.dollars + (loan.principal.cents / 100));
-     });
+      await this.httpService.creditCheck('http://localhost:9001/loans/check/' + userId, this.activeLoanType)
+        .subscribe((res) => {
+          console.log('loan received: ', res);
+          let loan: any;
+          loan = res;
+          this.activeLoan = loan;
+          console.log(loan.balance);
+          this.updateLoanForm.controls['balance'].setValue(loan.balance.dollars + (loan.balance.cents / 100));
+          this.updateLoanForm.controls['minDue'].setValue(loan.minDue.dollars + (loan.minDue.cents / 100));
+          this.updateLoanForm.controls['principal'].setValue(loan.principal.dollars + (loan.principal.cents / 100));
+        });
     } else {
       window.alert('Invalid input! Check userId and loan type fields!.')
     }
@@ -266,7 +275,7 @@ export class LoanComponent implements OnInit {
         '\balance: ', this.updateLoanForm.controls['balance'].value,
         '\principal: ', this.updateLoanForm.controls['principal'].value,
         '\nnegative: ', this.updateLoanForm.controls['negative'].value &&
-        '\nmonths: ', this.updateLoanForm.controls['numMonths'].value,
+      '\nmonths: ', this.updateLoanForm.controls['numMonths'].value,
         // this.updateLoanForm.controls['description'].value,
         '\ncreate: ', this.updateLoanForm.controls['createDate'].value,
         '\nnext: ', this.updateLoanForm.controls['nextDueDate'].value,
