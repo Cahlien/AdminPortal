@@ -1,4 +1,4 @@
-import {Component, OnInit, SystemJsNgModuleLoader, ViewChild} from '@angular/core';
+import {Component, HostListener, OnInit, SystemJsNgModuleLoader, ViewChild} from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -37,16 +37,22 @@ export class CardComponent implements OnInit {
   pageSize: any;
   cardIdOrder: string = 'desc';
   sortByCardId: boolean = false;
+  userIdOrder: string = 'desc';
+  sortByUserId: boolean = false;
   balanceOrder: string = 'desc';
   sortByBalance: boolean = false;
+  nicknameOrder: string = 'desc'
+  sortByNickname: boolean = false;
   createDateOrder: string = 'desc';
   sortByCreateDate: boolean = false;
   sortBy: string[] = [];
   predicate: string = '?page=0&&size=5';
   searchCriteria: string = '';
   selectedCardType!: any;
+  width!: number;
 
   ngOnInit(): void {
+    this.width = window.innerWidth;
     this.pageSize=5;
     this.pageIndex=0;
     this.totalItems=0;
@@ -55,8 +61,19 @@ export class CardComponent implements OnInit {
     this.initializeForms();
   }
 
+  @HostListener('window:resize', [])
+  private onResize() {
+    this.width = window.innerWidth;
+    console.log('resized to: ' + this.width)
+  }
+
   refresh() {
     this.predicate = '?page=0&&size=5';
+    this.sortByBalance = false;
+    this.sortByCardId = false;
+    this.sortByCreateDate = false;
+    this.sortByNickname = false;
+    this.sortByUserId = false;
     this.totalItems = 0;
     this.pageIndex = 0;
     this.pageSize = 5;
@@ -71,7 +88,7 @@ export class CardComponent implements OnInit {
       arr = response as Card;
       this.totalItems = arr.totalElements;
       for(let obj of arr.content){
-        let c = new Card(obj.cardId, obj.userId, obj.cardType, new CurrencyValue(obj.isNegative, obj.balance.dollars, obj.balance.cents),
+        let c = new Card(obj.id, obj.userId, obj.cardType, new CurrencyValue(obj.isNegative, obj.balance.dollars, obj.balance.cents),
           obj.cardNumber, obj.interestRate, obj.createDate, obj.nickname, obj.billCycleLength, obj.expireDate);
         console.log(c);
         this.cards.push(c);
@@ -250,6 +267,12 @@ export class CardComponent implements OnInit {
     } else if(field === 'createDate'){
       this.sortByCreateDate = true;
       this.createDateOrder = this.createDateOrder === 'desc' ? 'asc' : 'desc';
+    } else if(field === 'userId'){
+      this.sortByUserId = true;
+      this.userIdOrder = this.userIdOrder === 'desc' ? 'asc' : 'desc';
+    } else if(field === 'nickname'){
+      this.sortByNickname = true;
+      this.nicknameOrder = this.nicknameOrder === 'desc' ? 'asc' : 'desc';
     }
 
     this.updatePage();
@@ -259,13 +282,19 @@ export class CardComponent implements OnInit {
     this.sortBy = [];
 
     if(this.sortByCardId){
-      this.sortBy.push('cardId,' + this.cardIdOrder);
+      this.sortBy.push('id,' + this.cardIdOrder);
     }
     if(this.sortByBalance){
-      this.sortBy.push('balance,' + this.balanceOrder);
+      this.sortBy.push('balance_dollars,' + this.balanceOrder);
     }
     if(this.sortByCreateDate){
       this.sortBy.push('createDate,' + this.createDateOrder);
+    }
+    if(this.sortByUserId){
+      this.sortBy.push('user_userId,' + this.userIdOrder);
+    }
+    if(this.sortByNickname){
+      this.sortBy.push('nickname,' + this.nicknameOrder);
     }
   }
 

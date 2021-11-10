@@ -55,15 +55,15 @@ export class AccountComponent implements OnInit {
   } = { status: "notYetPending", content: [], totalElements: 0, totalPages: 0 };
 
   account = [
-    { name: "user", displayName: "User ID", class: "col-1", maxWidth: 500},
-    { name: "id", displayName: "Account ID", class: "col-1", maxWidth: 300},
-    { name: "activeStatus", displayName: "Is Active", class: "col-1", maxWidth: 500},
-    { name: "balance", displayName: "Balance", class: "col-1", maxWidth: 400},
-    { name: "createDate", displayName: "Date Created", class: "col-1", maxWidth: 900},
-    { name: "interest", displayName: "Interest Rate", class: "col-1", maxWidth: 950},
-    { name: "nickname", displayName: "Nickname", class: "col-1", maxWidth: 1050},
+    { name: "user", displayName: "User ID", class: "col-1"},
+    { name: "id", displayName: "Account ID", class: "col-1"},
+    { name: "activeStatus", displayName: "Is Active", class: "col-1"},
+    { name: "balance", displayName: "Balance", class: "col-1"},
+    { name: "createDate", displayName: "Date Created", class: "col-1"},
+    { name: "interest", displayName: "Interest Rate", class: "col-1"},
+    { name: "nickname", displayName: "Nickname", class: "col-1"},
     // { name: "description", displayName: "Description", class: "col-3" },
-    { name: "type", displayName: "Account Type", class: "col-1", maxWidth: 850}
+    { name: "type", displayName: "Account Type", class: "col-1"}
   ];
 
 

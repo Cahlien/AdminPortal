@@ -43,7 +43,6 @@
                 <ng-container *ngIf="width > 850">
                     <th scope="col-1">Type</th>
                 </ng-container>
-                <ng-container *ngFor="let a of account">
                     <!-- <th scope="col-1" [class]="a.class" (click)="setSort(a.name)">
                         <ng-container class="a.class" *ngIf="width > a.maxWidth">
                             {{a.displayName}}
@@ -52,7 +51,6 @@
                             {{asc ? ' ↑' : ' ↓'}}
                         </ng-container>
                     </th> -->
-                </ng-container>
                 <th class="col-1" id="edit title">Edit</th>
                 <th class="col-1" id="delete title">Delete</th>
             </tr>
