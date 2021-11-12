@@ -33,13 +33,25 @@ export class AccountComponent implements OnInit {
   editing!: boolean;
   depositReady: boolean = false;
   width!: number;
-
-
-  @Input() search!: string;
-  @Output() searchChange = new EventEmitter<string>();
-
-  @Input() sort!: string;
-  @Output() sortChange = new EventEmitter<number>();
+  sortByUserId: boolean = false;
+  userIdOrder: string = 'desc'
+  sortById: boolean = false;
+  idOrder: string = 'desc';
+  sortByBalance: boolean = false;
+  balanceOrder: string = 'desc';
+  sortByCreateDate: boolean = false;
+  createDateOrder: string = 'desc';
+  sortByNickname: boolean = false;
+  nicknameOrder: string = 'desc';
+  sortByType: boolean = false;
+  typeOrder: string = 'desc';
+  sortByIsActive: boolean = false;
+  isActiveOrder: string = 'desc';
+  sortByInterest: boolean = false;
+  interestOrder: string = 'desc';
+  predicate: string = '?pageNum=0&&pageSize=5';
+  searchCriteria: string = '';
+  sortBy: string[] = [];
 
   @Input() asc!: boolean;
   @Output() ascChange = new EventEmitter<number>();
@@ -92,27 +104,76 @@ export class AccountComponent implements OnInit {
     this.update();
   }
 
-  setSort(property: string) {
-    if (this.asc && this.sort === property) {
-      this.asc = false;
-      this.dir = "desc";
-      this.update();
-    } else {
-      console.log('asc true')
-      if (property !== 'firstName' && property !== 'lastName') {
-        this.sort = property;
-        this.asc = true;
-        this.dir = "asc";
-        this.update();
-      }
-      else {
-        alert('Cannot sort by name.')
-      }
+  addToSortBy(field: string) {
+    console.log('add to sort by: ', field)
+    if(field === 'Id'){
+      this.sortById = true;
+      this.idOrder = this.idOrder === 'desc' ? 'asc' : 'desc';
+    } else if(field === 'balance') {
+      this.sortByBalance = true;
+      this.balanceOrder = this.balanceOrder === 'desc' ? 'asc' : 'desc';
+    } else if(field === 'createDate'){
+      this.sortByCreateDate = true;
+      this.createDateOrder = this.createDateOrder === 'desc' ? 'asc' : 'desc';
+    } else if(field === 'userId'){
+      this.sortByUserId = true;
+      this.userIdOrder = this.userIdOrder === 'desc' ? 'asc' : 'desc';
+    } else if(field === 'nickname'){
+      this.sortByNickname = true;
+      this.nicknameOrder = this.nicknameOrder === 'desc' ? 'asc' : 'desc';
+    } else if(field === 'interest'){
+      this.sortByInterest= true;
+      this.interestOrder = this.interestOrder === 'desc' ? 'asc' : 'desc';
+    } else if(field === 'type'){
+      this.sortByType = true;
+      this.typeOrder = this.typeOrder === 'desc' ? 'asc' : 'desc';
+    } else if(field === 'isActive'){
+      this.sortByIsActive = true;
+      this.isActiveOrder = this.isActiveOrder === 'desc' ? 'asc' : 'desc';
+    }
+
+    this.updatePage();
+  }
+
+  private assembleQueryParams() {
+    this.sortBy = [];
+
+    if(this.sortById){
+      this.sortBy.push('id,' + this.idOrder);
+    }
+    if(this.sortByBalance){
+      this.sortBy.push('balance_dollars,' + this.balanceOrder);
+    }
+    if(this.sortByCreateDate){
+      this.sortBy.push('createDate,' + this.createDateOrder);
+    }
+    if(this.sortByUserId){
+      this.sortBy.push('user_userId,' + this.userIdOrder);
+    }
+    if(this.sortByNickname){
+      this.sortBy.push('nickname,' + this.nicknameOrder);
+    }
+    if(this.sortByType){
+      this.sortBy.push('type_name,' + this.typeOrder);
+    }
+    if(this.sortByIsActive){
+      this.sortBy.push('activeStatus,' + this.isActiveOrder);
+    }
+    if(this.sortByInterest){
+      this.sortBy.push('interest,' + this.interestOrder);
     }
   }
 
+  private assemblePredicate(){
+    this.assembleQueryParams()
+
+    this.predicate = "?pageNum=" + this.pageIndex + "&&pageSize=" + this.pageSize;
+    this.predicate += this.sortBy.length > 0 ? '&&sortBy=' + this.sortBy : '';
+    this.predicate += this.searchCriteria.length > 0 ? "&&search=" + this.searchCriteria : '';
+  }
+
   setSearch(search: string) {
-    this.search = search;
+    this.searchCriteria = search;
   }
 
   getTypeId(type: string): number {
@@ -166,8 +227,16 @@ export class AccountComponent implements OnInit {
   }
 
   refresh() {
-    this.search = "";
-    this.sort = 'Id';
+    this.predicate = '?pageNum=' + this.pageIndex + '&&pageSize=' + this.pageSize;
+    this.searchCriteria = "";
+    this.sortByUserId = false;
+    this.sortById = false;
+    this.sortByIsActive = false;
+    this.sortByBalance = false;
+    this.sortByCreateDate = false;
+    this.sortByInterest = false;
+    this.sortByNickname = false;
+    this.sortByType = false;
     this.dir = 'asc';
     this.totalItems = 0;
     this.pageIndex = 0;
@@ -176,9 +245,10 @@ export class AccountComponent implements OnInit {
   }
 
   update() {
+    console.log('outbound pred: ', this.predicate)
     this.accounts = [];
     this.data = { status: "pending", content: [], totalElements: 0, totalPages: 0 };
-    this.httpService.getAccounts(this.pageIndex, this.pageSize, this.sort, this.dir, this.search)
+    this.httpService.getAll('http://localhost:9001/accounts/all' + this.predicate)
       .subscribe((res) => {
         console.log(res);
         let arr: any;
@@ -368,6 +438,15 @@ export class AccountComponent implements OnInit {
     this.modalRef.close();
     this.depositReady = false;
     this.editing = false;
+  }
+
+  updatePage(){
+    this.accounts = [];
+
+    this.assemblePredicate();
+
+    this.update();
+    this.initializeForms();
   }
 
   get user() { return this.updateAccountForm.get('user'); }
